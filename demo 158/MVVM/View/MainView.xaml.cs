@@ -57,9 +57,9 @@ namespace demo_158.MVVM.View
 
             if (ContactsList.SelectedItem != null)
             {
-                _viewModel.Receive = ContactsList.SelectedItem as ConversationModel;
-                _viewModel.Receive.Type = "mainView";
-                SocketManager.Instance.Send("/MainView",_viewModel.Receive);
+                _viewModel.ConversationModel = ContactsList.SelectedItem as ConversationModel;
+                _viewModel.ConversationModel.Type = "mainView";
+                SocketManager.Instance.Send("/MainView",_viewModel.ConversationModel);
             }
         }
         // کلیک های دکمه های بالای صفحه برای بسته شدن و بزرگ وکوچک شدن صفخه

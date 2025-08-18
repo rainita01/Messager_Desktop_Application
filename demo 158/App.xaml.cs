@@ -35,8 +35,7 @@ namespace demo_158
 
         private void ServiceCollections(IServiceCollection service)
         {
-            service.AddTransient<UsersConversationsServices>();
-            service.AddTransient<MainViewServices>();
+            service.AddTransient<MessageAndTalkServices>();
 
             service.AddSingleton<SocketManager>();
 

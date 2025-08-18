@@ -11,6 +11,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net.Mime;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -23,17 +24,16 @@ namespace demo_158.MVVM.ViewModel
     {
         private object _currentView;
         private readonly IServiceProvider _service;
-        private readonly MainViewServices _services;
+        private readonly MessageAndTalkView _messageAndTalkView;
         private ICommand moveAndDrugCommand;
-        private ICommand messageShowCommand;
         private ICommand openProfileCommand;
         private ObservableCollection<ConversationModel>? _conversations;
-        private ConversationModel? _receive;
+        private ConversationModel? _conversationModel;
         private string _username;
-        public ConversationModel? Receive 
+        public ConversationModel? ConversationModel 
         {
-            get => _receive;
-            set => SetField(ref _receive, value);
+            get => _conversationModel;
+            set => SetField(ref _conversationModel, value);
         }
 
         public ReceiveUser User { get; set; }
@@ -54,16 +54,17 @@ namespace demo_158.MVVM.ViewModel
             set => SetField(ref _currentView, value);
         }
 
-        public MainViewModel(IServiceProvider service,MainViewServices services)
+        public MainViewModel(IServiceProvider service,MainViewServices services,MessageAndTalkView messageAndTalkView)
         {
             
             _service = service;
             _services = services;
+            _messageAndTalkView = messageAndTalkView;
             var userView = service.GetService<DefaultMessageView>();
             CurrentView = userView;
             var ws = SocketManager.Instance.GetConnection("/MainView", Username);
             ws.OnMessage += WsOnOnMessage;
-
+            _messageAndTalkView.SuccessEventMessage += SuccessEventMessage;
         }
 
         public ICommand OpenProfileCommand => openProfileCommand ?? new GeneralCommand((() =>
@@ -95,8 +96,24 @@ namespace demo_158.MVVM.ViewModel
                 return;
             }
 
-        
-            _services.GetDataAndSend(e, _service, this, this.Receive);
+            var messageDeserialize = JsonSerializer.Deserialize<ResieveConversationModel>(e.Data);
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                _messageAndTalkView.Messages = new ObservableCollection<MessagesModel>(messageDeserialize.Messages);
+                _messageAndTalkView.Conversation = this.ConversationModel;
+                _messageAndTalkView.Username = Username;
+                CurrentView =  _messageAndTalkView;
+            });
+
+        }
+
+        private void SuccessEventMessage(object? sender, EventArgs e)
+        {
+            var conversation = Conversations.FirstOrDefault();
+            if (conversation != null)
+            {
+               Conversations.FirstOrDefault(i=>i.ContactUsername == ConversationModel.ContactUsername).LastMessage = _messageAndTalkView.Messages.Last().Text;
+            }
         }
     }
 }

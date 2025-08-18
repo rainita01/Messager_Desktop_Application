@@ -29,36 +29,23 @@ namespace demo_158.MVVM.View
     public partial class MessageAndTalkView : UserControl
     {
         private readonly MessageAndTalkViewModel _viewModel;
-        
-        private readonly UsersConversationsServices _services;
+        private readonly MessageAndTalkServices _services;
         public ObservableCollection<MessagesModel> Messages { get; set; }
         public ConversationModel Conversation { get; set; }
         public string Username { get; set; }
         public EventHandler SuccessEventMessage;
-        public MessageAndTalkView(MessageAndTalkViewModel viewModel,UsersConversationsServices services)
+
+        public MessageAndTalkView(MessageAndTalkViewModel viewModel,MessageAndTalkServices services)
         {
             _viewModel = viewModel;
             _services = services;
-           ;
-
             DataContext = _viewModel;
-
             InitializeComponent();
             Loaded += MessageAndTalkView_OnLoaded;
             Loaded -= MessageAndTalkView_OnLoaded;
-
-           _viewModel.SuccessMessageSend += SuccessMessageSendEvent;
-            _viewModel.SuccessMessageReceived += SuccessMessageReceived;
+           _viewModel.SuccessMessageEvent += SuccessMessageSendEvent;
+           
         }
-
-        private void SuccessMessageReceived(object? sender, EventArgs e)
-        {
-
-            Messages.Add(_viewModel.Messages.Last());
-            MessagesListView.ScrollIntoView(_viewModel.Messages.Last());
-        
-        }
-
         private void SuccessMessageSendEvent(object? sender, EventArgs e)
         {
 
@@ -67,17 +54,12 @@ namespace demo_158.MVVM.View
             SuccessEventMessage.Invoke(this,EventArgs.Empty);
         
         }
-
-
-
         private void MessageAndTalkView_OnLoaded(object sender, RoutedEventArgs e)
         {
-
             _viewModel.ContactUsername = Conversation.ContactUsername;
             _viewModel.Username = Username; 
             _viewModel.Id = Conversation.Id;
             _viewModel.Image = Conversation.ContactImage;
-
             _viewModel.Messages = new ObservableCollection<MessagesModel>(Messages.Select((i, index) => new MessagesModel()
             {
                 Id = i.Id,
@@ -89,7 +71,6 @@ namespace demo_158.MVVM.View
                 FlowDirectionMessage = _services.SetFlowDirectionMessage(_viewModel.ContactUsername, i.SenderName),
                 FirstMessage = index == 0 || _services.SetFirstMessage(i.SenderName, Messages?[index - 1].SenderName),
                 BackgroundColorBrush = _services.SetBackGroundBrush(_viewModel.ContactUsername, i.SenderName)
-
             }));
 
             _viewModel.Conversation = Conversation;

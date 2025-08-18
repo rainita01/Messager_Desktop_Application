@@ -22,7 +22,7 @@ namespace demo_158.MVVM.ViewModel
 {
    public class MessageAndTalkViewModel : ViewModelBase
     {
-        private readonly UsersConversationsServices _services;
+        private readonly MessageAndTalkServices _services;
         private int _id;
         private string _contactUsername;
         private ObservableCollection<MessagesModel> _messages;
@@ -30,11 +30,10 @@ namespace demo_158.MVVM.ViewModel
         private ICommand sendMessageCommand;
         private string _text;
         private ConversationModel _conversation;
-        private DateTime _lastOnline;
         private string _username;
         private WebSocket _ws;
-        public EventHandler SuccessMessageSend { get; set; }
-        public EventHandler SuccessMessageReceived { get; set; } 
+        public EventHandler SuccessMessageEvent { get; set; }
+   
         public int Id
         {
             get => _id;
@@ -77,13 +76,7 @@ namespace demo_158.MVVM.ViewModel
             set => SetField(ref _conversation, value);
         }
 
-        public DateTime LastOnline
-        {
-            get => _lastOnline;
-            set => SetField(ref _lastOnline, value);
-        }
-
-        public MessageAndTalkViewModel(UsersConversationsServices services)
+        public MessageAndTalkViewModel(MessageAndTalkServices services)
         {
           _ws = SocketManager.Instance.GetConnection("/MainView");
             _services = services;
@@ -124,7 +117,7 @@ namespace demo_158.MVVM.ViewModel
             };
             Messages.Add(messageModel);
             Text = String.Empty;
-            SuccessMessageSend.Invoke(this, EventArgs.Empty);
+            SuccessMessageEvent.Invoke(this, EventArgs.Empty);
 
           
         }
@@ -165,8 +158,8 @@ namespace demo_158.MVVM.ViewModel
             {
                 Messages.Add(messageModel);
             });
-         
-            SuccessMessageReceived.Invoke(this,EventArgs.Empty);
+
+            SuccessMessageEvent.Invoke(this, EventArgs.Empty);
         }
     }
 }
