@@ -1,0 +1,115 @@
+﻿<UserControl x:Class="demo_158.MVVM.View.SignView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:demo_158.MVVM.View"
+             mc:Ignorable="d" 
+             FocusManager.FocusedElement="{Binding ElementName=Email}"
+             d:DesignHeight="400" d:DesignWidth="450"
+             Loaded="SignView_OnLoaded"
+             >
+    <Border Background="Transparent" 
+            
+            BorderThickness="0">
+
+        <StackPanel Margin="10">
+          
+            <TextBox Margin="0 0 0 20"
+                     Height="30"
+                     Width="200"
+                     Name="Email"
+                     TabIndex="1"
+                     Text="{Binding Email}"
+                      VerticalContentAlignment="Center"
+                     Style="{StaticResource LoginSignTextBoxTheme}"
+            ></TextBox>
+
+
+            <TextBox 
+               
+                Margin="0 0 0 20"
+                     Height="30"
+                     Width="200"
+                     Name="Username"
+                     TabIndex="2"
+                     VerticalContentAlignment="Center"
+                     Text="{Binding Username}"
+                     Style="{StaticResource LoginSignTextBoxTheme}"
+
+            ></TextBox>
+            <Grid Margin="0 0 0 15">
+
+                <PasswordBox 
+                    Width="200"
+                    Height="30"
+                    Name="Password"
+                    TabIndex="3"
+                    PasswordChanged="Password_OnPasswordChanged"
+  CaretBrush="White"
+                ></PasswordBox>
+                <TextBlock Foreground="#EEEEEE"
+                           Text="Password"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           FontSize="13"
+                           Margin="0 0 122 0"
+                           Name="PasswordTextBlock"
+                           IsHitTestVisible="False"
+                           
+                           Visibility="{Binding PasswordTextBlockVisibility}"
+                ></TextBlock>
+            </Grid>
+            <Grid Margin="0 0 0 5">
+
+                <PasswordBox 
+                    Width="200"
+                    Height="30"
+                    Name="VerfyPassword"
+                    TabIndex="4"
+                    PasswordChanged="VerifyPassword_OnPasswordChanged"
+            CaretBrush="White"
+                ></PasswordBox>
+                <TextBlock Foreground="#EEEEEE"
+                           Text="Verify Password"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           FontSize="13"
+                           Margin="0 0 90 0"
+                           Name="PasswordVerfyTextBlock"
+                           IsHitTestVisible="False"
+                           Visibility="{Binding VerifyPasswordTextBlockVisibility}"
+                ></TextBlock>
+            </Grid>
+                <TextBlock 
+                           FontStretch="Condensed"
+                           Padding="2"
+                            Opacity="5"
+                            HorizontalAlignment="Left"
+                            Margin=" 40 0 0  10"
+                            Text="{Binding MessageText}"
+                            FontFamily="Arial"
+                            FontSize="10"
+                            Foreground="{Binding MessageTextSuccess}"
+                       
+                            
+                    ></TextBlock>
+          
+            <Button 
+                Width="200"
+                Height="30"
+                Content="Sign Up"
+                Command="{Binding SignCommand}"
+                Style="{StaticResource LoginButtonTheme}"
+            >
+
+                <Button.InputBindings>
+                    <KeyBinding
+                        Key="Enter"
+                        Command="{Binding SignCommand}"></KeyBinding>
+                </Button.InputBindings>
+            </Button>
+        </StackPanel>
+    </Border>
+</UserControl>
+

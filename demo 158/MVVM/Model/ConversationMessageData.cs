@@ -1,0 +1,14 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace demo_158.MVVM.Model
+{
+    public class ConversationMessageData
+    {
+        public ReceiveUser User { get; set; }
+        public List<MessagesModel> Messages { get; set; }
+    }
+}

@@ -1,0 +1,143 @@
+﻿<UserControl x:Class="demo_158.MVVM.View.MessageAndTalkView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:demo_158.MVVM.View"
+             mc:Ignorable="d" 
+             d:DesignHeight="550" d:DesignWidth="600"
+             Background="Transparent"
+             BorderThickness="0"
+             Loaded="MessageAndTalkView_OnLoaded"
+             
+             >
+<Border
+    CornerRadius="20"
+   >
+
+        <Grid>
+          <Grid.RowDefinitions>
+              <RowDefinition Height="1.4*"></RowDefinition>
+              <RowDefinition Height="15*"></RowDefinition>
+              <RowDefinition Height="Auto"></RowDefinition>
+          </Grid.RowDefinitions>
+
+            <Border Background="#183B4E"
+                    CornerRadius="20 20 0 0"
+                    Height="50"
+                    Margin="0 0 0 2"
+                    
+            >
+                <Grid>
+            
+                 <StackPanel 
+                     Orientation="Horizontal"
+                     VerticalAlignment="top"
+                        HorizontalAlignment="Left"
+                     Margin="20 5 5 0"
+ 
+                 >
+                     <Ellipse Width="30" Height="30" Margin="0 0 0 0" 
+                              VerticalAlignment="Top"
+                              >
+                         <Ellipse.Fill>
+                             <VisualBrush>
+                                 <VisualBrush.Visual>
+                                     <Grid Background="White">
+                                         <Image Source="{Binding ContactImage}" 
+                                                Stretch="UniformToFill"/>
+                                     </Grid>
+                                 </VisualBrush.Visual>
+                             </VisualBrush>
+                         </Ellipse.Fill>
+                     </Ellipse>
+
+                     <TextBlock 
+                         Margin="5 0 0 15"
+                         Text="{Binding ContactUsername}"
+                         FontSize="20"
+                         Foreground="White"
+              
+                     ></TextBlock>
+                     <Label 
+                     
+                         FontSize="9"
+                         Margin="5 10 0 0 "
+                         Foreground="LightGray"
+                         Content="2025" 
+
+                     ></Label>
+                        </StackPanel
+                 
+                 >
+                  
+                    </Grid>
+                   
+            </Border>
+
+            <ListView
+                
+                Name="MessagesListView"
+                Grid.Row="1" 
+                      ItemsSource="{Binding Messages}"
+                      Style="{StaticResource MessagesListViewTheme}"
+                      ItemContainerStyle="{StaticResource MessagesListViewItemTheme}"
+                       
+                      ></ListView>
+          <Border Grid.Row="2"
+                Background="WhiteSmoke"
+                  CornerRadius="0 0  20 20"
+              
+                  
+                  >
+                <Grid>
+
+
+                    <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="9*"></ColumnDefinition>
+                  <ColumnDefinition></ColumnDefinition>
+              </Grid.ColumnDefinitions>
+
+              <TextBox Grid.Column="0"
+                       TextWrapping="Wrap"
+                       HorizontalContentAlignment="Right"
+                       Margin="5 10 10 10"
+                       Text="{Binding Text,UpdateSourceTrigger= PropertyChanged}"
+                       Background="LightSkyBlue"
+                       FontSize="17"
+                       FontStretch="Medium"
+                       AcceptsReturn="True"
+                       MinHeight="30"
+                       Foreground="Black"
+                       VerticalContentAlignment="Center"
+                       TabIndex="1"
+                        
+                       Name="MessageTextBox"
+              >
+                  <TextBox.InputBindings>
+                      <KeyBinding
+                          Key="Enter"
+                          Command="{Binding SendMessageCommand}"
+                          ></KeyBinding>
+                  </TextBox.InputBindings>
+              </TextBox>
+                    <Button
+                        Name="MessageBlock"
+                        BorderThickness="0"
+                        Grid.Column="1"
+
+                        Style="{StaticResource SenderButtonTheme}"
+                        Command="{Binding SendMessageCommand}"
+                        >
+                    </Button>
+              </Grid>
+            </Border>
+        </Grid>
+       
+     
+
+   
+    </Border>
+ 
+   
+</UserControl>

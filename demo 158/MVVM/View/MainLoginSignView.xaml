@@ -1,0 +1,111 @@
+﻿<Window x:Class="demo_158.MainLoginSignView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:demo_158"
+        mc:Ignorable="d"
+        AllowsTransparency="True"
+        Background="Transparent" 
+        ResizeMode="NoResize"
+        WindowStyle="None"
+WindowStartupLocation="CenterScreen"
+        Title="MainLoginSignView" Height="500" Width="800"
+        MouseLeftButtonDown="LoginView_OnMouseLeftButtonDown"
+        
+        >
+
+    <Border BorderThickness="0" 
+            Background="#4A7691"
+            CornerRadius="15"
+            
+            >
+        <DockPanel>
+            <Border 
+                DockPanel.Dock="Top"
+                Height="30"
+                Background="#142632"
+                BorderThickness="0"
+                CornerRadius="15 15 0 0"
+                >
+                 <StackPanel HorizontalAlignment="Right" 
+                             Orientation="Horizontal">
+
+                     <Button  
+                         Style="{StaticResource TopToolsButtonThem}"
+                         Width="30"
+                         Content="-"
+                        Click="HideClickMethod"
+                         ></Button>
+
+                     <Button  
+                         Style="{StaticResource TopToolsButtonThem}"
+                         Width="30"
+                         Content="×"
+                         Click="ExitClickMethod"
+                     ></Button>
+
+                </StackPanel>
+
+            </Border>
+
+                <Grid DockPanel.Dock="Bottom">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="3*"></ColumnDefinition>
+                        <ColumnDefinition Width="3*"></ColumnDefinition>
+                        <ColumnDefinition Width="3*"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="1.3*"></RowDefinition>
+                        <RowDefinition Height="3*"></RowDefinition>
+                        <RowDefinition Height="1*"></RowDefinition>
+                    </Grid.RowDefinitions>
+
+
+                   <StackPanel HorizontalAlignment="Center"
+                               Orientation="Horizontal"
+                               Grid.Column="1"
+                               Grid.Row="0"
+                               Margin="0 0 30 0"
+                               >
+
+                       <RadioButton
+                           VerticalAlignment="Bottom"
+                                  Name="LogInButoon"
+                           Content="Log in"
+                           IsChecked="True"
+                           Height="35"
+                           Width="70"
+                           Command="{Binding LoginViewSwitch}"
+                           Style="{StaticResource LoginSingRadioButtonTheme }"
+                           Margin="0 0 10 0"
+                           ></RadioButton>
+
+                       <RadioButton 
+                           Height="35"
+                           Name="SignInButoon"
+                           Width="70"
+                           VerticalAlignment="Bottom" 
+                           Content="Sign Up"
+                           Command="{Binding SignViewSwitch}"
+                           Style="{StaticResource LoginSingRadioButtonTheme}"
+                           >
+                           
+                       </RadioButton>
+                </StackPanel>
+
+
+                <ContentPresenter Content="{Binding CurrentView}"
+                             Grid.Row="1" Grid.Column="1" Grid.RowSpan="2">
+                     
+                    </ContentPresenter >
+
+               
+                  
+                </Grid>
+
+        </DockPanel>
+
+
+    </Border>
+</Window>
