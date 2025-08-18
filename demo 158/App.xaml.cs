@@ -49,7 +49,6 @@ namespace demo_158
             service.AddTransient<LoginLoadingPage>();
 
             service.AddTransient<DefaultMessageView>();
-            service.AddTransient<ConversationModel>();
 
 
             

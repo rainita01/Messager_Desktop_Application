@@ -32,7 +32,7 @@ namespace demo_158.MVVM.View
         
         private readonly UsersConversationsServices _services;
         public ObservableCollection<MessagesModel> Messages { get; set; }
-        public ConversationReceive Conversation { get; set; }
+        public ConversationModel Conversation { get; set; }
         public string Username { get; set; }
         public EventHandler SuccessEventMessage;
         public MessageAndTalkView(MessageAndTalkViewModel viewModel,UsersConversationsServices services)

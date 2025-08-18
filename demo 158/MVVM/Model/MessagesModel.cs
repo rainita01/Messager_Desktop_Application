@@ -20,18 +20,11 @@ namespace demo_158.MVVM.Model
         public DateTime SentTime { get; set; }
         public HorizontalAlignment HorizontalAlignmentMessage { get; set; }
         public FlowDirection FlowDirectionMessage { get; set; }
-        public ConversationReceive Conversation { get; set; }
+        public ConversationModel Conversation { get; set; }
         public SolidColorBrush BackgroundColorBrush { get; set; }
         public bool FirstMessage { get; set; }
     }
-
-    public class ResiveConversationModel
-    {
-        public string Type { get; set; }
-        public List< MessagesModel> Messages { get; set; }
-
-    }
-    public class MessageSenderModel
+    public class MessageSendToServerModel
     {
         public int Id { get; set; }
         public string? Type { get; set; }
@@ -42,4 +35,11 @@ namespace demo_158.MVVM.Model
         public DateTime SentTime { get; set; }
         public int ConversationId { get; set; }
     }
+    public class ResieveConversationModel
+    {
+        public string Type { get; set; }
+        public List< MessagesModel> Messages { get; set; }
+
+    }
+ 
 }

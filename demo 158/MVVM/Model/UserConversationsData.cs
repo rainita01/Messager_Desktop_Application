@@ -9,6 +9,6 @@ namespace demo_158.MVVM.Model
     public class UserConversationsData
     {
         public ReceiveUser User { get; set; }
-        public List<ConversationReceive> Conversations { get; set; }
+        public List<ConversationModel> Conversations { get; set; }
     }
 }

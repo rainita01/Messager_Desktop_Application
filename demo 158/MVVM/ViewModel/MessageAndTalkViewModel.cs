@@ -29,7 +29,7 @@ namespace demo_158.MVVM.ViewModel
         private string _image;
         private ICommand sendMessageCommand;
         private string _text;
-        private ConversationReceive _conversation;
+        private ConversationModel _conversation;
         private DateTime _lastOnline;
         private string _username;
         private WebSocket _ws;
@@ -71,7 +71,7 @@ namespace demo_158.MVVM.ViewModel
             set => SetField(ref _image, value);
         }
 
-        public ConversationReceive Conversation
+        public ConversationModel Conversation
         {
             get => _conversation;
             set => SetField(ref _conversation, value);
@@ -96,7 +96,7 @@ namespace demo_158.MVVM.ViewModel
             if (string.IsNullOrEmpty(Text))
                 return;
 
-            var message = new MessageSenderModel()
+            var message = new MessageSendToServerModel()
             {
                 Type = "message",
                 ConversationId = Conversation.Id,
@@ -142,7 +142,7 @@ namespace demo_158.MVVM.ViewModel
             {
                 return;
             }
-            var deserialize = JsonSerializer.Deserialize<MessageSenderModel>(e.Data);
+            var deserialize = JsonSerializer.Deserialize<MessageSendToServerModel>(e.Data);
             if (deserialize == null)
             {
                 return;

@@ -32,7 +32,7 @@ namespace demo_158.MVVM.View
     {
         private readonly MainViewModel _viewModel;
         public ReceiveUser User { get; set; } = new();
-        public List<ConversationReceive>? Conversations { get; set; }
+        public List<ConversationModel>? Conversations { get; set; }
         public MainView(MainViewModel viewModel)
         {
             _viewModel = viewModel;
@@ -45,7 +45,7 @@ namespace demo_158.MVVM.View
          
             _viewModel.User = User;
             _viewModel.Username = User.Username;
-            _viewModel.Conversations = new ObservableCollection<ConversationReceive>(Conversations);
+            _viewModel.Conversations = new ObservableCollection<ConversationModel>(Conversations);
             base.OnActivated(e);
             
         }
@@ -57,7 +57,7 @@ namespace demo_158.MVVM.View
 
             if (ContactsList.SelectedItem != null)
             {
-                _viewModel.Receive = ContactsList.SelectedItem as ConversationReceive;
+                _viewModel.Receive = ContactsList.SelectedItem as ConversationModel;
                 _viewModel.Receive.Type = "mainView";
                 SocketManager.Instance.Send("/MainView",_viewModel.Receive);
             }

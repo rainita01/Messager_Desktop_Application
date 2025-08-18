@@ -19,24 +19,16 @@ namespace demo_158.Services
     public class MainViewServices
     {
 
-        public void GetDataAndSend(MessageEventArgs e,IServiceProvider serviceProvider,MainViewModel viewModel,ConversationReceive? receive )
+        public void GetDataAndSend(MessageEventArgs e,IServiceProvider serviceProvider,MainViewModel viewModel,ConversationModel? receive )
         {
             try
             {
-                var jsonObject = JObject.Parse(e.Data);
-                string type =(string) jsonObject["Type"];
-
-                if (type != "mainView")
-                {
-                    return;
-                }
-
-                var messageDeserialize = JsonSerializer.Deserialize<ResiveConversationModel>(e.Data);
+                var messageDeserialize = JsonSerializer.Deserialize<ResieveConversationModel>(e.Data);
                 Application.Current.Dispatcher.Invoke(() =>
                 {
                     var messageView = serviceProvider.GetService<MessageAndTalkView>();
                     messageView.SuccessEventMessage += SuccessEventMessage;
-                    messageView.Messages = new ObservableCollection<MessagesModel>(new ObservableCollection<MessagesModel>(messageDeserialize.Messages));
+                    messageView.Messages = new ObservableCollection<MessagesModel>((messageDeserialize.Messages));
                     messageView.Conversation = receive;
                     messageView.Username = viewModel.Username;
                     viewModel.CurrentView = messageView;
