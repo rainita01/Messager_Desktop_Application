@@ -31,33 +31,19 @@ namespace demo_158.MVVM.View
     public partial class MainView : Window
     {
         private readonly MainViewModel _viewModel;
- 
-        private readonly IServiceProvider _serviceProvider;
-        private readonly MainViewServices _services;
-        private readonly MessageAndTalkView _messageAndTalkView;
         public ReceiveUser User { get; set; } = new();
         public List<ConversationReceive>? Conversations { get; set; }
-      
-        public MainView(MainViewModel viewModel,IServiceProvider serviceProvider,MainViewServices services,MessageAndTalkView messageAndTalkView)
+        public MainView(MainViewModel viewModel)
         {
             _viewModel = viewModel;
-          
-            _serviceProvider = serviceProvider;
-            _services = services;
-            _messageAndTalkView = messageAndTalkView;
             DataContext = _viewModel;
             InitializeComponent();
             
         }
-
-   
-
         protected override void OnActivated(EventArgs e)
         {
          
             _viewModel.User = User;
-            var ws = SocketManager.Instance.GetConnection("/MainView",User.Username);
-            ws.OnMessage += WsOnOnMessage;
             _viewModel.Username = User.Username;
             _viewModel.Conversations = new ObservableCollection<ConversationReceive>(Conversations);
             base.OnActivated(e);
@@ -74,20 +60,8 @@ namespace demo_158.MVVM.View
                 _viewModel.Receive = ContactsList.SelectedItem as ConversationReceive;
                 _viewModel.Receive.Type = "mainView";
                 SocketManager.Instance.Send("/MainView",_viewModel.Receive);
-                
             }
         }
-
-        private void WsOnOnMessage(object? sender, MessageEventArgs e)
-        {
-            if (e.Data == "Successfully")
-            {
-                return;
-            }
-            _services.GetDataAndSend(e, _serviceProvider, _viewModel,_viewModel.Receive);
-        }
-
-
         // کلیک های دکمه های بالای صفحه برای بسته شدن و بزرگ وکوچک شدن صفخه
         private void TopHideButtonClick(object sender, RoutedEventArgs e)
         {

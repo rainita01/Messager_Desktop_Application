@@ -23,6 +23,7 @@ namespace demo_158.MVVM.ViewModel
         
         private readonly IServiceProvider _service;
         private readonly MessageAndTalkViewModel _messageViewModel;
+        private readonly MainViewServices _services;
         private ICommand moveAndDrugCommand;
         private ICommand messageShowCommand;
         private ICommand openProfileCommand;
@@ -54,13 +55,16 @@ namespace demo_158.MVVM.ViewModel
             set => SetField(ref _currentView, value);
         }
 
-        public MainViewModel(IServiceProvider service,MessageAndTalkViewModel messageViewModel)
+        public MainViewModel(IServiceProvider service,MessageAndTalkViewModel messageViewModel,MainViewServices services)
         {
             
             _service = service;
             _messageViewModel = messageViewModel;
+            _services = services;
             var userView = service.GetService<DefaultMessageView>();
             CurrentView = userView;
+            var ws = SocketManager.Instance.GetConnection("/MainView", Username);
+            ws.OnMessage += WsOnOnMessage;
 
         }
 
@@ -82,6 +86,13 @@ namespace demo_158.MVVM.ViewModel
         {
             Application.Current.Windows.OfType<MainView>().FirstOrDefault()?.DragMove();
         }));
-
+        private void WsOnOnMessage(object? sender, MessageEventArgs e)
+        {
+            if (e.Data == "Successfully")
+            {
+                return;
+            }
+            _services.GetDataAndSend(e, _service, this, this.Receive);
+        }
     }
 }
