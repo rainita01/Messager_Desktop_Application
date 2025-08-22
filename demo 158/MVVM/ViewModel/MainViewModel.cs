@@ -54,17 +54,22 @@ namespace demo_158.MVVM.ViewModel
             set => SetField(ref _currentView, value);
         }
 
-        public MainViewModel(IServiceProvider service,MainViewServices services,MessageAndTalkView messageAndTalkView)
+        public MainViewModel(IServiceProvider service,MessageAndTalkView messageAndTalkView)
         {
             
             _service = service;
-            _services = services;
             _messageAndTalkView = messageAndTalkView;
             var userView = service.GetService<DefaultMessageView>();
             CurrentView = userView;
             var ws = SocketManager.Instance.GetConnection("/MainView", Username);
             ws.OnMessage += WsOnOnMessage;
-            _messageAndTalkView.SuccessEventMessage += SuccessEventMessage;
+            _messageAndTalkView.SuccessEventMessage += (sender, args) =>
+            {
+                Conversations.FirstOrDefault(i =>
+                        i.ContactUsername == _messageAndTalkView.Conversation.ContactUsername)
+                    .LastMessage = _messageAndTalkView.Messages.Last().Text;
+            };
+
         }
 
         public ICommand OpenProfileCommand => openProfileCommand ?? new GeneralCommand((() =>
@@ -107,13 +112,5 @@ namespace demo_158.MVVM.ViewModel
 
         }
 
-        private void SuccessEventMessage(object? sender, EventArgs e)
-        {
-            var conversation = Conversations.FirstOrDefault();
-            if (conversation != null)
-            {
-               Conversations.FirstOrDefault(i=>i.ContactUsername == ConversationModel.ContactUsername).LastMessage = _messageAndTalkView.Messages.Last().Text;
-            }
-        }
     }
 }
