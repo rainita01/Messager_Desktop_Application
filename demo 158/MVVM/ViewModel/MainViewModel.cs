@@ -27,9 +27,11 @@ namespace demo_158.MVVM.ViewModel
         private readonly MessageAndTalkView _messageAndTalkView;
         private ICommand moveAndDrugCommand;
         private ICommand openProfileCommand;
-        private ObservableCollection<ConversationModel>? _conversations;
+        private List<ConversationModel>? _conversations;
         private ConversationModel? _conversationModel;
         private string _username;
+        private ObservableCollection<ConversationModel>? _conversations1;
+
         public ConversationModel? ConversationModel 
         {
             get => _conversationModel;
@@ -42,10 +44,11 @@ namespace demo_158.MVVM.ViewModel
             get => _username;
             set => SetField(ref _username, value);
         }
+
         public ObservableCollection<ConversationModel>? Conversations
         {
-            get => _conversations;
-            set => SetField(ref _conversations, value);
+            get => _conversations1;
+            set => SetField(ref _conversations1, value);
         }
 
         public object CurrentView
@@ -62,13 +65,12 @@ namespace demo_158.MVVM.ViewModel
             var userView = service.GetService<DefaultMessageView>();
             CurrentView = userView;
             var ws = SocketManager.Instance.GetConnection("/MainView", Username);
-            ws.OnMessage += WsOnOnMessage;
-            _messageAndTalkView.SuccessEventMessage += (sender, args) =>
+            _messageAndTalkView.SuccessEventMessage += (sender, e) =>
             {
-                Conversations.FirstOrDefault(i =>
-                        i.ContactUsername == _messageAndTalkView.Conversation.ContactUsername)
-                    .LastMessage = _messageAndTalkView.Messages.Last().Text;
+                Conversations.First().LastMessage = _messageAndTalkView.Messages.Last().Text;
+                OnPropertyChanged();
             };
+            ws.OnMessage += WsOnOnMessage;
 
         }
 
@@ -102,7 +104,7 @@ namespace demo_158.MVVM.ViewModel
             }
 
             var messageDeserialize = JsonSerializer.Deserialize<ResieveConversationModel>(e.Data);
-            Application.Current.Dispatcher.Invoke(() =>
+            Application.Current.Dispatcher.InvokeAsync(() =>
             {
                 _messageAndTalkView.Messages = new ObservableCollection<MessagesModel>(messageDeserialize.Messages);
                 _messageAndTalkView.Conversation = this.ConversationModel;

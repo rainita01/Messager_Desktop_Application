@@ -25,7 +25,6 @@ namespace demo_158.MVVM.ViewModel
         private string _password;
         private string _username;
         private ICommand loginCommand;
-        private Visibility _passwordTextBlockVisibility;
         private UserConversationsData? _userConversationsData;
        
 
@@ -82,8 +81,6 @@ namespace demo_158.MVVM.ViewModel
                 Username = Username,
                 Password = Password
             };
-            var loadingPage = _service.GetService<LoginLoadingPage>();
-            SharingDataViewModel.Instance.CurrentView = loadingPage;
             SharingDataViewModel.Instance.CurrenViewChanged?.Invoke(this, EventArgs.Empty);
             SocketManager.Instance.Send("/Login",user);
 
@@ -94,7 +91,7 @@ namespace demo_158.MVVM.ViewModel
         {
             if (e.Data == "error")
             {
-                Application.Current.Dispatcher.Invoke(() =>
+                Application.Current.Dispatcher.InvokeAsync(() =>
                 {
                     SharingDataViewModel.Instance.CurrentViewErrorChanged?.Invoke(this, EventArgs.Empty);
                     MessageBox.Show("Incorrect Username or Password");
@@ -104,15 +101,11 @@ namespace demo_158.MVVM.ViewModel
 
             UserConversationsData = JsonSerializer.Deserialize<UserConversationsData>(e.Data);
             SuccessLoginEventExecute();
-
-
         }
-
         private void SuccessLoginEventExecute()
         {
-            Application.Current.Dispatcher.Invoke(() =>
+            Application.Current.Dispatcher.InvokeAsync(() =>
             {
-
                 var mainView = _service.GetService<MainView>();
                 mainView.User = UserConversationsData.User;
                 mainView.Conversations = UserConversationsData.Conversations;

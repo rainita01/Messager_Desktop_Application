@@ -35,6 +35,7 @@ namespace demo_158.MVVM.View
         public List<ConversationModel>? Conversations { get; set; }
         public MainView(MainViewModel viewModel)
         {
+           
             _viewModel = viewModel;
             DataContext = _viewModel;
             InitializeComponent();
@@ -42,10 +43,10 @@ namespace demo_158.MVVM.View
         }
         protected override void OnActivated(EventArgs e)
         {
-         
+            _viewModel.Conversations = new ObservableCollection<ConversationModel>(Conversations);
             _viewModel.User = User;
             _viewModel.Username = User.Username;
-            _viewModel.Conversations = new ObservableCollection<ConversationModel>(Conversations);
+       
             base.OnActivated(e);
             
         }

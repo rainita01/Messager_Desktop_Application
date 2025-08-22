@@ -14,6 +14,9 @@ namespace demo_158.MVVM.ViewModel
     public class MainLoginSignViewModel : ViewModelBase
     {
         private readonly IServiceProvider _service;
+        private readonly LoginView _loginView;
+        private readonly SignView _signView;
+        private readonly LoginLoadingPage _loadingPage;
         private object _currentView;
         public object CurrentView
         {
@@ -21,23 +24,26 @@ namespace demo_158.MVVM.ViewModel
             set => SetField(ref _currentView, value);
         }
 
-        public MainLoginSignViewModel(IServiceProvider service)
+        public MainLoginSignViewModel(IServiceProvider service,LoginView loginView,SignView signView,LoginLoadingPage loadingPage)
         {
             _service = service;
-            LoginViewExecute();
+            _loginView = loginView;
+            _signView = signView;
+            _loadingPage = loadingPage;
+            _currentView = _loginView;
             SharingDataViewModel.Instance.CurrenViewChanged += CurrenViewChanged;
             SharingDataViewModel.Instance.CurrentViewErrorChanged += CurrentViewErrorChanged;
         }
 
         private void CurrentViewErrorChanged(object? sender, EventArgs e)
         {
-            var loginV = _service.GetService<LoginView>();
-            CurrentView = loginV;
+           
+            CurrentView = _loginView;
         }
 
         private void CurrenViewChanged(object? sender, EventArgs e)
         {
-            CurrentView = SharingDataViewModel.Instance.CurrentView;
+            CurrentView = _loadingPage;
         }
 
         private ICommand _loginViewSwitch;
@@ -46,8 +52,7 @@ namespace demo_158.MVVM.ViewModel
         private void LoginViewExecute()
         {
 
-            var loginV = _service.GetService<LoginView>();
-            CurrentView = loginV;
+            CurrentView = _loginView;
         }
 
         private ICommand _signViewSwitch;
@@ -55,8 +60,7 @@ namespace demo_158.MVVM.ViewModel
 
         private void SignViewExecute()
         {
-            var signV = _service.GetService<SignView>();
-            CurrentView = signV;
+            CurrentView = _signView;
         }
     }
 }
