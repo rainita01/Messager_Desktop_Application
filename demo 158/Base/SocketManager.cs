@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -9,14 +10,20 @@ using WebSocketSharp;
 
 namespace demo_158.Base
 {
-    public class SocketManager :IDisposable
+    public class SocketManager : ViewModelBase
     {
       
-        private Dictionary<string,WebSocket> _connections = new Dictionary<string,WebSocket>();
-
+        //private Dictionary<string,WebSocket> _connections = new Dictionary<string,WebSocket>();
+        public Action<string> SuccessMessageReceive;
+        private WebSocket _ws;
         private static SocketManager? instance;
 
-        public string SessionId { get; set; }
+        public WebSocket Ws 
+        {
+            get => _ws;
+            set => SetField(ref _ws, value);
+        }
+
         public static SocketManager Instance
         {
             get
@@ -32,40 +39,19 @@ namespace demo_158.Base
         {
 
         }
-
-        public WebSocket GetConnection(string endpoint, string username = null)
+        public void Connect(string endpoint,string username)
         {
-            if (_connections.TryGetValue(endpoint, out var ws) &&
-                ws.ReadyState == WebSocketState.Open)
-            {
-                return ws;
-            }
+            Ws = new WebSocket($"ws://localhost:7482{endpoint}?Username={username}");
+            Ws.Connect();
+            Ws.OnMessage += (e, s) => SuccessMessageReceive.Invoke(s.Data);
 
-            var newWs = new WebSocket($"ws://localhost:7482{endpoint}?Username={username}");
-            newWs.Connect();
-
-            newWs.OnError += (s, e) =>
-                Debug.WriteLine($"WebSocket error on {endpoint}: {e.Message}");
-
-            _connections[endpoint] = newWs;
-            return newWs;
         }
-
-        public void Send(string endpoint, object message)
+        public void Send(object message)
         {
-            var ws = GetConnection(endpoint);
-            if (ws.ReadyState == WebSocketState.Open)
+            if (Ws.ReadyState == WebSocketState.Open)
             {
-                ws.Send(JsonSerializer.Serialize(message));
+                Ws.Send(JsonSerializer.Serialize(message));
             }
-        }
-        public void Dispose()
-        {
-            foreach (var connection in _connections.Values)
-            {
-                connection?.Close();
-            }
-            _connections.Clear();
         }
     }
 }

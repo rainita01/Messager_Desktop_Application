@@ -59,17 +59,20 @@ namespace demo_158.MVVM.ViewModel
 
         public ProfileViewModel()
         {
-            var ws = SocketManager.Instance.GetConnection("/MainView");
-            ws.Connect();
-            ws.OnMessage += WsOnOnMessage;
+            var ws = SocketManager.Instance.SuccessMessageReceive += OnMessage;
+        }
+
+        private void OnMessage(string obj)
+        {
+            if (obj == "Successfully")
+            {
+                ProfileSuccessChange.Invoke(this, EventArgs.Empty);
+            }
         }
 
         private void WsOnOnMessage(object? sender, MessageEventArgs e)
         {
-            if (e.Data == "Successfully")   
-            {
-                ProfileSuccessChange.Invoke(this,EventArgs.Empty);
-            }
+       
 
         }
 
@@ -85,7 +88,7 @@ namespace demo_158.MVVM.ViewModel
                Email = Email,
                Username = Username,
            };
-          SocketManager.Instance.Send("/MainView", model);
+          SocketManager.Instance.Send(model);
        }
 
        

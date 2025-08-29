@@ -1,8 +1,14 @@
 ﻿using demo_158.Base;
+using demo_158.MVVM.Model;
+using demo_158.MVVM.View;
 using demo_158.Services;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -10,11 +16,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
-using demo_158.MVVM.Model;
-using demo_158.MVVM.View;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
 using WebSocketSharp;
 
 namespace demo_158.MVVM.ViewModel
@@ -26,7 +27,13 @@ namespace demo_158.MVVM.ViewModel
         private string _username;
         private ICommand loginCommand;
         private UserConversationsData? _userConversationsData;
-       
+        private WebSocket _ws;
+
+        public WebSocket Ws
+        {
+            get => _ws;
+            set => SetField(ref _ws, value);
+        }
 
         public Visibility PasswordTextBlockVisibility => string.IsNullOrEmpty(Password) ? Visibility.Visible : Visibility.Collapsed;
 
@@ -66,8 +73,9 @@ namespace demo_158.MVVM.ViewModel
         {
 
             _service = service;
-            var wb = SocketManager.Instance.GetConnection("/Login");
-            wb.OnMessage += WbOnOnMessage;
+            Ws = new WebSocket("ws://localhost:7482/Login");
+            Ws.Connect();
+            Ws.OnMessage += WbOnOnMessage;
 
         }
    
@@ -82,8 +90,8 @@ namespace demo_158.MVVM.ViewModel
                 Password = Password
             };
             SharingDataViewModel.Instance.CurrenViewChanged?.Invoke(this, EventArgs.Empty);
-            SocketManager.Instance.Send("/Login",user);
-
+            var userSerialize = JsonSerializer.Serialize(user);
+            Ws.Send(userSerialize);
         }
 
 
@@ -106,6 +114,7 @@ namespace demo_158.MVVM.ViewModel
         {
             Application.Current.Dispatcher.InvokeAsync(() =>
             {
+                SocketManager.Instance.Connect("/MainView",Username);
                 var mainView = _service.GetService<MainView>();
                 mainView.User = UserConversationsData.User;
                 mainView.Conversations = UserConversationsData.Conversations;

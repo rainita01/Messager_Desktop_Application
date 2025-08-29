@@ -27,11 +27,9 @@ namespace demo_158.MVVM.ViewModel
         private readonly MessageAndTalkView _messageAndTalkView;
         private ICommand moveAndDrugCommand;
         private ICommand openProfileCommand;
-        private List<ConversationModel>? _conversations;
         private ConversationModel? _conversationModel;
         private string _username;
-        private ObservableCollection<ConversationModel>? _conversations1;
-
+        private ObservableCollection<ConversationModel>? _conversations;
         public ConversationModel? ConversationModel 
         {
             get => _conversationModel;
@@ -47,8 +45,8 @@ namespace demo_158.MVVM.ViewModel
 
         public ObservableCollection<ConversationModel>? Conversations
         {
-            get => _conversations1;
-            set => SetField(ref _conversations1, value);
+            get => _conversations;
+            set => SetField(ref _conversations, value);
         }
 
         public object CurrentView
@@ -59,21 +57,51 @@ namespace demo_158.MVVM.ViewModel
 
         public MainViewModel(IServiceProvider service,MessageAndTalkView messageAndTalkView)
         {
-            
+            SocketManager.Instance.SuccessMessageReceive += SuccessMessageReceive;
             _service = service;
             _messageAndTalkView = messageAndTalkView;
             var userView = service.GetService<DefaultMessageView>();
             CurrentView = userView;
-            var ws = SocketManager.Instance.GetConnection("/MainView", Username);
             _messageAndTalkView.SuccessEventMessage += (sender, e) =>
             {
                 Conversations.First().LastMessage = _messageAndTalkView.Messages.Last().Text;
-                OnPropertyChanged();
             };
-            ws.OnMessage += WsOnOnMessage;
-
         }
 
+        private void SuccessMessageReceive(string obj)
+        {
+            if (obj == "Successfully")
+            {
+                return;
+            }
+            var jsonObject = JObject.Parse(obj);
+            string type = (string)jsonObject["Type"];
+
+            if (type != "mainView")
+            {
+                return;
+            }
+
+            var messageDeserialize = JsonSerializer.Deserialize<ResieveConversationModel>(obj);
+            Application.Current.Dispatcher.InvokeAsync(() =>
+            {
+                _messageAndTalkView.Messages = new ObservableCollection<MessagesModel>(messageDeserialize.Messages);
+                _messageAndTalkView.Conversation = this.ConversationModel;
+                _messageAndTalkView.Username = Username;
+                CurrentView = _messageAndTalkView;
+            });
+        }
+
+        private void OnMessage(object? sender, EventArgs e)
+        {
+            
+          
+        }
+
+        public void InitConnection()
+        {
+       
+        }
         public ICommand OpenProfileCommand => openProfileCommand ?? new GeneralCommand((() =>
         {
             var profileView = _service.GetService<ProfileView>();
@@ -89,30 +117,6 @@ namespace demo_158.MVVM.ViewModel
         {
             Application.Current.Windows.OfType<MainView>().FirstOrDefault()?.DragMove();
         }));
-        private void WsOnOnMessage(object? sender, MessageEventArgs e)
-        {
-            if (e.Data == "Successfully")
-            {
-                return;
-            }
-            var jsonObject = JObject.Parse(e.Data);
-            string type = (string)jsonObject["Type"];
-
-            if (type != "mainView")
-            {
-                return;
-            }
-
-            var messageDeserialize = JsonSerializer.Deserialize<ResieveConversationModel>(e.Data);
-            Application.Current.Dispatcher.InvokeAsync(() =>
-            {
-                _messageAndTalkView.Messages = new ObservableCollection<MessagesModel>(messageDeserialize.Messages);
-                _messageAndTalkView.Conversation = this.ConversationModel;
-                _messageAndTalkView.Username = Username;
-                CurrentView =  _messageAndTalkView;
-            });
-
-        }
 
     }
 }

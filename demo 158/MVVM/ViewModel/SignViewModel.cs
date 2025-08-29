@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -26,6 +27,11 @@ namespace demo_158.MVVM.ViewModel
         private string _messageText;
         private SolidColorBrush _messageTextSuccess1;
 
+        public WebSocket ws
+        {
+            get => _ws;
+            set => SetField(ref _ws, value);
+        }
 
         public ReceiveUser? User
         {
@@ -83,11 +89,12 @@ namespace demo_158.MVVM.ViewModel
 
         
         private ReceiveUser? _user;
+        private WebSocket _ws;
 
         public SignViewModel()
         {
-           var ws =  SocketManager.Instance.GetConnection("/Lobby");
-           ws.OnMessage += MbOnOnMessage;
+            ws = new WebSocket($"ws://localhost:7482/Sign");
+            ws.Connect();
         }
 
      
@@ -105,8 +112,8 @@ namespace demo_158.MVVM.ViewModel
                 Password = Password,
                 Email = Email,
             };
-
-            SocketManager.Instance.Send("/Lobby",user);
+            var userDeserializer = JsonSerializer.Serialize(user);
+            ws.Send(userDeserializer);
             
             
 

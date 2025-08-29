@@ -78,64 +78,26 @@ namespace demo_158.MVVM.ViewModel
 
         public MessageAndTalkViewModel(MessageAndTalkServices services)
         {
-          _ws = SocketManager.Instance.GetConnection("/MainView");
-            _services = services;
-            _ws.OnMessage += WsOnOnMessage;
-        }
-        public ICommand SendMessageCommand => sendMessageCommand ?? new GeneralCommand((SendMessageExecuteActionAsync));
-
-        private async void SendMessageExecuteActionAsync()
-        {
-            if (string.IsNullOrEmpty(Text))
-                return;
-
-            var message = new MessageSendToServerModel()
-            {
-                Type = "message",
-                ConversationId = Conversation.Id,
-                Text = Text,
-                SenderName = Username,
-                SendToUser = ContactUsername,
-                SenderImage = Image,
-                SentTime = DateTime.Now
-
-            };
-
-            SocketManager.Instance.Send("/MainView",message);
-            var messageModel = new MessagesModel()
-            {
-                Id = Id,
-                SenderName = message.SenderName,
-                SentTime = message.SentTime,
-                Text = Text,
-                Conversation = Conversation,
-                SenderImage = Image,
-                HorizontalAlignmentMessage = HorizontalAlignment.Right,
-                FlowDirectionMessage = FlowDirection.RightToLeft,
-                BackgroundColorBrush = Brushes.LightSkyBlue,
-                FirstMessage = Messages.Count == 0 || _services.SetFirstMessage(message.SenderName, Messages.Last().SenderName)
-            };
-            Messages.Add(messageModel);
-            Text = String.Empty;
-            SuccessMessageEvent.Invoke(this, EventArgs.Empty);
-
-          
+            SocketManager.Instance.SuccessMessageReceive += OnMessage;
+          _services = services; 
         }
 
-        private void WsOnOnMessage(object? sender, MessageEventArgs e)
+     
+
+        private void OnMessage(string obj)
         {
-            if (e.Data == "Successfully")
+            if (obj == "Successfully")
             {
                 return;
             }
-            JObject jObject = JObject.Parse(e.Data);
+            JObject jObject = JObject.Parse(obj);
             string type = (string)jObject["Type"];
 
             if (type != "message")
             {
                 return;
             }
-            var deserialize = JsonSerializer.Deserialize<MessageSendToServerModel>(e.Data);
+            var deserialize = JsonSerializer.Deserialize<MessageSendToServerModel>(obj);
             if (deserialize == null)
             {
                 return;
@@ -160,6 +122,51 @@ namespace demo_158.MVVM.ViewModel
             });
 
             SuccessMessageEvent.Invoke(this, EventArgs.Empty);
+        }
+
+        public ICommand SendMessageCommand => sendMessageCommand ?? new GeneralCommand((SendMessageExecuteActionAsync));
+
+        private async void SendMessageExecuteActionAsync()
+        {
+            if (string.IsNullOrEmpty(Text))
+                return;
+
+            var message = new MessageSendToServerModel()
+            {
+                Type = "message",
+                ConversationId = Conversation.Id,
+                Text = Text,
+                SenderName = Username,
+                SendToUser = ContactUsername,
+                SenderImage = Image,
+                SentTime = DateTime.Now
+
+            };
+
+            SocketManager.Instance.Send(message);
+            var messageModel = new MessagesModel()
+            {
+                Id = Id,
+                SenderName = message.SenderName,
+                SentTime = message.SentTime,
+                Text = Text,
+                Conversation = Conversation,
+                SenderImage = Image,
+                HorizontalAlignmentMessage = HorizontalAlignment.Right,
+                FlowDirectionMessage = FlowDirection.RightToLeft,
+                BackgroundColorBrush = Brushes.LightSkyBlue,
+                FirstMessage = Messages.Count == 0 || _services.SetFirstMessage(message.SenderName, Messages.Last().SenderName)
+            };
+            Messages.Add(messageModel);
+            Text = String.Empty;
+            SuccessMessageEvent.Invoke(this, EventArgs.Empty);
+
+          
+        }
+
+        private void WsOnOnMessage(object? sender, MessageEventArgs e)
+        {
+       
         }
     }
 }

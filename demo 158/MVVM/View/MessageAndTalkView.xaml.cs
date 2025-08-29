@@ -48,11 +48,14 @@ namespace demo_158.MVVM.View
         }
         private void SuccessMessageSendEvent(object? sender, EventArgs e)
         {
-
-            MessagesListView.ScrollIntoView(_viewModel.Messages.Last());
-            Messages.Add(_viewModel.Messages.Last());
+      
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                Messages.Add(_viewModel.Messages.Last());
+                MessagesListView.ScrollIntoView(_viewModel.Messages.Last());
+            });
+         
             SuccessEventMessage.Invoke(this,EventArgs.Empty);
-        
         }  
         private void MessageAndTalkView_OnLoaded(object sender, RoutedEventArgs e)
         {
