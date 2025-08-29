@@ -49,8 +49,6 @@ namespace demo_158.MVVM.View
             _viewModel.Conversations = new ObservableCollection<ConversationModel>(Conversations);
             _viewModel.User = User;
             _viewModel.Username = User.Username;
-            _viewModel.InitConnection();
-           
             base.OnActivated(e);
             
         }

@@ -57,11 +57,12 @@ namespace demo_158.MVVM.ViewModel
 
         public MainViewModel(IServiceProvider service,MessageAndTalkView messageAndTalkView)
         {
-            SocketManager.Instance.SuccessMessageReceive += SuccessMessageReceive;
+          
             _service = service;
             _messageAndTalkView = messageAndTalkView;
             var userView = service.GetService<DefaultMessageView>();
             CurrentView = userView;
+            SocketManager.Instance.SuccessMessageReceive += SuccessMessageReceive;
             _messageAndTalkView.SuccessEventMessage += (sender, e) =>
             {
                 Conversations.First().LastMessage = _messageAndTalkView.Messages.Last().Text;
@@ -92,16 +93,6 @@ namespace demo_158.MVVM.ViewModel
             });
         }
 
-        private void OnMessage(object? sender, EventArgs e)
-        {
-            
-          
-        }
-
-        public void InitConnection()
-        {
-       
-        }
         public ICommand OpenProfileCommand => openProfileCommand ?? new GeneralCommand((() =>
         {
             var profileView = _service.GetService<ProfileView>();

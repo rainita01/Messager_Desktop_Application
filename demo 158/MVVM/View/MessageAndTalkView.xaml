@@ -26,8 +26,12 @@
                     CornerRadius="20 20 0 0"
                     Height="50"
                     Margin="0 0 0 2"
+                     Cursor="Hand"
                     
             >
+                <Border.InputBindings>
+                    <MouseBinding MouseAction="LeftClick" Command="{Binding ShowUserContentCommand}"></MouseBinding>
+                </Border.InputBindings>
                 <Grid>
             
                  <StackPanel 
@@ -44,7 +48,7 @@
                              <VisualBrush>
                                  <VisualBrush.Visual>
                                      <Grid Background="White">
-                                         <Image Source="{Binding ContactImage}" 
+                                            <Image Source="{Binding ContactImage}" 
                                                 Stretch="UniformToFill"/>
                                      </Grid>
                                  </VisualBrush.Visual>

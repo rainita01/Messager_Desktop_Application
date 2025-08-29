@@ -46,6 +46,7 @@ namespace demo_158
             service.AddTransient<MessageAndTalkView>();
             service.AddTransient<ProfileViewModel>();
             service.AddTransient<LoginLoadingPage>();
+            service.AddTransient<ContactProfileVeiw>();
 
             service.AddTransient<DefaultMessageView>();
 
@@ -58,7 +59,7 @@ namespace demo_158
             service.AddTransient<MainLoginSignViewModel>();
             service.AddTransient<MessageAndTalkViewModel>();
             service.AddSingleton<SharingDataViewModel>();
-
+            service.AddTransient<ContactProfileViewModel>();
             service.AddTransient<ProfileModel>();
 
             

@@ -52,6 +52,8 @@ namespace demo_158.MVVM.View
             Application.Current.Dispatcher.Invoke(() =>
             {
                 Messages.Add(_viewModel.Messages.Last());
+
+
                 MessagesListView.ScrollIntoView(_viewModel.Messages.Last());
             });
          
@@ -85,6 +87,6 @@ namespace demo_158.MVVM.View
             MessageTextBox.Focus();
         }
 
-        
+
     }
 }

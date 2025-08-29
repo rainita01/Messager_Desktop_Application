@@ -5,9 +5,27 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:demo_158.MVVM.View.Model"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450" d:DesignWidth="800"
+
+             >
   <Grid>
-      <TextBox BorderThickness="0" Margin="0 0 0 200" FontSize="44" Background="Transparent" HorizontalAlignment="Center" VerticalAlignment="Center" Text="Welcome"></TextBox>
-      <TextBox BorderThickness="0" FontSize="44" Background="Transparent" HorizontalAlignment="Center" VerticalAlignment="Center" Text="Select a Conversations!"></TextBox>
+      <TextBlock 
+                 Margin="0 0 0 200"
+                 FontSize="44"
+                 Foreground="CornflowerBlue"
+                 HorizontalAlignment="Center"
+                 VerticalAlignment="Center"
+                 Text="Welcome">
+
+      </TextBlock>
+
+      <TextBlock 
+                 FontSize="44"
+                 Foreground="CornflowerBlue"
+                 Background="Transparent"
+                 HorizontalAlignment="Center"
+                 VerticalAlignment="Center"
+                 Text="Select a Conversations!"
+                 ></TextBlock>
     </Grid>
 </UserControl>

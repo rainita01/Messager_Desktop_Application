@@ -13,8 +13,10 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using demo_158.MVVM.Model;
+using demo_158.MVVM.View;
 using demo_158.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json.Linq;
 using WebSocketSharp;
 
@@ -23,15 +25,16 @@ namespace demo_158.MVVM.ViewModel
    public class MessageAndTalkViewModel : ViewModelBase
     {
         private readonly MessageAndTalkServices _services;
+        private readonly IServiceProvider _service;
         private int _id;
         private string _contactUsername;
         private ObservableCollection<MessagesModel> _messages;
         private string _image;
         private ICommand sendMessageCommand;
+        private ICommand showUserContentCommand;
         private string _text;
         private ConversationModel _conversation;
-        private string _username;
-        private WebSocket _ws;
+        private string _username;   
         public EventHandler SuccessMessageEvent { get; set; }
    
         public int Id
@@ -76,32 +79,41 @@ namespace demo_158.MVVM.ViewModel
             set => SetField(ref _conversation, value);
         }
 
-        public MessageAndTalkViewModel(MessageAndTalkServices services)
+        public MessageAndTalkViewModel(MessageAndTalkServices services,IServiceProvider service)
         {
             SocketManager.Instance.SuccessMessageReceive += OnMessage;
-          _services = services; 
+          _services = services;
+          _service = service;
         }
 
-     
+        
 
         private void OnMessage(string obj)
-        {
+        {   
+
+
             if (obj == "Successfully")
             {
                 return;
             }
             JObject jObject = JObject.Parse(obj);
             string type = (string)jObject["Type"];
-
+            if (type == "ContactProfileInfo")
+            {
+                var profile = JsonSerializer.Deserialize<ProfileModel>(obj);
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    var profileView = _service.GetService<ContactProfileVeiw>();
+                    profileView.Profile = profile;
+                    profileView.ShowDialog();
+                });
+              return;
+            }
             if (type != "message")
             {
                 return;
             }
             var deserialize = JsonSerializer.Deserialize<MessageSendToServerModel>(obj);
-            if (deserialize == null)
-            {
-                return;
-            }
             var messageModel = new MessagesModel()
             {
                 Id = Id,
@@ -124,9 +136,21 @@ namespace demo_158.MVVM.ViewModel
             SuccessMessageEvent.Invoke(this, EventArgs.Empty);
         }
 
-        public ICommand SendMessageCommand => sendMessageCommand ?? new GeneralCommand((SendMessageExecuteActionAsync));
+        public ICommand ShowUserContentCommand => showUserContentCommand ?? new GeneralCommand((showUserContentAction));
 
-        private async void SendMessageExecuteActionAsync()
+        private void showUserContentAction()
+        {
+            var profile = new ProfileEditModel()
+            {
+                Username = ContactUsername,
+                Type = "ContactProfileInfo"
+            };
+            SocketManager.Instance.Send(profile);
+        }
+
+        public ICommand SendMessageCommand => sendMessageCommand ?? new GeneralCommand((SendMessageExecuteAction));
+
+        private  void SendMessageExecuteAction()
         {
             if (string.IsNullOrEmpty(Text))
                 return;
@@ -164,9 +188,5 @@ namespace demo_158.MVVM.ViewModel
           
         }
 
-        private void WsOnOnMessage(object? sender, MessageEventArgs e)
-        {
-       
-        }
     }
 }
