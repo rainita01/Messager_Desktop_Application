@@ -11,24 +11,18 @@
                              <Setter.Value>
                                  <ControlTemplate TargetType="{x:Type RadioButton}">
                                      <Border
-
                                         Height="45"
                                          Background="{TemplateBinding Background}">
-                                         <StackPanel Orientation="Horizontal" >
-                                             <TextBlock 
-                                                 FontSize="18"
-                                                 Text="{Binding Path=(base:Extensions.Icon),RelativeSource={RelativeSource Mode=TemplatedParent}}"
-                                                 Margin="5 0 8 0"
-                                                 HorizontalAlignment="Center"
-                                                 VerticalAlignment="Center"></TextBlock>
                                              <ContentPresenter
+                                                  
+                                                 Margin="8 0 0 0"
                                                  Content="{TemplateBinding Content}"
                                                  VerticalAlignment="Center"
                                                  HorizontalAlignment="Center"
                                                  ></ContentPresenter>
                                             
                                              
-                                         </StackPanel>
+                                     
                                         
                                      </Border>
                                  </ControlTemplate>
@@ -39,7 +33,7 @@
                                  <Setter Property="Background" Value="LightGray"></Setter>
                              </Trigger>
                              <Trigger Property="IsChecked" Value="True">
-                <Setter Property="Background" Value="#2A4759"></Setter>
+                                 <Setter Property="Background" Value="#2A4759"></Setter>
                              </Trigger>
                          </Style.Triggers>
                      </Style>

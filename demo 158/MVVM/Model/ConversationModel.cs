@@ -15,8 +15,6 @@ namespace demo_158.MVVM.Model
         private string? _lastMessage;
         public int Id { get; set; }
         public string Type { get; set; }
-        public bool IsConversationPrivateChat { get; set; }
-        public DateTime CreatedTime { get; set; }
         public string ContactUsername { get; set; }
 
         public string? LastMessage

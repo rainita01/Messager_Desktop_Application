@@ -30,33 +30,49 @@
             <Border.InputBindings>
                     <MouseBinding MouseAction="LeftClick" Command="{Binding MoveAndDrugCommand }"></MouseBinding>
             </Border.InputBindings>
-            <StackPanel HorizontalAlignment="Right" 
-                        Orientation="Horizontal">
+         <Grid>
+             <Grid.ColumnDefinitions>
+                 <ColumnDefinition></ColumnDefinition>
+                 <ColumnDefinition></ColumnDefinition>
+                 <ColumnDefinition></ColumnDefinition>
+             </Grid.ColumnDefinitions>
+             <StackPanel Grid.Column="2" HorizontalAlignment="Right" 
+                         Orientation="Horizontal">
 
-                <Button  
-                    Style="{StaticResource TopToolsButtonThem}"
-                    Width="30"
-                    Content="-"
-                    Click="TopHideButtonClick"
-                    
-                ></Button>
-                <Button  
-                    Style="{StaticResource TopToolsButtonThem}"
-                    Width="30"
-                    Content="□"
-                    Click="NormalizeMaximizeWindowClick"
+                 <Button  
+                     Style="{StaticResource TopToolsButtonThem}"
+                     Width="30"
+                     Content="-"
+                     Click="TopHideButtonClick"
+           
+                 ></Button>
+                 <Button  
+                     Style="{StaticResource TopToolsButtonThem}"
+                     Width="30"
+                     Content="□"
+                     Click="NormalizeMaximizeWindowClick"
        
-                ></Button>
-                <Button  
-                    Style="{StaticResource TopToolsButtonThem}"
-                    Width="30"
-                    Content="×"
-                    Click="CloseTheAppClick"
-                    
-                   
-                ></Button>
+                 ></Button>
+                 <Button  
+                     Style="{StaticResource TopToolsButtonThem}"
+                     Width="30"
+                     Content="×"
+                     Click="CloseTheAppClick"
+                 ></Button>
 
-            </StackPanel>
+             </StackPanel>
+             <Label Grid.Column="0"
+                    Content="AMessager"
+                    HorizontalAlignment="Left"
+                    Foreground="Gainsboro"
+             ></Label>
+                    <Label Grid.Column="1"
+                       Content="Try:1.0.0.1"
+                       HorizontalAlignment="Center"
+                       Foreground="Gainsboro"
+                       ></Label>
+
+                </Grid>
 
         </Border>
 
@@ -92,27 +108,12 @@
                                 <RadioButton 
                                     FontSize="16"
                                     Foreground="White"
-                                    Content="All Chats"
-                                    extensions:Extensions.Icon="💬"
+                                    Content="💬 All Chats"
                                     IsChecked="True"
                                     Style="{StaticResource RadioButtonStyle}"
 
                                     ></RadioButton>
-                                <RadioButton 
-                                    FontSize="16"
-                                    Foreground="White"
-                                    Content="Channels"
-                                    extensions:Extensions.Icon="👥"
-                                    Style="{StaticResource RadioButtonStyle}"
-                                    ></RadioButton>
-                        
-                                <RadioButton 
-                                    FontSize="16"
-                                    Foreground="White"
-                                    Content="Settings"
-                                    extensions:Extensions.Icon="⚙️"
-                                    Style="{StaticResource RadioButtonStyle}"
-                                    ></RadioButton>
+                            
 
                             </StackPanel>
                             <Border.Style>
@@ -190,7 +191,7 @@
               <Border 
                   Margin="5 5 10 5"
                   CornerRadius="20"
-                  Background="White"
+                  Background="WhiteSmoke"
                   Grid.Column="1"
                       >
                  <UserControl

@@ -25,12 +25,10 @@ namespace demo_158.MVVM.View
     public partial class LoginView : UserControl
     {
         private readonly LoginViewModel _viewModel;
-        private readonly IServiceProvider _service;
       
-        public LoginView(LoginViewModel viewModel,IServiceProvider service)
+        public LoginView(LoginViewModel viewModel)
         {
             _viewModel = viewModel;
-            _service = service;
             DataContext = _viewModel;
             InitializeComponent();
 

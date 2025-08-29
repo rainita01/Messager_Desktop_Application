@@ -26,18 +26,13 @@ namespace demo_158.MVVM.ViewModel
         private ICommand signCommand;
         private string _messageText;
         private SolidColorBrush _messageTextSuccess1;
-
+        private WebSocket _ws;
         public WebSocket ws
         {
             get => _ws;
             set => SetField(ref _ws, value);
         }
 
-        public ReceiveUser? User
-        {
-            get => _user;
-            set => SetField(ref _user, value);
-        }
 
         public SolidColorBrush MessageTextSuccess
         {
@@ -87,9 +82,7 @@ namespace demo_158.MVVM.ViewModel
             }
         }
 
-        
-        private ReceiveUser? _user;
-        private WebSocket _ws;
+  
 
         public SignViewModel()
         {
