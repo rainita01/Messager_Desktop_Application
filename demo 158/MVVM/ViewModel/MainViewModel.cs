@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using demo_158.Hubs;
 using WebSocketSharp;
 
 namespace demo_158.MVVM.ViewModel
@@ -24,24 +25,26 @@ namespace demo_158.MVVM.ViewModel
     {
         private object _currentView;
         private readonly IServiceProvider _service;
-        private readonly MessageAndTalkView _messageAndTalkView;
+        private readonly ConnectionManager _connection;
+        private readonly MessageAndTalkServices _messageAndTalkServices;
         private ICommand moveAndDrugCommand;
         private ICommand openProfileCommand;
-        private ConversationModel? _conversationModel;
-        private string _username;
+        private ConversationModel _conversationModel;
+      
         private ObservableCollection<ConversationModel>? _conversations;
-        public ConversationModel? ConversationModel 
+        public ConversationModel ConversationModel 
         {
             get => _conversationModel;
-            set => SetField(ref _conversationModel, value);
+            set
+            {
+                if (SetField(ref _conversationModel, value))
+                {
+                    OnSelectedConversationChangedAsync();
+                }
+            }
         }
-
-        public ReceiveUser User { get; set; }
-        public string Username
-        {
-            get => _username;
-            set => SetField(ref _username, value);
-        }
+        public UserModelFromServer UserModelFromServer { get; set; }
+     
 
         public ObservableCollection<ConversationModel>? Conversations
         {
@@ -55,43 +58,18 @@ namespace demo_158.MVVM.ViewModel
             set => SetField(ref _currentView, value);
         }
 
-        public MainViewModel(IServiceProvider service,MessageAndTalkView messageAndTalkView)
+        public MainViewModel(IServiceProvider service,ConnectionManager connection,MessageAndTalkServices messageAndTalkServices)
         {
           
             _service = service;
-            _messageAndTalkView = messageAndTalkView;
+          
+            _connection = connection;
+            _messageAndTalkServices = messageAndTalkServices;
             var userView = service.GetService<DefaultMessageView>();
             CurrentView = userView;
-            SocketManager.Instance.SuccessMessageReceive += SuccessMessageReceive;
-            _messageAndTalkView.SuccessEventMessage += (sender, e) =>
-            {
-                Conversations.First().LastMessage = _messageAndTalkView.Messages.Last().Text;
-            };
+            ReceiveConversation();
         }
 
-        private void SuccessMessageReceive(string obj)
-        {
-            if (obj == "Successfully")
-            {
-                return;
-            }
-            var jsonObject = JObject.Parse(obj);
-            string type = (string)jsonObject["Type"];
-
-            if (type != "mainView")
-            {
-                return;
-            }
-
-            var messageDeserialize = JsonSerializer.Deserialize<ResieveConversationModel>(obj);
-            Application.Current.Dispatcher.InvokeAsync(() =>
-            {
-                _messageAndTalkView.Messages = new ObservableCollection<MessagesModel>(messageDeserialize.Messages);
-                _messageAndTalkView.Conversation = this.ConversationModel;
-                _messageAndTalkView.Username = Username;
-                CurrentView = _messageAndTalkView;
-            });
-        }
 
         public ICommand OpenProfileCommand => openProfileCommand ?? new GeneralCommand((() =>
         {
@@ -99,7 +77,7 @@ namespace demo_158.MVVM.ViewModel
 
             if (profileView.User == null)
             {
-                profileView.User = User;
+                profileView.User = UserModelFromServer;
             }
             profileView.ShowDialog();
         }));
@@ -108,6 +86,37 @@ namespace demo_158.MVVM.ViewModel
         {
             Application.Current.Windows.OfType<MainView>().FirstOrDefault()?.DragMove();
         }));
+        private async Task OnSelectedConversationChangedAsync()
+        {
+            await _connection.SendAsync("ConversationSender", ConversationModel);
+        }
 
+        private void ReceiveConversation()
+        {
+            _connection.On<List<MessageModelFromServer>,UserModelFromServer>("ReceiveConversation", (messages, user) =>
+            {
+                var messageView = _service.GetService<MessageAndTalkView>();
+                messageView.UserModelFromServer = UserModelFromServer;
+                messageView.Conversation = ConversationModel;
+                messageView.Messages ??= new ObservableCollection<MessagesModel>();
+
+                foreach (var msg in messages)
+                {
+                    messageView.Messages.Add(new MessagesModel
+                    {
+                        SenderName = msg.Username,
+                        SenderImage = user.Image,
+                        SentTime = msg.SendDate,
+                        HorizontalAlignmentMessage = _messageAndTalkServices.SetHorizontalAlignment(UserModelFromServer.Username, msg.Username),
+                        FlowDirectionMessage = _messageAndTalkServices.SetFlowDirectionMessage(UserModelFromServer.Username, msg.Username),
+                        BackgroundColorBrush = _messageAndTalkServices.SetBackGroundBrush(UserModelFromServer.Username, msg.Username),
+                        MessageType = msg.MessageType,
+                        Text = msg.Text,
+                        Object = msg.Object
+                    });
+                }
+                CurrentView = messageView;
+            });
+        }
     }
 }

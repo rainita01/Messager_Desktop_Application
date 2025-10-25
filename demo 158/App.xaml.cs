@@ -3,12 +3,14 @@ using System.Configuration;
 using System.Data;
 using System.Windows;
 using demo_158.Base;
-
+using demo_158.Hubs;
+using demo_158.Midleware;
 using demo_158.MVVM.Model;
 using demo_158.MVVM.View;
 using demo_158.MVVM.View.Model;
 using demo_158.MVVM.ViewModel;
 using demo_158.Services;
+using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -21,23 +23,33 @@ namespace demo_158
     /// </summary>
     public partial class App : Application
     {
-        protected override async void OnStartup(StartupEventArgs e)
+        private IServiceProvider ServiceProvider;
+        protected override  void OnStartup(StartupEventArgs e)
         {
-            var applicationBuilder = Host.CreateApplicationBuilder(e.Args);
-            applicationBuilder.Configuration.AddJsonFile("appsettings.json");
-            applicationBuilder.Services.AddHostedService<MainHostedServices>();
-            ServiceCollections(applicationBuilder.Services);
 
-            var hosted = applicationBuilder.Build();
-            await hosted.StartAsync();
             base.OnStartup(e);
+            InitialCatalog();
+        }
+
+        public  void InitialCatalog()
+        {
+            var services = new ServiceCollection();
+            ServiceCollections(services);
+            ServiceProvider = services.BuildServiceProvider();
+
+
+            var connectionManager = ServiceProvider.GetRequiredService<ConnectionManager>();
+             connectionManager.StartAsync();
+
+            var mainLoginSignView = ServiceProvider.GetService<MainLoginSignView>();
+
+            mainLoginSignView.Show();
+           
         }
 
         private void ServiceCollections(IServiceCollection service)
         {
             service.AddTransient<MessageAndTalkServices>();
-
-            service.AddSingleton<SocketManager>();
 
             service.AddTransient<MainLoginSignView>();
             service.AddTransient<LoginView>();
@@ -50,7 +62,15 @@ namespace demo_158
 
             service.AddTransient<DefaultMessageView>();
 
-
+            service.AddSingleton<ConnectionManager>();
+            service.AddSingleton(s =>
+            {
+                return new HubConnectionBuilder()
+                    .WithUrl("http://localhost:5209/MainHub")
+                    .WithAutomaticReconnect()
+                    .Build();
+            });
+            service.AddSingleton<MessageReceiveController>();
             
             service.AddTransient<ProfileView>();
             service.AddTransient<MainViewModel>();

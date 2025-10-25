@@ -16,6 +16,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
+using demo_158.Hubs;
+using Microsoft.AspNetCore.SignalR.Client;
 using WebSocketSharp;
 
 namespace demo_158.MVVM.ViewModel
@@ -23,26 +25,11 @@ namespace demo_158.MVVM.ViewModel
     public class LoginViewModel : ViewModelBase
     {
         private readonly IServiceProvider _service;
+        private readonly ConnectionManager _connection;
         private string _password;
         private string _username;
         private ICommand loginCommand;
-        private UserConversationsData? _userConversationsData;
-        private WebSocket _ws;
-
-        public WebSocket Ws
-        {
-            get => _ws;
-            set => SetField(ref _ws, value);
-        }
-
         public Visibility PasswordTextBlockVisibility => string.IsNullOrEmpty(Password) ? Visibility.Visible : Visibility.Collapsed;
-
-        public UserConversationsData? UserConversationsData
-        {
-            get => _userConversationsData;
-            set => SetField(ref _userConversationsData, value);
-        }
-
         public string Username
         {
             get => _username;
@@ -69,62 +56,55 @@ namespace demo_158.MVVM.ViewModel
             }
         }
 
-        public LoginViewModel(IServiceProvider service)
+
+    
+        public LoginViewModel(IServiceProvider service,ConnectionManager connection)
         {
-
             _service = service;
-            Ws = new WebSocket("ws://localhost:7482/Login");
-            Ws.Connect();
-            Ws.OnMessage += WbOnOnMessage;
-
+            _connection = connection;
+            ReceiveUser();
+            ExceptionMessage();
+       
         }
    
-        public ICommand LoginCommand => loginCommand ?? new GeneralCommand((LoginCommandExecuteAction),(LoginCanExecute));
+        public ICommand LoginCommand => loginCommand ?? new GeneralCommand(async () => await LoginCommandExecuteActionAsync(),LoginCanExecute);
 
-        private async void LoginCommandExecuteAction()
+        private async Task LoginCommandExecuteActionAsync()
         {
-            var user = new SendUser()
+            var user = new UserModelFromUser()
             {
-                
                 Username = Username,
                 Password = Password
             };
+
+            await _connection.SendAsync("RegisterRequest", user);
             SharingDataViewModel.Instance.CurrenViewChanged?.Invoke(this, EventArgs.Empty);
-            var userSerialize = JsonSerializer.Serialize(user);
-            Ws.Send(userSerialize);
         }
 
-
-        private void WbOnOnMessage(object? sender, MessageEventArgs e)
+        private void ReceiveUser()  
         {
-            if (e.Data == "error")
+           _connection.On<UserModelFromServer,List<ConversationModel>>("ReceiveUser", (user,conversations) =>
             {
-                Application.Current.Dispatcher.InvokeAsync(() =>
-                {
-                    SharingDataViewModel.Instance.CurrentViewErrorChanged?.Invoke(this, EventArgs.Empty);
-                    MessageBox.Show("Incorrect Username or Password");
-                });
-                return;
-            }
-
-            UserConversationsData = JsonSerializer.Deserialize<UserConversationsData>(e.Data);
-            SuccessLoginEventExecute();
-        }
-        private void SuccessLoginEventExecute()
-        {
-            Application.Current.Dispatcher.InvokeAsync(() =>
-            {
-                SocketManager.Instance.Connect("/MainView",Username);
                 var mainView = _service.GetService<MainView>();
-                mainView.User = UserConversationsData.User;
-                mainView.Conversations = UserConversationsData.Conversations;
+                mainView.UserModelFromServer = user;
+                mainView.Conversations = conversations;
+                
                 Application.Current.Windows.OfType<MainLoginSignView>().FirstOrDefault()?.Close();
                 mainView.Show();
             });
-        
-        }
-        
 
+        }
+
+        private void ExceptionMessage()
+        {
+            _connection.On<string>("ExceptionMessage", (message) =>
+            {
+                MessageBox.Show(message, "Register Failed", MessageBoxButton.OK, MessageBoxImage.Error);
+                SharingDataViewModel.Instance.CurrentViewErrorChanged.Invoke(this,EventArgs.Empty);
+
+
+            });
+        }
         private bool LoginCanExecute()
         {
             return !string.IsNullOrEmpty(Username) && !string.IsNullOrEmpty(Password);

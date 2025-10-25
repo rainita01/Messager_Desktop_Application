@@ -6,25 +6,21 @@ using System.Threading.Tasks;
 
 namespace demo_158.MVVM.Model
 {
-    public class SendUser
+    public class UserModelFromUser
     {
-        public int Id { get; set; }
-        public string Type { get; set; }
+      
         public string Username { get; set; }
         public string Password { get; set; }
         public string Email { get; set; }
-        public string BioCaption { get; set; }
-        public string Image { get; set; }
 
     }
-    public class ReceiveUser
+    public class UserModelFromServer
     {
-        public int Id { get; set; } 
-        public string Email { get; set; }
+        public int UserId { get; set; }
         public string Username { get; set; }
-        public DateTime RegisterDate { get; set; }
         public string? BioCaption { get; set; }
-        public string Image { get; set; }
+        public byte[] Image { get; set; }
+        public string Email { get; set; }
 
     }
 }

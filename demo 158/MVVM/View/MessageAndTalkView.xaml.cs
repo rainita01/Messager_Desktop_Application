@@ -29,54 +29,26 @@ namespace demo_158.MVVM.View
     public partial class MessageAndTalkView : UserControl
     {
         private readonly MessageAndTalkViewModel _viewModel;
-        private readonly MessageAndTalkServices _services;
+       
         public ObservableCollection<MessagesModel> Messages { get; set; }
         public ConversationModel Conversation { get; set; }
-        public string Username { get; set; }
-        public EventHandler SuccessEventMessage;
+        public UserModelFromServer UserModelFromServer { get; set; }
+   
 
-        public MessageAndTalkView(MessageAndTalkViewModel viewModel,MessageAndTalkServices services)
+        public MessageAndTalkView(MessageAndTalkViewModel viewModel)
         {
             _viewModel = viewModel;
-            _services = services;
+            
             DataContext = _viewModel;
             InitializeComponent();
             Loaded += MessageAndTalkView_OnLoaded;
             Loaded -= MessageAndTalkView_OnLoaded;
-           _viewModel.SuccessMessageEvent += SuccessMessageSendEvent;
-           
         }
-        private void SuccessMessageSendEvent(object? sender, EventArgs e)
-        {
-      
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                Messages.Add(_viewModel.Messages.Last());
-
-
-                MessagesListView.ScrollIntoView(_viewModel.Messages.Last());
-            });
-         
-            SuccessEventMessage.Invoke(this,EventArgs.Empty);
-        }  
         private void MessageAndTalkView_OnLoaded(object sender, RoutedEventArgs e)
         {
-            _viewModel.ContactUsername = Conversation.ContactUsername;
-            _viewModel.Username = Username; 
-            _viewModel.Id = Conversation.Id;
-            _viewModel.Image = Conversation.ContactImage;
-            _viewModel.Messages = new ObservableCollection<MessagesModel>(Messages.Select((i, index) => new MessagesModel()
-            {
-                Id = i.Id,
-                SenderImage = _viewModel.Image,
-                SenderName = i.SenderName,
-                SentTime = i.SentTime,
-                Text = i.Text,
-                HorizontalAlignmentMessage = _services.SetHorizontalAlignment(_viewModel.ContactUsername, i.SenderName),
-                FlowDirectionMessage = _services.SetFlowDirectionMessage(_viewModel.ContactUsername, i.SenderName),
-                FirstMessage = index == 0 || _services.SetFirstMessage(i.SenderName, Messages?[index - 1].SenderName),
-                BackgroundColorBrush = _services.SetBackGroundBrush(_viewModel.ContactUsername, i.SenderName)
-            }));
+            _viewModel.Conversation = Conversation;
+            _viewModel.UserModelFromServer = UserModelFromServer; 
+            _viewModel.Messages = Messages;
 
             _viewModel.Conversation = Conversation;
             if (_viewModel.Messages != null)

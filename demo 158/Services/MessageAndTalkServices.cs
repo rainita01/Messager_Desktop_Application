@@ -1,5 +1,6 @@
 ﻿
 using demo_158.MVVM.Model;
+using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -8,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
+using static System.Net.Mime.MediaTypeNames;
 
 
 namespace demo_158.Services
@@ -18,7 +20,7 @@ namespace demo_158.Services
 
         public HorizontalAlignment SetHorizontalAlignment(string username,string senderUsername)
         {
-            if (username == senderUsername )
+            if (username != senderUsername )
             {
                 return HorizontalAlignment.Left;
             }
@@ -29,7 +31,7 @@ namespace demo_158.Services
          public FlowDirection SetFlowDirectionMessage(string username, string senderUsername)
         {
 
-            if (username == senderUsername)
+            if (username != senderUsername)
             {
                 return  FlowDirection.LeftToRight;
             }
@@ -49,12 +51,13 @@ namespace demo_158.Services
 
         public SolidColorBrush SetBackGroundBrush(string? username, string? senderUsername)
         {
-            if (username  == senderUsername)
+            if (username  != senderUsername)
             {
                 return Brushes.LightGray;
             }
 
             return Brushes.LightSkyBlue;
         }
+
     }
 }

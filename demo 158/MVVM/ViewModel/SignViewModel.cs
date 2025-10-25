@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using demo_158.Hubs;
 using WebSocketSharp;
 using Color = System.Drawing.Color;
 
@@ -19,6 +20,7 @@ namespace demo_158.MVVM.ViewModel
 {
     public class SignViewModel : ViewModelBase
     {
+        private readonly ConnectionManager _connection;
         private string _email;
         private string _username;
         private string _password;
@@ -26,12 +28,9 @@ namespace demo_158.MVVM.ViewModel
         private ICommand signCommand;
         private string _messageText;
         private SolidColorBrush _messageTextSuccess1;
-        private WebSocket _ws;
-        public WebSocket ws
-        {
-            get => _ws;
-            set => SetField(ref _ws, value);
-        }
+
+        public Visibility PasswordTextBlockVisibility => CollectionUtilities.IsNullOrEmpty(Password) ? Visibility.Visible : Visibility.Collapsed;
+        public Visibility VerifyPasswordTextBlockVisibility => CollectionUtilities.IsNullOrEmpty(VerifyPassword) ? Visibility.Visible : Visibility.Collapsed;
 
 
         public SolidColorBrush MessageTextSuccess
@@ -45,8 +44,6 @@ namespace demo_158.MVVM.ViewModel
             set => SetField(ref _messageText, value);
         }
 
-        public Visibility PasswordTextBlockVisibility => CollectionUtilities.IsNullOrEmpty(Password) ? Visibility.Visible : Visibility.Collapsed;
-        public Visibility VerifyPasswordTextBlockVisibility => CollectionUtilities.IsNullOrEmpty(VerifyPassword) ? Visibility.Visible : Visibility.Collapsed;
         public string Email 
         {
             get => _email;
@@ -82,14 +79,12 @@ namespace demo_158.MVVM.ViewModel
             }
         }
 
-  
-
-        public SignViewModel()
+        public SignViewModel(ConnectionManager connection)
         {
-            ws = new WebSocket($"ws://localhost:7482/Sign");
-            ws.Connect();
+            _connection = connection;
+            InvalidSignUp();
+            SuccessSignUp();
         }
-
      
         public ICommand SignCommand => signCommand ?? new GeneralCommand((SignExecuteAction),SignCanExecute);
 
@@ -99,38 +94,32 @@ namespace demo_158.MVVM.ViewModel
             {
                 return;
             }
-            var user = new SendUser()
+            var user = new UserModelFromUser()
             {
                 Username = Username,
                 Password = Password,
-                Email = Email,
+                 Email = Email,
             };
-            var userDeserializer = JsonSerializer.Serialize(user);
-            ws.Send(userDeserializer);
-            
-            
 
+           await _connection.SendAsync("SignUp", user);
 
         }
 
-        private async void MbOnOnMessage(object? sender, MessageEventArgs e)
+        private  void SuccessSignUp()
         {
-            if (e.Data == "Error")
+            _connection.On<string>("SuccessSignUp", data =>
             {
-                MessageTextSuccess = Brushes.Red;
-                MessageText = "Username Exist";
-                return;
-            }
-                
-
-            if (e.Data == "SuccessFull")
-            {
-                MessageText = "Account Created Successfully.";
-                MessageTextSuccess = Brushes.LawnGreen;
-            }
-            
+                MessageBox.Show("Success Sign Up!", data, MessageBoxButton.OKCancel);
+            });
         }
 
+        private void InvalidSignUp()
+        {
+            _connection.On<string>("InvalidSignUp", data =>
+            {
+                MessageBox.Show("InvalidOperator", data + "!!!", MessageBoxButton.OK);
+            });
+        }
         private bool SignCanExecute()
         {
             string[] fields = { Email, Username, Password, VerifyPassword };

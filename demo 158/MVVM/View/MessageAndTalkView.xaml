@@ -48,7 +48,7 @@
                              <VisualBrush>
                                  <VisualBrush.Visual>
                                      <Grid Background="White">
-                                            <Image Source="{Binding ContactImage}" 
+                                            <Image Source="{Binding Conversation.ContactImage}" 
                                                 Stretch="UniformToFill"/>
                                      </Grid>
                                  </VisualBrush.Visual>
@@ -58,7 +58,7 @@
 
                      <TextBlock 
                          Margin="5 0 0 15"
-                         Text="{Binding ContactUsername}"
+                         Text="{Binding Conversation.ContactUsername}"
                          FontSize="20"
                          Foreground="White"
               

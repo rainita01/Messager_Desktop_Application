@@ -32,7 +32,7 @@ namespace demo_158.MVVM.View
     public partial class MainView : Window
     {
         private readonly MainViewModel _viewModel;
-        public ReceiveUser User { get; set; } = new();
+        public UserModelFromServer UserModelFromServer { get; set; } = new();
         public List<ConversationModel>? Conversations { get; set; }
         
         public MainView(MainViewModel viewModel)
@@ -47,22 +47,11 @@ namespace demo_158.MVVM.View
         protected override void OnActivated(EventArgs e)
         {
             _viewModel.Conversations = new ObservableCollection<ConversationModel>(Conversations);
-            _viewModel.User = User;
-            _viewModel.Username = User.Username;
+            _viewModel.UserModelFromServer = UserModelFromServer;
             base.OnActivated(e);
             
         }
 
-    
-        private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (ContactsList.SelectedItem != null)
-            {
-                _viewModel.ConversationModel = ContactsList.SelectedItem as ConversationModel;
-                _viewModel.ConversationModel.Type = "mainView";
-                SocketManager.Instance.Send(_viewModel.ConversationModel);
-            }
-        }
         // کلیک های دکمه های بالای صفحه برای بسته شدن و بزرگ وکوچک شدن صفخه
         private void TopHideButtonClick(object sender, RoutedEventArgs e)
         {

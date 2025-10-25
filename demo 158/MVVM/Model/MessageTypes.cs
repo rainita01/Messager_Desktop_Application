@@ -6,9 +6,12 @@ using System.Threading.Tasks;
 
 namespace demo_158.MVVM.Model
 {
-    public class UserConversationsData
+    public enum MessageTypes
     {
-        public ReceiveUser User { get; set; }
-        public List<ConversationModel> Conversations { get; set; }
+        Text,
+        Video,
+        Image,
+        Audio,
+        File
     }
 }

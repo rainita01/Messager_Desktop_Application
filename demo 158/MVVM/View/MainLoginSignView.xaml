@@ -28,25 +28,42 @@ WindowStartupLocation="CenterScreen"
                 BorderThickness="0"
                 CornerRadius="15 15 0 0"
                 >
-                 <StackPanel HorizontalAlignment="Right" 
-                             Orientation="Horizontal">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="2" HorizontalAlignment="Right" 
+                                Orientation="Horizontal">
 
-                     <Button  
-                         Style="{StaticResource TopToolsButtonThem}"
-                         Width="30"
-                         Content="-"
-                        Click="HideClickMethod"
-                         ></Button>
+                        <Button  
+                            Style="{StaticResource TopToolsButtonThem}"
+                            Width="30"
+                            Content="-"
+                            Click="HideClickMethod"
+                        ></Button>
 
-                     <Button  
-                         Style="{StaticResource TopToolsButtonThem}"
-                         Width="30"
-                         Content="×"
-                         Click="ExitClickMethod"
-                     ></Button>
+                        <Button  
+                            Style="{StaticResource TopToolsButtonThem}"
+                            Width="30"
+                            Content="×"
+                            Click="ExitClickMethod"
+                        ></Button>
 
-                </StackPanel>
-
+                    </StackPanel>
+                    <Label Grid.Column="0"
+                           Content="AMessager"
+                           HorizontalAlignment="Left"
+                           Foreground="Gainsboro"
+                    ></Label>
+                    <Label Grid.Column="1"
+                           Content="Try:1.0.0.1"
+                           HorizontalAlignment="Center"
+                           Foreground="Gainsboro"
+                    ></Label>
+                </Grid>
+                
             </Border>
 
                 <Grid DockPanel.Dock="Bottom">

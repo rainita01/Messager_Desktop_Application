@@ -23,7 +23,7 @@ namespace demo_158.MVVM.View
     public partial class ProfileView : Window
     {
         private readonly ProfileViewModel _viewModel;
-        public ReceiveUser? User { get; set; }
+        public UserModelFromServer? User { get; set; }
         public ProfileView(ProfileViewModel viewModel)
         {
             _viewModel = viewModel;
@@ -48,11 +48,11 @@ namespace demo_158.MVVM.View
 
         protected override void OnActivated(EventArgs e)
         {
-            _viewModel.Id = User.Id;
+            // _viewModel.Id = User.Id;
             _viewModel.Username = User.Username;
             _viewModel.Bio = User.BioCaption;
             _viewModel.Email = User.Email;
-            _viewModel.Image = User.Image;
+            // _viewModel.Image = User.Image;
             base.OnActivated(e);
         }
         private void ProfileViewExitButton(object sender, RoutedEventArgs e)
