@@ -100,8 +100,8 @@
              ></Label>
               <TextBox
                   VerticalContentAlignment="Center"
-                 Name="Username"
-                   TextChanged="Username_OnTextChanged"
+                  Name="Username"
+                  IsReadOnly="True"
                   Margin="0 0 17 0"
                   Width="250"
                   Text="{Binding Username}"

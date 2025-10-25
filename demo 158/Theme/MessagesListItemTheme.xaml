@@ -22,7 +22,7 @@
                                 <VisualBrush>
                                     <VisualBrush.Visual>
                                         <Grid Background="White">
-                                            <Image Source="{Binding SenderImage}" 
+                                            <Image 
                                                    Stretch="UniformToFill"/>
                                         </Grid>
                                     </VisualBrush.Visual>

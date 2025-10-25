@@ -30,12 +30,12 @@ namespace demo_158.MVVM.ViewModel
         private readonly ConnectionManager _connection;
         private readonly MessageReceiveController _messageReceive;
         private ObservableCollection<MessagesModel> _messages;
-        private ICommand sendMessageCommand;
-        private ICommand showUserContentCommand;
+        private ICommand _sendMessageCommand;
+        private ICommand _showUserContentCommand;
         private string _text;
         private ConversationModel _conversation;
         private UserModelFromServer _userModelFromServer;
-
+        public event EventHandler SuccessMessageAdded;
         public string Text
         {
             get => _text;
@@ -84,19 +84,19 @@ namespace demo_158.MVVM.ViewModel
                 FirstMessage = Messages.Count == 0 || _messageAndTalkServices.SetFirstMessage(UserModelFromServer.Username, Messages.Last().SenderName)
             };
                 Messages.Add(messageModel);
+            
         }
-        public ICommand ShowUserContentCommand => showUserContentCommand ?? new GeneralCommand((ShowUserContentAction));
+        public ICommand ShowUserContentCommand => _showUserContentCommand ?? new GeneralCommand((ShowUserContentAction));
 
         private void ShowUserContentAction()
         {
             var profile = new ProfileEditModel()
             {
                 Username = Conversation.ContactUsername,
-                Type = "ContactProfileInfo"
             };
         }
 
-        public ICommand SendMessageCommand => sendMessageCommand ??= new GeneralCommand(async()=> await  SendTextMessageExecuteAction());
+        public ICommand SendMessageCommand => _sendMessageCommand ??= new GeneralCommand(async()=> await  SendTextMessageExecuteAction());
       
 
         private async Task  SendTextMessageExecuteAction()
@@ -127,6 +127,7 @@ namespace demo_158.MVVM.ViewModel
 
             await _connection.SendAsync("SendMessageToPrivate", Conversation.ContactUsername, messageFromUser);
             Messages.Add(messageModel);
+            SuccessMessageAdded.Invoke(this,EventArgs.Empty);
             Text = String.Empty;
         }
 

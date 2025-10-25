@@ -100,7 +100,7 @@
                                      Margin="0 0 0 25"
                                      Foreground="White"
                                      FontSize="16"
-                                     Content="{Binding Username}"
+                                     Content="{Binding UserModelFromServer.Username}"
                                      Style="{StaticResource ProfileButton}"
                                      Command="{Binding OpenProfileCommand}"
                                     >

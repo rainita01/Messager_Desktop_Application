@@ -19,6 +19,7 @@
                 <RowDefinition Height="1*"></RowDefinition>
                 <RowDefinition Height="3*"></RowDefinition>
                 <RowDefinition Height="5*"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
             </Grid.RowDefinitions>
 
             <Border
@@ -41,7 +42,7 @@
 
                     <Label
                         HorizontalAlignment="Left"
-                        Content="Profile"
+                        Content="Contact Info"
                         Foreground="Gainsboro"
                         FontSize="14"
                         VerticalAlignment="Center"
@@ -90,60 +91,65 @@
             
              >
                 <Label
-                 Margin="30 0 0 0"
-                 HorizontalAlignment="Left"
-                 Content="Username:"
+                    Margin="30 0 0 0"
+                    HorizontalAlignment="Left"
+                    Content="Username:"
                     Width="250"
                     Foreground="LightGray"
-             ></Label>
-                <TextBlock
-                  Name="Username"
-                  Margin="0 0 17 0"
-                  Width="250"
-                  Foreground="White"
-                  Padding="3"
-                  Background="#2A4759"
-                  Text="{Binding Username}"
-                  Height="30"
-                  
-              ></TextBlock>
+                ></Label>
+                <TextBox
+                    VerticalContentAlignment="Center"
+                    Name="Username"
+                    IsReadOnly="True"
+                    Margin="0 0 17 0"
+                    Width="250"
+                    Text="{Binding Username}"
+                    Height="30"
+                    Style="{StaticResource LoginSignTextBoxTheme}"
+                ></TextBox>
                 <Label 
                     Margin="30 10 0 0"
                     HorizontalAlignment="Left"
                     Content="Email:"
-                    
+        
                     Width="250"
                     Foreground="LightGray"
-             ></Label>
-                <TextBlock
-                    Foreground="White"
-                    Background="#2A4759"
-                     Name="Email"
-                     Padding="3"
-                     Margin="0 0 17 0"
-                     Width="250"
-                     Text="{Binding Email}"
-                     Height="30"
-                 ></TextBlock>
+                ></Label>
+                <TextBox
+                    VerticalContentAlignment="Center"
+                    Name="Email"
+                    IsReadOnly="True"
+                    Margin="0 0 17 0"
+                    Width="250"
+                    Text="{Binding Email}"
+                    Height="30"
+                    Style="{StaticResource LoginSignTextBoxTheme}"
+                ></TextBox>
 
                 <Label Content="Bio:"
+          
                        Margin="30 10 0 0"
                        HorizontalAlignment="Left"
                        Width="250"
                        Foreground="LightGray"
-             ></Label>
-                <TextBlock
-                     Foreground="White"
-                     Name="Bio"
-                     Margin="0 0 17 0"
-                     Width="250"
-                     Padding="3"
-                     Background="#2A4759"
-                     Text="{Binding Bio}"
-                     Height="70"
-                 ></TextBlock>
+                ></Label>
+                <TextBox
+                    VerticalContentAlignment="Top"
+                    Name="Bio"
+                    IsReadOnly="True"
+                    Margin="0 0 17 0"
+                    Width="250"
+                    Text="{Binding Bio}"
+                    Height="70"
+                    Style="{StaticResource LoginSignTextBoxTheme}"
+                ></TextBox>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="50 0 50 0" Grid.Row="3">
+                <RadioButton Content="Videos"></RadioButton>
+                <RadioButton Content="Audio"></RadioButton>
+                <RadioButton Content="Picture"></RadioButton>
             </StackPanel>
         </Grid>
-
+       
     </Border>
 </Window>

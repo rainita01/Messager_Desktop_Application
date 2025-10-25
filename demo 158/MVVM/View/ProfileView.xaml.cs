@@ -24,6 +24,7 @@ namespace demo_158.MVVM.View
     {
         private readonly ProfileViewModel _viewModel;
         public UserModelFromServer? User { get; set; }
+        public EventHandler OnSuccessChange;
         public ProfileView(ProfileViewModel viewModel)
         {
             _viewModel = viewModel;
@@ -34,7 +35,6 @@ namespace demo_158.MVVM.View
 
         private void ProfileSuccessChange(object? sender, EventArgs e)
         {
-            User.Username = _viewModel.Username;
             User.BioCaption = _viewModel.Bio;
             User.Email = _viewModel.Email;
             Application.Current.Dispatcher.Invoke(() =>
@@ -42,17 +42,13 @@ namespace demo_158.MVVM.View
 
                 SaveButton.Visibility = Visibility.Hidden;
             });
-         
-
         }
 
         protected override void OnActivated(EventArgs e)
         {
-            // _viewModel.Id = User.Id;
             _viewModel.Username = User.Username;
             _viewModel.Bio = User.BioCaption;
             _viewModel.Email = User.Email;
-            // _viewModel.Image = User.Image;
             base.OnActivated(e);
         }
         private void ProfileViewExitButton(object sender, RoutedEventArgs e)
@@ -82,14 +78,5 @@ namespace demo_158.MVVM.View
            
         }
 
-        private void Username_OnTextChanged(object sender, TextChangedEventArgs e)
-        {
-            SaveButton.Visibility = Visibility.Visible;
-            if (Username.Text == User.Username)
-            {
-                SaveButton.Visibility = Visibility.Hidden;
-            }
-            
-        }
     }
 }

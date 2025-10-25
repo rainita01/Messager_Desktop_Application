@@ -43,7 +43,16 @@ namespace demo_158.MVVM.View
             InitializeComponent();
             Loaded += MessageAndTalkView_OnLoaded;
             Loaded -= MessageAndTalkView_OnLoaded;
+            _viewModel.SuccessMessageAdded += ViewModelOnSuccessMessageAdded;
         }
+
+        private void ViewModelOnSuccessMessageAdded(object? sender, EventArgs e)
+        {
+
+            this.MessagesListView.ScrollIntoView(_viewModel.Messages.Last());
+
+        }
+
         private void MessageAndTalkView_OnLoaded(object sender, RoutedEventArgs e)
         {
             _viewModel.Conversation = Conversation;

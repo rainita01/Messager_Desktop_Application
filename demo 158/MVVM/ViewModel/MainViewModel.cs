@@ -27,11 +27,14 @@ namespace demo_158.MVVM.ViewModel
         private readonly IServiceProvider _service;
         private readonly ConnectionManager _connection;
         private readonly MessageAndTalkServices _messageAndTalkServices;
+        private readonly MessagesServices _messagesServices;
         private ICommand moveAndDrugCommand;
         private ICommand openProfileCommand;
         private ConversationModel _conversationModel;
       
         private ObservableCollection<ConversationModel>? _conversations;
+        private UserModelFromServer _userModelFromServer;
+
         public ConversationModel ConversationModel 
         {
             get => _conversationModel;
@@ -43,8 +46,16 @@ namespace demo_158.MVVM.ViewModel
                 }
             }
         }
-        public UserModelFromServer UserModelFromServer { get; set; }
-     
+
+        public UserModelFromServer UserModelFromServer
+        {
+            get => _userModelFromServer;
+            set
+            {
+                if (SetField(ref _userModelFromServer, value)) OnPropertyChanged(nameof(OpenProfileCommand));
+            }
+        }
+
 
         public ObservableCollection<ConversationModel>? Conversations
         {
@@ -58,13 +69,14 @@ namespace demo_158.MVVM.ViewModel
             set => SetField(ref _currentView, value);
         }
 
-        public MainViewModel(IServiceProvider service,ConnectionManager connection,MessageAndTalkServices messageAndTalkServices)
+        public MainViewModel(IServiceProvider service,ConnectionManager connection,MessageAndTalkServices messageAndTalkServices,MessagesServices messagesServices)
         {
           
             _service = service;
           
             _connection = connection;
             _messageAndTalkServices = messageAndTalkServices;
+            _messagesServices = messagesServices;
             var userView = service.GetService<DefaultMessageView>();
             CurrentView = userView;
             ReceiveConversation();
@@ -80,6 +92,7 @@ namespace demo_158.MVVM.ViewModel
                 profileView.User = UserModelFromServer;
             }
             profileView.ShowDialog();
+          
         }));
 
         public ICommand MoveAndDrugCommand => moveAndDrugCommand ?? new GeneralCommand((() =>
@@ -98,23 +111,7 @@ namespace demo_158.MVVM.ViewModel
                 var messageView = _service.GetService<MessageAndTalkView>();
                 messageView.UserModelFromServer = UserModelFromServer;
                 messageView.Conversation = ConversationModel;
-                messageView.Messages ??= new ObservableCollection<MessagesModel>();
-
-                foreach (var msg in messages)
-                {
-                    messageView.Messages.Add(new MessagesModel
-                    {
-                        SenderName = msg.Username,
-                        SenderImage = user.Image,
-                        SentTime = msg.SendDate,
-                        HorizontalAlignmentMessage = _messageAndTalkServices.SetHorizontalAlignment(UserModelFromServer.Username, msg.Username),
-                        FlowDirectionMessage = _messageAndTalkServices.SetFlowDirectionMessage(UserModelFromServer.Username, msg.Username),
-                        BackgroundColorBrush = _messageAndTalkServices.SetBackGroundBrush(UserModelFromServer.Username, msg.Username),
-                        MessageType = msg.MessageType,
-                        Text = msg.Text,
-                        Object = msg.Object
-                    });
-                }
+                messageView.Messages =  _messagesServices.ConvertMessagesFromServerToMessageModel(messages, UserModelFromServer.Username);
                 CurrentView = messageView;
             });
         }

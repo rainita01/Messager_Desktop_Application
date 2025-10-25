@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using demo_158.Base;
+using demo_158.Hubs;
 using demo_158.MVVM.Model;
 using WebSocketSharp;
 
@@ -15,16 +16,14 @@ namespace demo_158.MVVM.ViewModel
 {
    public class ProfileViewModel :ViewModelBase
     {
+        private readonly ConnectionManager _connectionManager;
 
         private string _username;
         private string _email;
         private string? _bio;
-        private string _image;
-        private ICommand _profileBioOkCommand;
         private int _id;
         public EventHandler ProfileSuccessChange;
-        public EventHandler ProfileCancelChange;
-       
+        
         private readonly ICommand saveChanges;
 
         public int Id
@@ -50,31 +49,33 @@ namespace demo_158.MVVM.ViewModel
             get => _bio;
             set => SetField(ref _bio, value);
         }
-
-        public string Image
+        public ProfileViewModel(ConnectionManager connectionManager)
         {
-            get => _image;
-            set => SetField(ref _image, value);
+            _connectionManager = connectionManager;
+            ChangeProfile();
         }
 
-        public ProfileViewModel()
-        {
-        }
+        public ICommand SaveChanges => saveChanges ?? new GeneralCommand(async ()=>await ExecuteAction());
 
-        public ICommand SaveChanges => saveChanges ?? new GeneralCommand((ExecuteAction));
-
-       private void ExecuteAction()
+       private async Task ExecuteAction()
        {
            var model = new ProfileEditModel()
            {
-               Type = "Profile",
                Bio = Bio,
                Id = Id,
                Email = Email,
                Username = Username,
            };
+           await _connectionManager.SendAsync("ChangeProfile", model);
        }
 
-       
+       private void  ChangeProfile()
+       {
+            _connectionManager.On<string>("ChangeProfile", submit =>
+            {
+                        ProfileSuccessChange.Invoke(this,EventArgs.Empty);
+            });
+
+       }
     }
 }
