@@ -15,21 +15,15 @@ namespace demo_158.MVVM.Model
    public class MessagesModel : ViewModelBase 
     {
         private string _senderName;
-        private byte[] _senderImage;
         private string? _text;
         private byte[]? _o;
+        private bool _isSeen;
         public int Id { get; set; }
-
+        public int ConversationId { get; set; }
         public string SenderName
         {
             get => _senderName;
             set => SetField(ref _senderName, value);
-        }
-
-        public Byte[] SenderImage
-        {
-            get => _senderImage;
-            set => SetField(ref _senderImage, value);
         }
 
         public string? Text
@@ -43,13 +37,19 @@ namespace demo_158.MVVM.Model
             get => _o;
             set => SetField(ref _o, value);
         }
-
+        public bool IsSeen
+        {
+            get => _isSeen;
+            set => SetField(ref _isSeen, value);
+        }
         public MessageTypes MessageType { get; set; }
         public DateTime SentTime { get; set; }
         public HorizontalAlignment HorizontalAlignmentMessage { get; set; }
         public FlowDirection FlowDirectionMessage { get; set; }
         public SolidColorBrush BackgroundColorBrush { get; set; }
         public bool FirstMessage { get; set; }
+
+       
     }
     public class MessageModelFromUser
     {
@@ -60,6 +60,7 @@ namespace demo_158.MVVM.Model
         public int UserId { get; set; }
         public string Username { get; set; }
         public int ConversationId { get; set; }
+        public bool IsSeen { get; set; }= false;
     }
     public class MessageModelFromServer
     {
@@ -71,6 +72,7 @@ namespace demo_158.MVVM.Model
         public string Username { get; set; }
         public DateTime SendDate { get; set; }
         public int ConversationId { get; set; }
+        public  bool IsSeen { get; set; }
     }
 
 }

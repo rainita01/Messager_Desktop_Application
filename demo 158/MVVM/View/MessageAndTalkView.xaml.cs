@@ -16,7 +16,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-
 using demo_158.Services;
 using Microsoft.Extensions.DependencyInjection;
 using WebSocketSharp;
@@ -28,43 +27,21 @@ namespace demo_158.MVVM.View
     /// </summary>
     public partial class MessageAndTalkView : UserControl
     {
-        private readonly MessageAndTalkViewModel _viewModel;
-       
-        public ObservableCollection<MessagesModel> Messages { get; set; }
-        public ConversationModel Conversation { get; set; }
-        public UserModelFromServer UserModelFromServer { get; set; }
-   
-
-        public MessageAndTalkView(MessageAndTalkViewModel viewModel)
+        private readonly MainViewModel _viewModel;
+        
+        public MessageAndTalkView(MainViewModel viewModel)
         {
             _viewModel = viewModel;
-            
-            DataContext = _viewModel;
+            DataContext = _viewModel.ConversationModel;
             InitializeComponent();
             Loaded += MessageAndTalkView_OnLoaded;
             Loaded -= MessageAndTalkView_OnLoaded;
-            _viewModel.SuccessMessageAdded += ViewModelOnSuccessMessageAdded;
-        }
-
-        private void ViewModelOnSuccessMessageAdded(object? sender, EventArgs e)
-        {
-
-            this.MessagesListView.ScrollIntoView(_viewModel.Messages.Last());
-
         }
 
         private void MessageAndTalkView_OnLoaded(object sender, RoutedEventArgs e)
         {
-            _viewModel.Conversation = Conversation;
-            _viewModel.UserModelFromServer = UserModelFromServer; 
-            _viewModel.Messages = Messages;
-
-            _viewModel.Conversation = Conversation;
-            if (_viewModel.Messages != null)
-            {
-                MessagesListView.ScrollIntoView(_viewModel.Messages.Last());
-            }
-
+           
+            MessagesListView.ScrollIntoView(_viewModel.ConversationModel.Messages.Last());
             MessageTextBox.Focus();
         }
 

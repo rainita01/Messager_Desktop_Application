@@ -48,7 +48,7 @@
                              <VisualBrush>
                                  <VisualBrush.Visual>
                                      <Grid Background="White">
-                                            <Image Source="{Binding Conversation.ContactImage}" 
+                                            <Image Source="{Binding ContactUserInfo.ContactImage}" 
                                                 Stretch="UniformToFill"/>
                                      </Grid>
                                  </VisualBrush.Visual>
@@ -58,7 +58,7 @@
 
                      <TextBlock 
                          Margin="5 0 0 15"
-                         Text="{Binding Conversation.ContactUsername}"
+                         Text="{Binding ContactUserInfo.ContactUsername}"
                          FontSize="20"
                          Foreground="White"
               
@@ -86,8 +86,8 @@
                       ItemsSource="{Binding Messages}"
                       Style="{StaticResource MessagesListViewTheme}"
                       ItemContainerStyle="{StaticResource MessagesListViewItemTheme}"
-                       
-                      ></ListView>
+                      >
+            </ListView>
           <Border Grid.Row="2"
                 Background="WhiteSmoke"
                   CornerRadius="0 0  20 20"

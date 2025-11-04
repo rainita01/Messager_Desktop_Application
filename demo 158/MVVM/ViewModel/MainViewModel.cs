@@ -2,38 +2,32 @@
 using demo_158.MVVM.Model;
 using demo_158.MVVM.View;
 using demo_158.MVVM.View.Model;
-using demo_158.Services;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Net.Mime;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media;
 using demo_158.Hubs;
-using WebSocketSharp;
+using demo_158.Repository;
+using demo_158.Services.Interfaces;
 
 namespace demo_158.MVVM.ViewModel
 {
     public class MainViewModel : ViewModelBase
     {
+        
         private object _currentView;
         private readonly IServiceProvider _service;
         private readonly ConnectionManager _connection;
-        private readonly MessageAndTalkServices _messageAndTalkServices;
-        private readonly MessagesServices _messagesServices;
+        private readonly MyInformationRepository _myInformationRepository;
+        private readonly MyConversationsRepository _conversationsRepository;
+        private readonly MyMessagesRepository _myMessagesRepository;
+        private readonly IMessageServices _messagesServices;
         private ICommand moveAndDrugCommand;
         private ICommand openProfileCommand;
         private ConversationModel _conversationModel;
-      
-        private ObservableCollection<ConversationModel>? _conversations;
         private UserModelFromServer _userModelFromServer;
+
+        public ObservableCollection<ConversationModel>? Conversations { get; set; } = new();
 
         public ConversationModel ConversationModel 
         {
@@ -55,35 +49,39 @@ namespace demo_158.MVVM.ViewModel
                 if (SetField(ref _userModelFromServer, value)) OnPropertyChanged(nameof(OpenProfileCommand));
             }
         }
-
-
-        public ObservableCollection<ConversationModel>? Conversations
-        {
-            get => _conversations;
-            set => SetField(ref _conversations, value);
-        }
-
         public object CurrentView
         {
             get => _currentView;
             set => SetField(ref _currentView, value);
         }
 
-        public MainViewModel(IServiceProvider service,ConnectionManager connection,MessageAndTalkServices messageAndTalkServices,MessagesServices messagesServices)
-        {
-          
-            _service = service;
-          
-            _connection = connection;
-            _messageAndTalkServices = messageAndTalkServices;
-            _messagesServices = messagesServices;
-            var userView = service.GetService<DefaultMessageView>();
-            CurrentView = userView;
-            ReceiveConversation();
-        }
+            public MainViewModel( 
+                
+                ConnectionManager connection,
+                MyInformationRepository myInformationRepository,
+                MyConversationsRepository conversationsRepository,
+                MyMessagesRepository myMessagesRepository,
+                IMessageServices messagesServices,
+                IServiceProvider service
+                )
+            {
+                _connection = connection;
+                _myInformationRepository = myInformationRepository;
+                _conversationsRepository = conversationsRepository;
+                _myMessagesRepository = myMessagesRepository;
+                _messagesServices = messagesServices;
+                _service = service;
 
+                var userView = service.GetService<DefaultMessageView>();
+                CurrentView = userView;
 
-        public ICommand OpenProfileCommand => openProfileCommand ?? new GeneralCommand((() =>
+                UserModelFromServer = _myInformationRepository.MyUserInfo;
+                _conversationsRepository.SuccessReceiveConversations += SuccessReceiveConversations;
+                _myMessagesRepository.MessageReceived += SuccessReceiveMessages;
+
+            }
+
+            public ICommand OpenProfileCommand => openProfileCommand ?? new GeneralCommand((() =>
         {
             var profileView = _service.GetService<ProfileView>();
 
@@ -99,21 +97,66 @@ namespace demo_158.MVVM.ViewModel
         {
             Application.Current.Windows.OfType<MainView>().FirstOrDefault()?.DragMove();
         }));
-        private async Task OnSelectedConversationChangedAsync()
+        private void  OnSelectedConversationChangedAsync()
         {
-            await _connection.SendAsync("ConversationSender", ConversationModel);
+            var messageView = _service.GetRequiredService<MessageAndTalkView>();
+            messageView.DataContext = ConversationModel;
+            CurrentView = messageView;
+        }
+        private void SuccessReceiveMessages(MessageModelFromServer obj)
+        {
+            MessagesModel lastmessage;
+            MessagesModel message;
+
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                var conversation = Conversations?.FirstOrDefault(e => e.Id == obj.ConversationId);
+                if (conversation.Messages.Count > 0)
+                {
+                   lastmessage = conversation.Messages.Last();
+                     message = _messagesServices.MessageModelMapping(obj, UserModelFromServer.Username, lastmessage.SenderName);
+
+                }
+                else
+                {
+                     message = _messagesServices.MessageModelMapping(obj, UserModelFromServer.Username, null); 
+                }
+                AddToConversation(message, conversation);
+
+            });
         }
 
-        private void ReceiveConversation()
+        private void SuccessReceiveConversations(List<ConversationModel> obj)
         {
-            _connection.On<List<MessageModelFromServer>,UserModelFromServer>("ReceiveConversation", (messages, user) =>
+            Application.Current.Dispatcher.BeginInvoke(() =>
             {
-                var messageView = _service.GetService<MessageAndTalkView>();
-                messageView.UserModelFromServer = UserModelFromServer;
-                messageView.Conversation = ConversationModel;
-                messageView.Messages =  _messagesServices.ConvertMessagesFromServerToMessageModel(messages, UserModelFromServer.Username);
-                CurrentView = messageView;
+                foreach (var conversationModel in obj)
+                {
+
+                    Conversations.Add(conversationModel);
+                    _connection.SendAsync("ReceiveMessages", conversationModel);
+                }
+
             });
+        }
+
+        private void AddToConversation(MessagesModel obj, ConversationModel conversation)
+        {
+            if (conversation == null)
+            {
+                throw new Exception("Conversation not found");
+            }
+
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                conversation.Messages.Add(obj);
+                conversation.LastMessage = conversation.Messages.LastOrDefault();
+            });
+        }
+
+        private void SortConversation()
+        {
+          
         }
     }
 }

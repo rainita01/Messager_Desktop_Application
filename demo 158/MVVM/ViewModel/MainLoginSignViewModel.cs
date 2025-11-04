@@ -1,19 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 using demo_158.Base;
 using demo_158.MVVM.View;
-using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace demo_158.MVVM.ViewModel
 {
     public class MainLoginSignViewModel : ViewModelBase
     {
-        private readonly IServiceProvider _service;
         private readonly LoginView _loginView;
         private readonly SignView _signView;
         private readonly LoginLoadingPage _loadingPage;
@@ -24,9 +16,9 @@ namespace demo_158.MVVM.ViewModel
             set => SetField(ref _currentView, value);
         }
 
-        public MainLoginSignViewModel(IServiceProvider service,LoginView loginView,SignView signView,LoginLoadingPage loadingPage)
+        public MainLoginSignViewModel(LoginView loginView,SignView signView,LoginLoadingPage loadingPage)
         {
-            _service = service;
+            
             _loginView = loginView;
             _signView = signView;
             _loadingPage = loadingPage;

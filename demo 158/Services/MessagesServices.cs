@@ -1,40 +1,94 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using demo_158.MVVM.Model;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using demo_158.MVVM.Model;
+using System.Windows;
+using System.Windows.Media;
+using demo_158.Services.Interfaces;
 
 namespace demo_158.Services
 {
-    public class MessagesServices(MessageAndTalkServices messageAndTalkServices)
+    public class MessagesServices : IMessageServices
     {
-        public ObservableCollection<MessagesModel> ConvertMessagesFromServerToMessageModel(
-            List<MessageModelFromServer> messages, string username)
+        public ObservableCollection<MessagesModel> MessagesModelMapping(List<MessageModelFromServer> messages, string username)
         {
             var messageModel = new ObservableCollection<MessagesModel>();
-            MessagesModel? lastMsg = null;
-
+            var lastMessageUsername = string.Empty; 
             foreach (var msg in messages)
             {
 
-                messageModel.Add(new MessagesModel
-                {
-                    SenderName = msg.Username,
-                    SentTime = msg.SendDate,
-                    HorizontalAlignmentMessage = messageAndTalkServices.SetHorizontalAlignment(username, msg.Username),
-                    FlowDirectionMessage = messageAndTalkServices.SetFlowDirectionMessage(username, msg.Username),
-                    BackgroundColorBrush = messageAndTalkServices.SetBackGroundBrush(username, msg.Username),
-                    FirstMessage = messageAndTalkServices.SetFirstMessage(lastMsg?.SenderName, msg.Username),
-                    MessageType = msg.MessageType,
-                    Text = msg.Text,
-                    Object = msg.Object
-                });
-                lastMsg = messageModel.Last();
+                messageModel.Add(MessageModelMapping(msg,username,lastMessageUsername));
+                lastMessageUsername = msg.Username;
             }
 
             return messageModel;
+        }
+        public MessagesModel MessageModelMapping(MessageModelFromServer msg,string? username,string? lastMessageUsername)
+        {
+           var messageModel = new MessagesModel()
+            {
+                SenderName = msg.Username,
+                SentTime = msg.SendDate,
+                HorizontalAlignmentMessage = SetHorizontalAlignment(username, msg.Username),
+                FlowDirectionMessage = SetFlowDirectionMessage(username, msg.Username),
+                BackgroundColorBrush = SetBackGroundBrush(username, msg.Username),
+                FirstMessage =SetFirstMessage(lastMessageUsername, msg.Username),
+                MessageType = msg.MessageType,
+                Text = msg.Text,
+                Object = msg.Object
+            };  
+            return messageModel;
+        }
+        public MessagesModel MessageModelMapping(MessageModelFromUser msg, string username, string? lastMessageUsername)
+        {
+            var messageModel = new MessagesModel()
+            {
+                SenderName = msg.Username,
+                SentTime = DateTime.Now,
+                HorizontalAlignmentMessage = SetHorizontalAlignment(username, msg.Username),
+                FlowDirectionMessage =SetFlowDirectionMessage(username, msg.Username),
+                BackgroundColorBrush = SetBackGroundBrush(username, msg.Username),
+                FirstMessage = SetFirstMessage(lastMessageUsername, msg.Username),
+                MessageType = msg.MessageType,
+                Text = msg.Text,
+                Object = msg.Object
+            };
+            return messageModel;
+        }
+        public HorizontalAlignment SetHorizontalAlignment(string username, string senderUsername)
+        {
+            if (username != senderUsername)
+            {
+                return HorizontalAlignment.Left;
+            }
+
+            return HorizontalAlignment.Right;
+        }
+        public FlowDirection SetFlowDirectionMessage(string username, string senderUsername)
+        {
+
+            if (username != senderUsername)
+            {
+                return FlowDirection.LeftToRight;
+            }
+            return FlowDirection.RightToLeft;
+        }
+        public SolidColorBrush SetBackGroundBrush(string? username, string? senderUsername)
+        {
+            if (username != senderUsername)
+            {
+                return Brushes.LightGray;
+            }
+
+            return Brushes.LightSkyBlue;
+        }
+        public bool SetFirstMessage(string? username, string? senderUsername)
+        {
+            if (username == senderUsername)
+            {
+                return false;
+            }
+
+            return true;
+
         }
     }
 }

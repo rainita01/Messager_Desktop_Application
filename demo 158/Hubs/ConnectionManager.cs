@@ -28,25 +28,33 @@ namespace demo_158.Hubs
         }
 
       
-         public void On<T>(string methodName, Action<T> handler)
+         public async Task OnAsync<T>(string methodName, Action<T> handler)
          {
-             _connection.On<T>(methodName, data =>
-             {
-                 Application.Current.Dispatcher.Invoke(() =>
+             await Task.Run((() => {
+                 _connection.On<T>(methodName, data =>
                  {
-                     handler(data);
+                     Application.Current.Dispatcher.Invoke(() =>
+                     {
+                         handler(data);
+                     });
                  });
-             });
-         }
-         public void On<T1, T2>(string methodName, Action<T1, T2> handler)
+             }));
+        }
+         public async Task OnAsync<T1, T2>(string methodName, Action<T1, T2> handler)
          {
-             _connection.On<T1, T2>(methodName, (data1, data2) =>
-             {
-                 Application.Current.Dispatcher.Invoke(() =>
+             await Task.Run((() => {
+                 _connection.On<T1, T2>(methodName, (data1, data2) =>
                  {
-                     handler(data1, data2);
+                     Application.Current.Dispatcher.Invoke(() =>
+                     {
+                         handler(data1, data2);
+                     });
                  });
-             });
+             }));
+             
+             
+             
+
          }
 
         public async Task SendAsync<T>(string methodName,T obj)

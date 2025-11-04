@@ -31,8 +31,7 @@ namespace demo_158.MVVM.View
             _viewModel = viewModel;
             DataContext = _viewModel;
             InitializeComponent();
-
-
+           
         }
 
 

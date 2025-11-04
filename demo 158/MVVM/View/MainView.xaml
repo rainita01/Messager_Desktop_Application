@@ -5,16 +5,28 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:demo_158.MVVM.View"
         xmlns:extensions="clr-namespace:demo_158.Base"
+        xmlns:componentModel="clr-namespace:System.ComponentModel;assembly=WindowsBase"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         WindowStyle="None"
         WindowState="Normal"
         Background="Transparent"
         Title="MainView" Height="700" Width="800">
+    <Window.Resources>
+        <CollectionViewSource 
+            x:Key="ListConversations"
+            Source="Conversations"
+            >
+            <CollectionViewSource.SortDescriptions>
+                <componentModel:SortDescription PropertyName="DateTime" Direction="Ascending"/>
+            </CollectionViewSource.SortDescriptions>
+
+        </CollectionViewSource>
+    </Window.Resources>
     <Border Background="#4A7691" 
             
             CornerRadius="5 5 5 5 "
-            >
+    >
 
     <DockPanel >
         <Border 

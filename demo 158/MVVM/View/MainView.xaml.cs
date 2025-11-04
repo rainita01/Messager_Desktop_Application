@@ -32,9 +32,6 @@ namespace demo_158.MVVM.View
     public partial class MainView : Window
     {
         private readonly MainViewModel _viewModel;
-        public UserModelFromServer UserModelFromServer { get; set; } = new();
-        public List<ConversationModel>? Conversations { get; set; }
-        
         public MainView(MainViewModel viewModel)
         {
             _viewModel = viewModel;
@@ -46,8 +43,6 @@ namespace demo_158.MVVM.View
 
         protected override void OnActivated(EventArgs e)
         {
-            _viewModel.Conversations = new ObservableCollection<ConversationModel>(Conversations);
-            _viewModel.UserModelFromServer = UserModelFromServer;
             base.OnActivated(e);
             
         }

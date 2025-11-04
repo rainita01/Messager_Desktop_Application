@@ -107,7 +107,7 @@ namespace demo_158.MVVM.ViewModel
 
         private  void SuccessSignUp()
         {
-            _connection.On<string>("SuccessSignUp", data =>
+            _connection.OnAsync<string>("SuccessSignUp", data =>
             {
                 MessageBox.Show("Success Sign Up!", data, MessageBoxButton.OKCancel);
             });
@@ -115,7 +115,7 @@ namespace demo_158.MVVM.ViewModel
 
         private void InvalidSignUp()
         {
-            _connection.On<string>("InvalidSignUp", data =>
+            _connection.OnAsync<string>("InvalidSignUp", data =>
             {
                 MessageBox.Show("InvalidOperator", data + "!!!", MessageBoxButton.OK);
             });

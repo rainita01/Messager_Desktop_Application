@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
-using System.Windows;
+﻿
 using System.Windows.Input;
 using demo_158.Base;
 using demo_158.Hubs;
@@ -71,7 +65,7 @@ namespace demo_158.MVVM.ViewModel
 
        private void  ChangeProfile()
        {
-            _connectionManager.On<string>("ChangeProfile", submit =>
+            _connectionManager.OnAsync<string>("ChangeProfile", submit =>
             {
                         ProfileSuccessChange.Invoke(this,EventArgs.Empty);
             });

@@ -2,7 +2,6 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="clr-namespace:demo_158.Services"
                     >
-    <local:LastMessageValueConverter x:Key="LastMessageValueConverter"/>
 
     <Style x:Key="ContactsListTheme" TargetType="{x:Type ListView}">
         <Setter Property="Background" Value="Transparent"></Setter>
@@ -27,7 +26,7 @@
                                 <Ellipse>
                                     <Ellipse.Fill>
                                         <ImageBrush
-                                            ImageSource="{Binding ContactImage}" 
+                                            ImageSource="{Binding ContactUserInfo.ContactImage}" 
                                                    
                                             Stretch="UniformToFill"/>
                                     </Ellipse.Fill>
@@ -36,13 +35,13 @@
                             <StackPanel >
                                 <TextBlock
                                     Margin="10 0 0 0"
-                                    Text="{Binding ContactUsername}"
+                                    Text="{Binding ContactUserInfo.ContactUsername}"
                                     VerticalAlignment="Top"
                                     FontSize="18"></TextBlock>
                                 <TextBlock 
                                     Opacity="20"
                                     Margin="10 10 0 0 " 
-                                    Text="{Binding LastMessage, Converter={StaticResource LastMessageValueConverter}}"
+                                    Text="{Binding LastMessage}"
                                     FontSize="12" FontFamily="Arial" Foreground="Gray">
 
                                 </TextBlock>
