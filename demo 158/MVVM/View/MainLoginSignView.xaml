@@ -110,7 +110,16 @@ WindowStartupLocation="CenterScreen"
                            
                        </RadioButton>
                 </StackPanel>
-
+                <TextBlock 
+                    Grid.Column="2"
+                    Grid.Row="2"
+                    HorizontalAlignment="Right"
+                    Height="50"
+                    Width="150"
+                    FontSize="12"
+                    Foreground="White"
+                    Text="{Binding State}"
+                    ></TextBlock>
 
                 <ContentPresenter Content="{Binding CurrentView}"
                              Grid.Row="1" Grid.Column="1" Grid.RowSpan="2">

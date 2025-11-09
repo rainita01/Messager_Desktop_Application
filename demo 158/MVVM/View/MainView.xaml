@@ -36,8 +36,7 @@
             Height="30"
             Background="#2A4759"
             BorderThickness="0"
-          
-           
+
         >
             <Border.InputBindings>
                     <MouseBinding MouseAction="LeftClick" Command="{Binding MoveAndDrugCommand }"></MouseBinding>
@@ -102,31 +101,37 @@
            Orientation="Horizontal"
            HorizontalAlignment="Left"
            Grid.Column="0">
-           
-                <Border
-              Background="#4A7691  "
-              Margin="0 20 0 0 "
-              Width="35">
+
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition></RowDefinition>
+                                <RowDefinition></RowDefinition>
+                                <RowDefinition Height="Auto"></RowDefinition>
+                            </Grid.RowDefinitions>
+                            <Border
+                                 Grid.Row="0"
+                                 Background="#4A7691  "
+                                 Margin="0 20 0 0 "
+                                 Width="35">
                             <StackPanel >
                                 <Button
-                                     Margin="0 0 0 25"
-                                     Foreground="White"
-                                     FontSize="16"
-                                     Content="{Binding UserModelFromServer.Username}"
-                                     Style="{StaticResource ProfileButton}"
-                                     Command="{Binding OpenProfileCommand}"
-                                    >
+                                    Margin="0 0 0 25"
+                                    Foreground="White"
+                                    FontSize="16"
+                                    Content="{Binding UserModelFromServer.Username}"
+                                    Style="{StaticResource ProfileButton}"
+                                    Command="{Binding OpenProfileCommand}"
+                      >
 
                                 </Button>
                                 <RadioButton 
-                                    FontSize="16"
-                                    Foreground="White"
-                                    Content="💬 All Chats"
-                                    IsChecked="True"
-                                    Style="{StaticResource RadioButtonStyle}"
+                                   FontSize="16"
+                                   Foreground="White"
+                                   Content="💬 All Chats"
+                                   IsChecked="True"
+                                   Style="{StaticResource RadioButtonStyle}"
 
-                                    ></RadioButton>
-                            
+                      ></RadioButton>
 
                             </StackPanel>
                             <Border.Style>
@@ -137,10 +142,10 @@
                                                 <BeginStoryboard >
                                                     <Storyboard>
                                                         <DoubleAnimation 
-                                           Storyboard.TargetProperty="(Border.Width)"
-                                           To="120"
-                                           Duration="0:0:.1"
-                                           ></DoubleAnimation>
+                                                           Storyboard.TargetProperty="(Border.Width)"
+                                                           To="120"
+                                                           Duration="0:0:.1"
+                                                           ></DoubleAnimation>
                                                     </Storyboard>
                                                 </BeginStoryboard>
                                             </EventTrigger.Actions>
@@ -150,9 +155,9 @@
                                                 <BeginStoryboard>
                                                     <Storyboard>
                                                         <DoubleAnimation Storyboard.TargetProperty="(Border.Width)"
-                                                         To="35"
-                                                         Duration="0:0:.1"
-                                        />
+                                           To="35"
+                                           Duration="0:0:.1"
+                                                     />
                                                     </Storyboard>
                                                 </BeginStoryboard>
                                             </EventTrigger.Actions>
@@ -161,9 +166,20 @@
                                     </Style.Triggers>
                                 </Style>
 
-                            </Border.Style>
+                                  </Border.Style>
+                            </Border>
+                            <Border
+                                Grid.Row="2"
+                                Margin="0 5 0 10"
+                                >
+                                <TextBlock
+                                    Text="{Binding State}"
+                                    >
 
-                        </Border>
+                                </TextBlock>
+                            </Border>
+                   </Grid>
+                     
 
                         <Border
                   CornerRadius="20"

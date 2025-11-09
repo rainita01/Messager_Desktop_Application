@@ -8,7 +8,9 @@ using System.Windows;
 using System.Windows.Input;
 using demo_158.Hubs;
 using demo_158.Repository;
+using demo_158.Services.Enums;
 using demo_158.Services.Interfaces;
+using Microsoft.AspNetCore.SignalR.Client;
 
 namespace demo_158.MVVM.ViewModel
 {
@@ -26,8 +28,15 @@ namespace demo_158.MVVM.ViewModel
         private ICommand openProfileCommand;
         private ConversationModel _conversationModel;
         private UserModelFromServer _userModelFromServer;
+        private State _state;
 
         public ObservableCollection<ConversationModel>? Conversations { get; set; } = new();
+
+        public State State
+        {
+            get => _state;
+            set => SetField(ref _state, value);
+        }
 
         public ConversationModel ConversationModel 
         {
@@ -78,8 +87,10 @@ namespace demo_158.MVVM.ViewModel
                 UserModelFromServer = _myInformationRepository.MyUserInfo;
                 _conversationsRepository.SuccessReceiveConversations += SuccessReceiveConversations;
                 _myMessagesRepository.MessageReceived += SuccessReceiveMessages;
-
+                _connection.OnStateChanged += OnStateChanged;
             }
+
+
 
             public ICommand OpenProfileCommand => openProfileCommand ?? new GeneralCommand((() =>
         {
@@ -97,6 +108,24 @@ namespace demo_158.MVVM.ViewModel
         {
             Application.Current.Windows.OfType<MainView>().FirstOrDefault()?.DragMove();
         }));
+        private void OnStateChanged(HubConnectionState obj)
+        {
+            switch (obj)
+            {
+                case HubConnectionState.Connecting:
+                    State = State.Connecting;
+                    break;
+                case HubConnectionState.Connected:
+                    State = State.Online;
+                    break;
+                case HubConnectionState.Disconnected:
+                    State = State.Offline;
+                    break;
+                case HubConnectionState.Reconnecting:
+                    State = State.Connecting;
+                    break;
+            }
+        }
         private void  OnSelectedConversationChangedAsync()
         {
             var messageView = _service.GetRequiredService<MessageAndTalkView>();

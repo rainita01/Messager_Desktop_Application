@@ -34,9 +34,9 @@ namespace demo_158
             await host.StartAsync();
 
             // Get ConnectionManager
-            var connectionManager = host.Services.GetRequiredService<ConnectionManager>();
+            var connectionManager = host.Services.GetService<ConnectionManager>();
             await connectionManager.StartAsync();
-            
+
             var myInfoListener = host.Services.GetRequiredService<MyInformationRepository>();
             await myInfoListener.StartAsync();
 
@@ -54,7 +54,9 @@ namespace demo_158
         }
         protected override void OnExit(ExitEventArgs e)
         {
-            
+         
+           var connection = ServiceProvider.GetService<ConnectionManager>();
+            connection.Close();
         }
         private void ServiceCollections(IServiceCollection service)
         {
@@ -73,6 +75,7 @@ namespace demo_158
             service.AddTransient<DefaultMessageView>();
 
             service.AddSingleton<ConnectionManager>();
+            service.AddHostedService<ReconnectManager>();
             service.AddSingleton(s =>
             {
                 return new HubConnectionBuilder()
@@ -83,9 +86,8 @@ namespace demo_158
 
             service.AddSingleton<MyInformationRepository>();
             service.AddSingleton<MyMessagesRepository>();
-            service.AddSingleton<ConnectionStateManager>();
             service.AddSingleton<MyConversationsRepository>();
-            service.AddHostedService<ConnectionStateManager>(sp => sp.GetRequiredService<ConnectionStateManager>());
+            
 
 
             service.AddTransient<ProfileView>();

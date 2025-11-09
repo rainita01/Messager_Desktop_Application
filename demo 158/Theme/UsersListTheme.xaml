@@ -41,7 +41,7 @@
                                 <TextBlock 
                                     Opacity="20"
                                     Margin="10 10 0 0 " 
-                                    Text="{Binding LastMessage}"
+                                    Text="{Binding LastMessage.Text}"
                                     FontSize="12" FontFamily="Arial" Foreground="Gray">
 
                                 </TextBlock>

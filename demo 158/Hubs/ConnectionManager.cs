@@ -1,30 +1,66 @@
-﻿using Microsoft.AspNetCore.SignalR.Client;
+﻿using demo_158.Base;
+using Microsoft.AspNetCore.SignalR.Client;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media.Animation;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace demo_158.Hubs
 {
-    public class ConnectionManager 
+    public class ConnectionManager :ViewModelBase
     {
         private readonly HubConnection _connection;
-
-
+        private HubConnectionState _connectionState;
+        public Action<HubConnectionState>? OnStateChanged;
+        public HubConnectionState ConnectionState
+        {
+            get => _connectionState;
+            set
+            {
+                if (SetField(ref _connectionState, value))
+                {
+                    OnStateChanged?.Invoke(ConnectionState);
+                }
+            }
+        }
         public ConnectionManager(HubConnection connection) : base()
         {
             _connection = connection;
+            _connection.Reconnecting += async (ex) =>
+            {
+                ConnectionState = HubConnectionState.Reconnecting;
+                await Task.CompletedTask;
+            };
 
+            _connection.Reconnected += async (id) =>
+            {
+                ConnectionState = HubConnectionState.Connected;
+                await Task.CompletedTask;
+            };
+
+            _connection.Closed += async (ex) =>
+            {
+                ConnectionState = HubConnectionState.Disconnected;
+              
+                await Task.CompletedTask;
+            };
+            
+            
         }
+        
+       
 
-        public HubConnectionState ConnectionState => _connection.State;
         public async Task StartAsync()
         {
             if (_connection.State == HubConnectionState.Disconnected)
                 await _connection.StartAsync();
+            ConnectionState = _connection.State;
         }
 
       
@@ -51,9 +87,6 @@ namespace demo_158.Hubs
                      });
                  });
              }));
-             
-             
-             
 
          }
 
@@ -80,5 +113,10 @@ namespace demo_158.Hubs
         }
 
       
+        public void Close()
+        {
+            _connection.StopAsync();
+        }
+
     }
 }
