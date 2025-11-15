@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="demo_158.MVVM.View.MessageAndTalkView"
+﻿<UserControl x:Class="demo_158.MVVM.View.ConversationView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -48,7 +48,7 @@
                              <VisualBrush>
                                  <VisualBrush.Visual>
                                      <Grid Background="White">
-                                            <Image Source="{Binding ContactUserInfo.ContactImage}" 
+                                            <Image Source="{Binding ContactUserModel.ContactImage}" 
                                                 Stretch="UniformToFill"/>
                                      </Grid>
                                  </VisualBrush.Visual>
@@ -58,7 +58,7 @@
 
                      <TextBlock 
                          Margin="5 0 0 15"
-                         Text="{Binding ContactUserInfo.ContactUsername}"
+                         Text="{Binding ContactUserModel.ContactUsername}"
                          FontSize="20"
                          Foreground="White"
               
@@ -67,8 +67,8 @@
                      
                          FontSize="9"
                          Margin="5 10 0 0 "
-                         Foreground="LightGray"
-                         Content="2025" 
+                         Foreground="DodgerBlue"
+                         Content="{Binding ContactState}" 
 
                      ></Label>
                         </StackPanel
@@ -88,6 +88,7 @@
                       ItemContainerStyle="{StaticResource MessagesListViewItemTheme}"
                       >
             </ListView>
+          
           <Border Grid.Row="2"
                 Background="WhiteSmoke"
                   CornerRadius="0 0  20 20"

@@ -1,13 +1,16 @@
 ﻿
 
+using demo_158.Base;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Media;
-using demo_158.Base;
+using System.Windows.Threading;
 using Color = System.Drawing.Color;
 
 namespace demo_158.MVVM.Model
@@ -18,6 +21,9 @@ namespace demo_158.MVVM.Model
         private string? _text;
         private byte[]? _o;
         private bool _isSeen;
+        private ICommand editMessageCommand;
+        private ICommand copyTextCommand;
+        private ICommand deleteMessageCommand;
         public int Id { get; set; }
         public int ConversationId { get; set; }
         public string SenderName
@@ -49,7 +55,19 @@ namespace demo_158.MVVM.Model
         public SolidColorBrush BackgroundColorBrush { get; set; }
         public bool FirstMessage { get; set; }
 
-       
+        public ICommand EditMessageCommand => editMessageCommand ?? new GeneralCommand(() =>
+        {
+            
+        });
+        public ICommand DeleteMessageCommand => deleteMessageCommand ?? new GeneralCommand(() =>
+        {
+
+
+        });
+        public ICommand CopyTextCommand => copyTextCommand ?? new GeneralCommand(() =>
+        {
+            Clipboard.SetDataObject(this.Text);
+        });
     }
     public class MessageModelFromUser
     {

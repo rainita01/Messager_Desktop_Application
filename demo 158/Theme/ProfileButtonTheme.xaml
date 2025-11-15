@@ -9,18 +9,26 @@
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
                     <Border
-
                         Height="35"
-                        Background="{TemplateBinding Background}">
+                        Background="{TemplateBinding Background}"
+                        CornerRadius="15 0 0 15"
+                        >
+                        
                         <StackPanel Orientation="Horizontal" >
-                            <Image Source="../Images/blue profile.png"
-                                   Margin="3 0 3 0 "
-                                   Width="35"
-                                   Height="35"
-                                   
-                                   ></Image>
-                              
+                            <Grid Margin="2 0 0 0" Width="35" Height="35">
+                                <Ellipse Fill="White"/>
+                                <Ellipse>
+                                    <Ellipse.Fill>
+                                        <ImageBrush
+                                            ImageSource="{Binding UserModelFromServer.Image}" 
+                          
+                                            Stretch="UniformToFill"/>
+                                    </Ellipse.Fill>
+                                </Ellipse>
+                            </Grid>
+
                             <ContentPresenter
+                                Margin="4 0 0 0"
                                 Content="{TemplateBinding Content}"
                                 VerticalAlignment="Center"
                                 HorizontalAlignment="Center"

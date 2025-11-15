@@ -4,38 +4,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using demo_158.Base;
+using demo_158.MVVM.Model;
 
 namespace demo_158.MVVM.ViewModel
 {
     public class ContactProfileViewModel :ViewModelBase
     {
-        private string _image;
-        private string _username;
-        private string _email;
-        private string? _bio;
+        private ContactUserModel _profile;
 
-        public string Image
+        public ContactUserModel Profile     
         {
-            get => _image;
-            set => SetField(ref _image, value);
-        }
-
-        public string Username
-        {
-            get => _username;
-            set => SetField(ref _username, value);
-        }
-
-        public string Email
-        {
-            get => _email;
-            set => SetField(ref _email, value);
-        }
-
-        public string? Bio
-        {
-            get => _bio;
-            set => SetField(ref _bio, value);
+            get => _profile;
+            set => SetField(ref _profile, value);
         }
     }
 }

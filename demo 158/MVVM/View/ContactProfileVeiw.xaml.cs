@@ -22,7 +22,7 @@ namespace demo_158.MVVM.View
     public partial class ContactProfileVeiw : Window
     {
         private readonly ContactProfileViewModel _viewModel;
-        public ProfileModel Profile { get; set; }
+        public ContactUserModel Profile { get; set; }
         public ContactProfileVeiw(ContactProfileViewModel viewModel)
         {
             _viewModel = viewModel;
@@ -32,9 +32,7 @@ namespace demo_158.MVVM.View
 
         protected override void OnActivated(EventArgs e)
         {
-            _viewModel.Username = Profile.Username;
-            _viewModel.Bio = Profile.Bio;
-            _viewModel.Email = Profile.Email;
+            _viewModel.Profile = Profile;
         }
         private void ProfileViewExitButton(object sender, RoutedEventArgs e)
         {

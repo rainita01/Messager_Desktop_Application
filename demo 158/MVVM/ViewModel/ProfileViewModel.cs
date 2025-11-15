@@ -1,8 +1,19 @@
 ﻿
+using System.IO;
+using System.Runtime.CompilerServices;
+using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using demo_158.Base;
 using demo_158.Hubs;
 using demo_158.MVVM.Model;
+using demo_158.Repository;
+using demo_158.Services;
+using demo_158.Services.Enums;
+using demo_158.Services.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Win32;
 using WebSocketSharp;
 
 
@@ -11,54 +22,72 @@ namespace demo_158.MVVM.ViewModel
    public class ProfileViewModel :ViewModelBase
     {
         private readonly ConnectionManager _connectionManager;
-
-        private string _username;
-        private string _email;
-        private string? _bio;
-        private int _id;
-        public EventHandler ProfileSuccessChange;
-        
+        private readonly MyInformationRepository _myInfoRepo;
+        private readonly IProfileServices _profileServices;
+        private readonly IServiceProvider _service;
+        private ICommand changeProfileImage;
         private readonly ICommand saveChanges;
+        private byte[] _image;
+        private UserModelFromServer? _myUserInfo;
 
-        public int Id
+        public EventHandler ProfileSuccessChange;
+
+        public byte[] Image
         {
-            get => _id;
-            set => SetField(ref _id, value);
+            get => _image;
+            set => SetField(ref _image, value);
         }
 
-        public string Username
+        public UserModelFromServer? MyUserInfo
         {
-            get => _username;
-            set => SetField(ref _username, value);
+            get => _myUserInfo;
+            set => SetField(ref _myUserInfo, value);
         }
 
-        public string Email
-        {
-            get => _email;
-            set => SetField(ref _email, value);
-        }
-
-        public string? Bio
-        {
-            get => _bio;
-            set => SetField(ref _bio, value);
-        }
-        public ProfileViewModel(ConnectionManager connectionManager)
+        public ProfileViewModel(ConnectionManager connectionManager,MyInformationRepository myInfoRepo,IProfileServices profileServices,IServiceProvider service)
         {
             _connectionManager = connectionManager;
+            _myInfoRepo = myInfoRepo;
+            _profileServices = profileServices;
+            _service = service;
+            MyUserInfo = _myInfoRepo.MyUserInfo;
+            Image = _myInfoRepo.MyUserInfo.Image;
             ChangeProfile();
         }
 
-        public ICommand SaveChanges => saveChanges ?? new GeneralCommand(async ()=>await ExecuteAction());
+        public ICommand SaveChanges => saveChanges ?? new GeneralCommand(async ()=>await SaveChangesExecuteAction());
 
-       private async Task ExecuteAction()
+        public ICommand ChangeProfileImage => changeProfileImage ?? new GeneralCommand(async () => await ChangeProfileImageExecute());
+
+        public async Task ChangeProfileImageExecute()
+        {
+            var openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Images (*.jpg;*.png)|*.jpg;*.png";
+            openFileDialog.Title = "Profile Image";
+            if (openFileDialog.ShowDialog() == true)
+            {
+                var filePath = openFileDialog.FileName;
+                var imageBytes = await File.ReadAllBytesAsync(filePath);
+
+                // ارسال تصویر به سرور
+                var imageSend = await _connectionManager.InvokeAsync("UploadProfileImage", imageBytes, MyUserInfo.Id);
+
+                if (imageSend == ServerAnswer.bad)
+                    return;
+                _myInfoRepo.MyUserInfo.Image = imageBytes;
+                Image = imageBytes;
+            }
+
+        }
+
+        private async Task SaveChangesExecuteAction()
        {
            var model = new ProfileEditModel()
            {
-               Bio = Bio,
-               Id = Id,
-               Email = Email,
-               Username = Username,
+               Bio = MyUserInfo?.BioCaption,
+               Id = MyUserInfo.Id,
+               Email = MyUserInfo.Email,
+               Username = MyUserInfo.Username,
            };
            await _connectionManager.SendAsync("ChangeProfile", model);
        }
@@ -66,9 +95,9 @@ namespace demo_158.MVVM.ViewModel
        private void  ChangeProfile()
        {
             _connectionManager.OnAsync<string>("ChangeProfile", submit =>
-            {
-                        ProfileSuccessChange.Invoke(this,EventArgs.Empty);
-            });
+             {
+                 ProfileSuccessChange.Invoke(this,EventArgs.Empty);
+             });
 
        }
     }

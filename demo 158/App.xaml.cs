@@ -62,12 +62,13 @@ namespace demo_158
         {
             service.AddTransient<IMessageServices,MessagesServices>();
             service.AddTransient<IConversationServices,ConversationServices>();
+            service.AddTransient<IProfileServices, ProfileServices>();
 
             service.AddTransient<MainLoginSignView>();
             service.AddTransient<LoginView>();
             service.AddTransient<SignView>();
             service.AddTransient<MainView>();
-            service.AddTransient<MessageAndTalkView>();
+            service.AddTransient<ConversationView>();
 
             service.AddTransient<ProfileViewModel>();
             service.AddTransient<LoginLoadingPage>();
@@ -97,9 +98,9 @@ namespace demo_158
             service.AddTransient<MainLoginSignViewModel>(); 
             service.AddSingleton<SharingDataViewModel>();
             service.AddTransient<ContactProfileViewModel>();
-            service.AddTransient<ProfileModel>();
-            service.AddTransient<ConversationModel>();
-            service.AddTransient<Func<ConversationModel>>(sp => () => sp.GetRequiredService<ConversationModel>());
+        
+            service.AddTransient<ConversationViewModel>();
+            service.AddTransient<Func<ConversationViewModel>>(sp => () => sp.GetRequiredService<ConversationViewModel>());
         }
     }
     

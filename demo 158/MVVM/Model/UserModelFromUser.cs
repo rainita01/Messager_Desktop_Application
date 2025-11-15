@@ -16,7 +16,7 @@ namespace demo_158.MVVM.Model
     }
     public class UserModelFromServer
     {
-        public int UserId { get; set; }
+        public int Id { get; set; }
         public string Username { get; set; }
         public string? BioCaption { get; set; }
         public byte[] Image { get; set; }

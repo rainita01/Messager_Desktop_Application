@@ -1,4 +1,5 @@
 ﻿using demo_158.Base;
+using demo_158.Services.Enums;
 using Microsoft.AspNetCore.SignalR.Client;
 using System;
 using System.Collections.Generic;
@@ -54,8 +55,6 @@ namespace demo_158.Hubs
             
         }
         
-       
-
         public async Task StartAsync()
         {
             if (_connection.State == HubConnectionState.Disconnected)
@@ -102,6 +101,16 @@ namespace demo_158.Hubs
             await _connection.SendAsync(methodName, obj1,obj2);
         }
 
+        public async Task<ServerAnswer> InvokeAsync<T>(string methodName, T obj)
+        {
+          return await _connection.InvokeAsync<ServerAnswer>(methodName, obj);
+           
+        }
+        public async Task<ServerAnswer> InvokeAsync<T1,T2>(string methodName, T1 obj,T2 obj2)
+        {
+            return await _connection.InvokeAsync<ServerAnswer>(methodName, obj,obj2);
+
+        }
         public async Task StopAsync()
         {
 

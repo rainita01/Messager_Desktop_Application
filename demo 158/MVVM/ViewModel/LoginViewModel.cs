@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Input;
 using demo_158.Hubs;
 using demo_158.Repository;
+using Microsoft.Win32;
 
 namespace demo_158.MVVM.ViewModel
 {
@@ -50,7 +51,7 @@ namespace demo_158.MVVM.ViewModel
             _service = service;
             _connection = connection;
             _myInformationRepository.SuccessLoginAction += SuccessLoginAction;
-       
+            
         }
 
         public ICommand LoginCommand => loginCommand ?? new GeneralCommand(async () => await LoginCommandExecuteActionAsync(),LoginCanExecute);
@@ -59,7 +60,7 @@ namespace demo_158.MVVM.ViewModel
         {
             var mainView = _service.GetService<MainView>();
             mainView?.Show();
-            ReceiveConversations(obj.UserId);
+            ReceiveConversations(obj.Id);
             Application.Current.Windows.OfType<MainLoginSignView>().FirstOrDefault()?.Close();
 
         }

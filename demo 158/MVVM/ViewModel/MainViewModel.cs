@@ -4,8 +4,10 @@ using demo_158.MVVM.View;
 using demo_158.MVVM.View.Model;
 using Microsoft.Extensions.DependencyInjection;
 using System.Collections.ObjectModel;
+using System.Security.Permissions;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
 using demo_158.Hubs;
 using demo_158.Repository;
 using demo_158.Services.Enums;
@@ -24,26 +26,29 @@ namespace demo_158.MVVM.ViewModel
         private readonly MyConversationsRepository _conversationsRepository;
         private readonly MyMessagesRepository _myMessagesRepository;
         private readonly IMessageServices _messagesServices;
+        private readonly IConversationServices _conversationServices;
         private ICommand moveAndDrugCommand;
         private ICommand openProfileCommand;
-        private ConversationModel _conversationModel;
+      
+        private ConversationViewModel _conversationViewModel;
         private UserModelFromServer _userModelFromServer;
-        private State _state;
+        private SolidColorBrush _cycleFillerBrush;
 
-        public ObservableCollection<ConversationModel>? Conversations { get; set; } = new();
+        public ObservableCollection<ConversationViewModel>? Conversations { get; set; } = new();
 
-        public State State
+
+        public SolidColorBrush CycleFillerBrush
         {
-            get => _state;
-            set => SetField(ref _state, value);
+            get => _cycleFillerBrush;
+            set => SetField(ref _cycleFillerBrush, value);
         }
 
-        public ConversationModel ConversationModel 
+        public ConversationViewModel ConversationViewModel 
         {
-            get => _conversationModel;
+            get => _conversationViewModel;
             set
             {
-                if (SetField(ref _conversationModel, value))
+                if (SetField(ref _conversationViewModel, value))
                 {
                     OnSelectedConversationChangedAsync();
                 }
@@ -71,6 +76,7 @@ namespace demo_158.MVVM.ViewModel
                 MyConversationsRepository conversationsRepository,
                 MyMessagesRepository myMessagesRepository,
                 IMessageServices messagesServices,
+                IConversationServices conversationServices,
                 IServiceProvider service
                 )
             {
@@ -79,30 +85,48 @@ namespace demo_158.MVVM.ViewModel
                 _conversationsRepository = conversationsRepository;
                 _myMessagesRepository = myMessagesRepository;
                 _messagesServices = messagesServices;
+                _conversationServices = conversationServices;
                 _service = service;
 
                 var userView = service.GetService<DefaultMessageView>();
                 CurrentView = userView;
 
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+
+                    switch (_connection.ConnectionState)
+                    {
+                        case HubConnectionState.Connecting:
+                            CycleFillerBrush = new SolidColorBrush(Colors.LightGoldenrodYellow);
+                            break;
+                        case HubConnectionState.Connected:
+                            CycleFillerBrush = new SolidColorBrush(Colors.Chartreuse);
+                            break;
+                        case HubConnectionState.Disconnected:
+                            CycleFillerBrush = new SolidColorBrush(Colors.OrangeRed);
+                            break;
+                        case HubConnectionState.Reconnecting:
+                            CycleFillerBrush = new SolidColorBrush(Colors.LightGoldenrodYellow);
+                            break;
+                    }
+
+                });
+                CheckUsersState();
                 UserModelFromServer = _myInformationRepository.MyUserInfo;
                 _conversationsRepository.SuccessReceiveConversations += SuccessReceiveConversations;
                 _myMessagesRepository.MessageReceived += SuccessReceiveMessages;
                 _connection.OnStateChanged += OnStateChanged;
             }
 
-
+            
 
             public ICommand OpenProfileCommand => openProfileCommand ?? new GeneralCommand((() =>
-        {
-            var profileView = _service.GetService<ProfileView>();
+             {
+                 var profileView = _service.GetService<ProfileView>();
 
-            if (profileView.User == null)
-            {
-                profileView.User = UserModelFromServer;
-            }
-            profileView.ShowDialog();
+                 profileView.ShowDialog();
           
-        }));
+              }));
 
         public ICommand MoveAndDrugCommand => moveAndDrugCommand ?? new GeneralCommand((() =>
         {
@@ -110,28 +134,36 @@ namespace demo_158.MVVM.ViewModel
         }));
         private void OnStateChanged(HubConnectionState obj)
         {
-            switch (obj)
+            Application.Current?.Dispatcher.Invoke(() =>
             {
-                case HubConnectionState.Connecting:
-                    State = State.Connecting;
-                    break;
-                case HubConnectionState.Connected:
-                    State = State.Online;
-                    break;
-                case HubConnectionState.Disconnected:
-                    State = State.Offline;
-                    break;
-                case HubConnectionState.Reconnecting:
-                    State = State.Connecting;
-                    break;
-            }
+
+                switch (obj)
+                {
+                    case HubConnectionState.Connecting:
+                        CycleFillerBrush = new SolidColorBrush(Colors.LightGoldenrodYellow);
+                        break;
+                    case HubConnectionState.Connected:
+                        CycleFillerBrush = new SolidColorBrush(Colors.Chartreuse);
+                        break;
+                    case HubConnectionState.Disconnected:
+                        CycleFillerBrush = new SolidColorBrush(Colors.OrangeRed);
+                        break;
+                    case HubConnectionState.Reconnecting:
+                        CycleFillerBrush = new SolidColorBrush(Colors.LightGoldenrodYellow);
+                        break;
+                }
+
+            });
+          
         }
+        // این خط برای وقتی هست که ی مکالمه رو انتخاب میکنیم
         private void  OnSelectedConversationChangedAsync()
         {
-            var messageView = _service.GetRequiredService<MessageAndTalkView>();
-            messageView.DataContext = ConversationModel;
+            var messageView = _service.GetRequiredService<ConversationView>();
+            messageView.DataContext = ConversationViewModel;
             CurrentView = messageView;
         }
+        // این کد برای اضافه کردن پیام ها بعد دریافته 
         private void SuccessReceiveMessages(MessageModelFromServer obj)
         {
             MessagesModel lastmessage;
@@ -154,38 +186,66 @@ namespace demo_158.MVVM.ViewModel
 
             });
         }
-
-        private void SuccessReceiveConversations(List<ConversationModel> obj)
+        // این دو  متد هم برای ضافه کردن مکالمه ها بعد از دریافته 
+        private void SuccessReceiveConversations(List<ConversationModelFromServer> obj)
         {
             Application.Current.Dispatcher.BeginInvoke(() =>
             {
-                foreach (var conversationModel in obj)
+                foreach (var conversationModelFromServer in obj)
                 {
-
-                    Conversations.Add(conversationModel);
-                    _connection.SendAsync("ReceiveMessages", conversationModel);
+                    var conversation = _conversationServices.ConversationModelMapping(conversationModelFromServer);
+                    if (conversationModelFromServer.ContactUserModel.State == State.Online)
+                    {
+                        conversation.ContactState = "Online";
+                    }
+                    else
+                    {
+                        conversation.ContactState =
+                            conversationModelFromServer.ContactUserModel.LastActiveTime.ToString("MM-dd HH:mm");
+                    }
+                    Conversations?.Add(conversation);
+                    _connection?.SendAsync("ReceiveMessages", conversationModelFromServer.Id);
                 }
 
             });
         }
-
-        private void AddToConversation(MessagesModel obj, ConversationModel conversation)
+        private void AddToConversation(MessagesModel obj, ConversationViewModel conversationView)
         {
-            if (conversation == null)
+            if (conversationView == null)
             {
                 throw new Exception("Conversation not found");
             }
 
             Application.Current.Dispatcher.Invoke(() =>
             {
-                conversation.Messages.Add(obj);
-                conversation.LastMessage = conversation.Messages.LastOrDefault();
+                conversationView.Messages.Add(obj);
+                conversationView.LastMessage = conversationView.Messages.LastOrDefault();
             });
         }
 
-        private void SortConversation()
+        private void CheckUsersState()
         {
-          
+            _connection.OnAsync<State, string>("CheckUsersState", (state, username) =>
+            {
+                var conversation = Conversations
+                    .FirstOrDefault(e => e.ContactUserModel.ContactUsername == username);
+
+                if (conversation == null)
+                    return;
+
+                switch (state)
+                {
+                    case State.Online:
+                        conversation.ContactState = "Online";
+                        break;
+
+                    case State.Offline:
+                        conversation.ContactState = DateTime.Now.ToString("MM-dd HH:mm");
+                        break;
+                }
+
+            });
+       
         }
     }
 }

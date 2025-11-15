@@ -4,7 +4,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:demo_158.MVVM.View"
-        xmlns:extensions="clr-namespace:demo_158.Base"
         xmlns:componentModel="clr-namespace:System.ComponentModel;assembly=WindowsBase"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
@@ -110,6 +109,7 @@
                             </Grid.RowDefinitions>
                             <Border
                                  Grid.Row="0"
+                                 Grid.RowSpan="2"
                                  Background="#4A7691  "
                                  Margin="0 20 0 0 "
                                  Width="35">
@@ -127,7 +127,7 @@
                                 <RadioButton 
                                    FontSize="16"
                                    Foreground="White"
-                                   Content="💬 All Chats"
+                                   Content="💬  All Chats"
                                    IsChecked="True"
                                    Style="{StaticResource RadioButtonStyle}"
 
@@ -170,13 +170,15 @@
                             </Border>
                             <Border
                                 Grid.Row="2"
-                                Margin="0 5 0 10"
+                                Margin="5 5 0 10"
+                                HorizontalAlignment="Left"
                                 >
-                                <TextBlock
-                                    Text="{Binding State}"
-                                    >
-
-                                </TextBlock>
+                                <Ellipse
+                                    Width="10"
+                                    Height="10"
+                                    Fill="{Binding CycleFillerBrush}"
+                                    Stroke="White" 
+                                    StrokeThickness="1"/>
                             </Border>
                    </Grid>
                      
@@ -200,7 +202,7 @@
                       >
 
                                     <ListView
-                                        SelectedItem="{Binding ConversationModel,Mode=TwoWay}"
+                                        SelectedItem="{Binding ConversationViewModel,Mode=TwoWay}"
                                         Name="ContactsList"
                                         ItemsSource="{Binding Conversations}"
                                         Style="{StaticResource ContactsListTheme}"

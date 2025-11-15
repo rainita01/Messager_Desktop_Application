@@ -6,8 +6,17 @@
 
       </Style>
     <Style x:Key="MessagesListViewItemTheme" TargetType="ListViewItem">
-        <Setter Property="HorizontalAlignment" Value="{Binding HorizontalAlignmentMessage}"></Setter> 
-     <Setter Property="Template" >
+        <Setter Property="HorizontalAlignment" Value="{Binding HorizontalAlignmentMessage}"></Setter>
+        <Setter Property="ContextMenu">
+            <Setter.Value>
+                <ContextMenu>
+                    <MenuItem Header="Copy 📄" Command="{Binding CopyTextCommand}" />
+                    <MenuItem Header="Edit 🖊"  Command="{Binding EditMessageCommand}" />
+                    <MenuItem Header="Delete 🗑" Command="{Binding DeleteMessageCommand}" />
+                </ContextMenu>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template" >
          <Setter.Value>
              <ControlTemplate TargetType="{x:Type ListViewItem}">
 

@@ -26,7 +26,7 @@ public class ReconnectManager (ConnectionManager connectionManager,MyInformation
 
             }
 
-            await Task.Delay(TimeSpan.FromSeconds(7),stoppingToken);
+            await Task.Delay(TimeSpan.FromSeconds(5),stoppingToken);
         }
 
 

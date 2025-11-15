@@ -1,10 +1,11 @@
-﻿using System.Windows;
-using System.Windows.Input;
-using demo_158.Base;
+﻿using demo_158.Base;
 using demo_158.Hubs;
 using demo_158.MVVM.View;
 using demo_158.Services.Enums;
 using Microsoft.AspNetCore.SignalR.Client;
+using System.Windows;
+using System.Windows.Input;
+using System.Windows.Media;
 
 namespace demo_158.MVVM.ViewModel
 {
@@ -15,7 +16,8 @@ namespace demo_158.MVVM.ViewModel
         private readonly LoginLoadingPage _loadingPage;
         private readonly ConnectionManager _connectionManager;
         private ICommand _signViewSwitch;
-        private State _state;
+        private ICommand _loginViewSwitch;
+        private SolidColorBrush _cycleFillerBrush;
         private object _currentView;
         public object CurrentView
         {
@@ -23,10 +25,10 @@ namespace demo_158.MVVM.ViewModel
             set => SetField(ref _currentView, value);
         }
 
-        public State State
+        public SolidColorBrush CycleFillerBrush
         {
-            get => _state;
-            set => SetField(ref _state, value);
+            get => _cycleFillerBrush;
+            set => SetField(ref _cycleFillerBrush, value);
         }
 
         public MainLoginSignViewModel(LoginView loginView,SignView signView,LoginLoadingPage loadingPage,ConnectionManager connectionManager)
@@ -44,21 +46,26 @@ namespace demo_158.MVVM.ViewModel
 
         private void OnStateChanged(HubConnectionState state)
         {
-            switch (state)
+            Application.Current?.Dispatcher.Invoke(() =>
             {
-                case HubConnectionState.Connecting:
-                    State = State.Connecting;
-                    break;
-                case HubConnectionState.Connected:
-                    State = State.Online;
-                    break;
-                case HubConnectionState.Disconnected:
-                    State = State.Offline;
-                    break;
-                case HubConnectionState.Reconnecting:
-                    State = State.Connecting;
-                    break;
-            }
+                
+                switch (state)
+                {
+                    case HubConnectionState.Connecting:
+                        CycleFillerBrush = new SolidColorBrush(Colors.LightGoldenrodYellow);
+                        break;
+                    case HubConnectionState.Connected:
+                        CycleFillerBrush = new SolidColorBrush(Colors.Chartreuse);
+                        break;
+                    case HubConnectionState.Disconnected:
+                        CycleFillerBrush = new SolidColorBrush(Colors.OrangeRed);
+                        break;
+                    case HubConnectionState.Reconnecting:
+                        CycleFillerBrush = new SolidColorBrush(Colors.LightGoldenrodYellow);
+                        break;
+                }
+            });
+
         }
 
 
@@ -74,7 +81,7 @@ namespace demo_158.MVVM.ViewModel
             CurrentView = _loadingPage;
         }
 
-        private ICommand _loginViewSwitch;
+       
         public ICommand LoginViewSwitch => _loginViewSwitch = new GeneralCommand(LoginViewExecute);
 
         private void LoginViewExecute()

@@ -13,8 +13,7 @@ namespace demo_158.Repository
         private readonly ConnectionManager _connectionManager;
         private readonly IConversationServices _conversationServices;
 
-        public Action<List<ConversationModel>> SuccessReceiveConversations { get; set; }
-        public List<ConversationModel> Conversations { get; set; } = new();
+        public Action<List<ConversationModelFromServer>> SuccessReceiveConversations { get; set; }
         public MyConversationsRepository(ConnectionManager connectionManager,IConversationServices conversationServices)
         {
             _connectionManager = connectionManager;
@@ -33,12 +32,7 @@ namespace demo_158.Repository
             {
                 try
                 {
-                    foreach (var conversation in ConversationsList)
-                    {
-                        Conversations.Add(_conversationServices.ConversationModelMapping(conversation));
-                    }
-
-                    SuccessReceiveConversations.Invoke(Conversations);
+                    SuccessReceiveConversations.Invoke(ConversationsList);
                 }
                 catch (Exception e)
                 {

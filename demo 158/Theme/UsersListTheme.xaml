@@ -11,7 +11,14 @@
     <Style x:Key="ContactsListItemTheme" TargetType="{x:Type ListViewItem}"
            xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
         <Setter Property="Cursor" Value="Hand" ></Setter>
-        
+        <Setter Property="ContextMenu">
+            <Setter.Value>
+                <ContextMenu>
+                    <MenuItem Header="Delete 🗑" Command="{Binding DeleteConversation}"></MenuItem>
+                    
+                </ContextMenu>
+            </Setter.Value>
+        </Setter>
         <Setter Property="Template">
 
             <Setter.Value>
@@ -26,7 +33,7 @@
                                 <Ellipse>
                                     <Ellipse.Fill>
                                         <ImageBrush
-                                            ImageSource="{Binding ContactUserInfo.ContactImage}" 
+                                            ImageSource="{Binding ContactUserModel.ContactImage}" 
                                                    
                                             Stretch="UniformToFill"/>
                                     </Ellipse.Fill>
@@ -35,7 +42,7 @@
                             <StackPanel >
                                 <TextBlock
                                     Margin="10 0 0 0"
-                                    Text="{Binding ContactUserInfo.ContactUsername}"
+                                    Text="{Binding ContactUserModel.ContactUsername}"
                                     VerticalAlignment="Top"
                                     FontSize="18"></TextBlock>
                                 <TextBlock 

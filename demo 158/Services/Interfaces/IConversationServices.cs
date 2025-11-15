@@ -9,7 +9,7 @@ namespace demo_158.Services.Interfaces
 {
     public interface IConversationServices
     {
-        ConversationModel ConversationModelMapping(ConversationModelFromServer obj); 
+        ConversationViewModel ConversationModelMapping(ConversationModelFromServer obj); 
        
     }
 }

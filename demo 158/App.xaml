@@ -17,6 +17,7 @@
                   <ResourceDictionary Source="Theme/MessagesListItemTheme.xaml"></ResourceDictionary>
                   <ResourceDictionary Source="Theme/ProfileSaveChangeButtonView.xaml"></ResourceDictionary>
                   <ResourceDictionary Source="Theme/ScrollbarTheme.xaml"></ResourceDictionary>
+                  <ResourceDictionary Source="Theme/ContextMenuTheme.xaml"></ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
             
 

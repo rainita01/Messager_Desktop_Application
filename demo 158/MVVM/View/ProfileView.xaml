@@ -59,30 +59,43 @@
       
          
            Grid.Row="1">
-           
-          <Ellipse 
-              HorizontalAlignment="Center"
-              Width="150"       
-              Height="145"
-               Stroke="LightCoral"
-              
-              StrokeDashCap="Round"
-              StrokeDashOffset="2"
-              StrokeStartLineCap="Flat"
-              >
-              <Ellipse.Fill >
-                  
-                  <VisualBrush  >
-                      <VisualBrush.Visual >
-                          <Grid Background="White" >
-                              <Image 
-                                  Stretch="UniformToFill"
-                                  Source="{Binding Image}"></Image>
-                          </Grid>
-                      </VisualBrush.Visual>
-                  </VisualBrush>
-              </Ellipse.Fill>
-          </Ellipse>
+           <StackPanel
+               Orientation="Horizontal"
+               HorizontalAlignment="Center"
+               >
+               <Ellipse 
+                   HorizontalAlignment="Center"
+                   Width="150"       
+                   Height="145"
+                   Stroke="LightGreen"
+      
+                   StrokeDashCap="Round"
+                   StrokeDashOffset="2"
+                   StrokeStartLineCap="Flat"
+               >
+                   <Ellipse.Fill >
+
+                       <VisualBrush  >
+                           <VisualBrush.Visual >
+                               <Grid Background="White" >
+                                   <Image 
+                                       Stretch="UniformToFill"
+                                       Name="ImageP"
+                                       Source="{Binding Image}"
+                                       ></Image>
+                               </Grid>
+                           </VisualBrush.Visual>
+                       </VisualBrush>
+                   </Ellipse.Fill>
+               </Ellipse>
+               <Button Height="20"
+                       Width="20"
+                       Margin="0 0 0 110"
+                       Content="c"
+                       Command="{Binding ChangeProfileImage}"
+                       ></Button>
+                </StackPanel>
+        
 
             </Border>
          <StackPanel
@@ -104,7 +117,7 @@
                   IsReadOnly="True"
                   Margin="0 0 17 0"
                   Width="250"
-                  Text="{Binding Username}"
+                  Text="{Binding MyUserInfo.Username}"
                   Height="30"
                   Style="{StaticResource LoginSignTextBoxTheme}"
               ></TextBox>
@@ -122,7 +135,7 @@
                      Name="Email"
                      Margin="0 0 17 0"
                      Width="250"
-                     Text="{Binding Email}"
+                     Text="{Binding MyUserInfo.Email}"
                      Height="30"
                      Style="{StaticResource LoginSignTextBoxTheme}"
                  ></TextBox>
@@ -140,7 +153,7 @@
                      Name="Bio"
                      Margin="0 0 17 0"
                      Width="250"
-                     Text="{Binding Bio}"
+                     Text="{Binding MyUserInfo.BioCaption}"
                      Height="70"
                      Style="{StaticResource LoginSignTextBoxTheme}"
                  ></TextBox>

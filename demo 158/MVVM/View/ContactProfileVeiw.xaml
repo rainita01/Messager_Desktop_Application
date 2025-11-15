@@ -76,7 +76,7 @@
                                 <Grid Background="White" >
                                     <Image 
                                   Stretch="UniformToFill"
-                                  Source="{Binding Image}"></Image>
+                                  Source="{Binding Profile.ContactImage}"></Image>
                                 </Grid>
                             </VisualBrush.Visual>
                         </VisualBrush>
@@ -103,7 +103,7 @@
                     IsReadOnly="True"
                     Margin="0 0 17 0"
                     Width="250"
-                    Text="{Binding Username}"
+                    Text="{Binding Profile.ContactUsername}"
                     Height="30"
                     Style="{StaticResource LoginSignTextBoxTheme}"
                 ></TextBox>
@@ -121,7 +121,7 @@
                     IsReadOnly="True"
                     Margin="0 0 17 0"
                     Width="250"
-                    Text="{Binding Email}"
+                    Text="{Binding Profile.Email}"
                     Height="30"
                     Style="{StaticResource LoginSignTextBoxTheme}"
                 ></TextBox>
@@ -139,7 +139,7 @@
                     IsReadOnly="True"
                     Margin="0 0 17 0"
                     Width="250"
-                    Text="{Binding Bio}"
+                    Text="{Binding Profile.Bio}"
                     Height="70"
                     Style="{StaticResource LoginSignTextBoxTheme}"
                 ></TextBox>
