@@ -174,13 +174,22 @@ namespace demo_158.MVVM.ViewModel
                 var conversation = Conversations?.FirstOrDefault(e => e.Id == obj.ConversationId);
                 if (conversation.Messages.Count > 0)
                 {
-                   lastmessage = conversation.Messages.Last();
+                   lastmessage = conversation.Messages.Last().Message;
                      message = _messagesServices.MessageModelMapping(obj, UserModelFromServer.Username, lastmessage.SenderName);
 
                 }
                 else
                 {
                      message = _messagesServices.MessageModelMapping(obj, UserModelFromServer.Username, null); 
+                }
+
+                if (message.SenderName == conversation.ContactUserModel.ContactUsername)
+                {
+                    message.Image = conversation.ContactUserModel.ContactImage;
+                }
+                else
+                {
+                    message.Image = _userModelFromServer.Image;
                 }
                 AddToConversation(message, conversation);
 
@@ -209,7 +218,7 @@ namespace demo_158.MVVM.ViewModel
 
             });
         }
-        private void AddToConversation(MessagesModel obj, ConversationViewModel conversationView)
+        private void AddToConversation(MessagesModel messageModel, ConversationViewModel conversationView)
         {
             if (conversationView == null)
             {
@@ -218,8 +227,13 @@ namespace demo_158.MVVM.ViewModel
 
             Application.Current.Dispatcher.Invoke(() =>
             {
-                conversationView.Messages.Add(obj);
-                conversationView.LastMessage = conversationView.Messages.LastOrDefault();
+                var messageViewModel = new MessageViewModel(_connection,_service)
+                {
+                    Message = messageModel,
+                    Username = _userModelFromServer.Username
+                };
+                conversationView.Messages.Add(messageViewModel);
+                conversationView.LastMessage = conversationView.Messages.LastOrDefault()?.Message;
             });
         }
 

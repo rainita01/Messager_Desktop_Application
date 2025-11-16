@@ -4,8 +4,11 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Input;
 using demo_158.MVVM.View;
+using demo_158.MVVM.ViewModel;
+using demo_158.Services.Enums;
 using demo_158.Services.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Identity.Client;
 
 
 namespace demo_158.MVVM.Model
@@ -21,10 +24,12 @@ namespace demo_158.MVVM.Model
         private ICommand _showUserContentCommand;
         private ICommand _sendMessageCommand;
         private ICommand _deleteConversation;
+        private ICommand openProfileCommand;
         private int _id;
         private string _text;
         private MessagesModel? _lastMessage;
         private string _contactState;
+       
 
         public int Id
         {
@@ -37,7 +42,7 @@ namespace demo_158.MVVM.Model
             set => SetField(ref _userModelFromServer, value);
         }
 
-        public ObservableCollection<MessagesModel> Messages { get; set; }
+        public ObservableCollection<MessageViewModel> Messages { get; set; }
 
         public ContactUserModel ContactUserModel
         {
@@ -67,9 +72,11 @@ namespace demo_158.MVVM.Model
             IServiceProvider service
             )
         {
+          
             _connection = connection;
             _messagesServices = messagesServices;
             _service = service;
+            MessageDeleted();
         }
         public ICommand ShowUserContentCommand => _showUserContentCommand ?? new GeneralCommand((ShowUserContentAction));
         public ICommand SendMessageCommand => _sendMessageCommand ??= new GeneralCommand(async () => await SendTextMessageExecuteAction());
@@ -92,13 +99,36 @@ namespace demo_158.MVVM.Model
                 UserId = UserModelFromServer.Id,
                 Username = UserModelFromServer.Username,
             };
-            var result = 
-                _messagesServices.MessageModelMapping(messageFromUser, UserModelFromServer.Username,this.Messages.OrderBy(e=>e.SentTime).LastOrDefault()?.SenderName);
+            var messageModel = 
+                _messagesServices.MessageModelMapping(messageFromUser, UserModelFromServer.Username,this.Messages.OrderBy(e=>e.Message.SentTime)?.LastOrDefault().Message.SenderName);
+            messageModel.Image = _userModelFromServer.Image;
+            
+            var messageViewModel = new MessageViewModel(_connection, _service)
+            {
+                Message = messageModel,
+                Username = UserModelFromServer.Username
+            };
+
             await _connection.SendAsync("SendMessageToPrivate", ContactUserModel.ContactUsername, messageFromUser);
-            Messages.Add(result);
-            LastMessage = Messages.LastOrDefault();
+            Messages.Add(messageViewModel);
+            LastMessage = Messages.LastOrDefault()?.Message;
             Text = String.Empty;
         }
+
+        public async Task MessageDeleted()
+        {
+            await _connection.OnAsync<ServerAnswer,int>("MessageDeleted", ((answer,msg) =>
+            {
+
+                if (answer == ServerAnswer.ok)
+                {
+                  var message =   Messages.FirstOrDefault(e => e.Message.Id == msg);
+                  Messages.Remove(message);
+                }
+            }));
+
+        }
+
         private void ShowUserContentAction()
         {
             var contactProfile = _service.GetRequiredService<ContactProfileVeiw>();

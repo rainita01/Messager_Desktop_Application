@@ -25,6 +25,7 @@ namespace demo_158.Services
         {
            var messageModel = new MessagesModel()
             {
+                Id = msg.Id,
                 SenderName = msg.Username,
                 SentTime = msg.SendDate,
                 HorizontalAlignmentMessage = SetHorizontalAlignment(username, msg.Username),
@@ -33,7 +34,7 @@ namespace demo_158.Services
                 FirstMessage =SetFirstMessage(lastMessageUsername, msg.Username),
                 MessageType = msg.MessageType,
                 Text = msg.Text,
-                Object = msg.Object
+              
             };  
             return messageModel;
         }
@@ -41,6 +42,7 @@ namespace demo_158.Services
         {
             var messageModel = new MessagesModel()
             {
+                Id = msg.Id,
                 SenderName = msg.Username,
                 SentTime = DateTime.Now,
                 HorizontalAlignmentMessage = SetHorizontalAlignment(username, msg.Username),
@@ -49,7 +51,7 @@ namespace demo_158.Services
                 FirstMessage = SetFirstMessage(lastMessageUsername, msg.Username),
                 MessageType = msg.MessageType,
                 Text = msg.Text,
-                Object = msg.Object
+              
             };
             return messageModel;
         }
