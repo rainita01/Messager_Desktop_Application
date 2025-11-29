@@ -22,7 +22,16 @@ namespace demo_158.MVVM.ViewModel
         private ICommand editMessageCommand;
         private ICommand deleteMessageCommand;
         private ICommand copyTextCommand;
-        public MessagesModel Message { get; set; }
+        private MessagesModel _message;
+        private ICommand openProfile;
+
+        public ContactUserModel UserModel { get; set; }
+        public MessagesModel Message
+        {
+            get => _message;
+            set => SetField(ref _message, value);
+        }
+
         public string Username { get; set; }
        public MessageViewModel(ConnectionManager connectionManager,IServiceProvider service)
        {
@@ -36,7 +45,7 @@ namespace demo_158.MVVM.ViewModel
        {
            if (Message.SenderName != Username)
            {
-               MessageBox.Show("U cannot delete another person message");
+               MessageBox.Show("U cannot Edit another person message");
                return;
            }
            var edit = _service.GetService<EditMessageView>();
@@ -64,5 +73,15 @@ namespace demo_158.MVVM.ViewModel
            Clipboard.SetDataObject(Message.Text);
            MessageBox.Show("copy");
        });
+
+       public ICommand OpenProfile => openProfile ?? new GeneralCommand(ShowUserProfile);
+
+       public void ShowUserProfile()
+       {
+           var profile = _service.GetRequiredService<ContactProfileVeiw>();
+           profile.Profile = UserModel;
+           profile.ShowDialog();
+
+       }
     }
 }

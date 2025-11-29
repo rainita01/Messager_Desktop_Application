@@ -1,15 +1,17 @@
 ﻿using demo_158.Base;
 using demo_158.Hubs;
 using demo_158.MVVM.Model;
+using Microsoft.EntityFrameworkCore.Query.Internal;
 using Microsoft.Extensions.Hosting;
 
 namespace demo_158.Repository
 {
-    public class MyInformationRepository 
+    public class MyInformationRepository :ViewModelBase 
     {
         private readonly ConnectionManager _connectionManager;
         private UserModelFromServer? _myUserInfo;
         public Action<byte[]>? ImageChanged;
+       
         public Action<UserModelFromServer> SuccessLoginAction { get; set; }
 
         public UserModelFromServer? MyUserInfo
@@ -20,13 +22,10 @@ namespace demo_158.Repository
                 if (_myUserInfo?.Image != value?.Image)
                 {
                     _myUserInfo = value;
-                    ImageChanged?.Invoke(_myUserInfo?.Image);
-                }
-                else
-                {
-                    _myUserInfo = value;
+                    ImageChanged?.Invoke(value.Image);
                 }
             }
+
         }
 
         public MyInformationRepository( ConnectionManager connectionManager)

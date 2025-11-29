@@ -62,6 +62,7 @@ namespace demo_158.MVVM.ViewModel
             mainView?.Show();
             ReceiveConversations(obj.Id);
             Application.Current.Windows.OfType<MainLoginSignView>().FirstOrDefault()?.Close();
+            
 
         }
         private async Task LoginCommandExecuteActionAsync()
@@ -85,5 +86,7 @@ namespace demo_158.MVVM.ViewModel
             await _connection.SendAsync("ReceiveConversations", userId);
         
         }
+
+    
     }
 }

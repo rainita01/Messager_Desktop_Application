@@ -1,0 +1,148 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:messageDataSelector="clr-namespace:demo_158.DataTemplateSelector.MessageDataSelector">
+
+
+    <!-- Template پیام من -->
+    <DataTemplate x:Key="MyMessageTemplate">
+        <StackPanel HorizontalAlignment="Right" Margin="0 0 3 1">
+            <Border Background="LightSkyBlue"
+                    CornerRadius="10"
+                    Padding="3"
+                    MaxWidth="250">
+              <StackPanel 
+                  Orientation="Vertical"
+                  >
+                  <TextBox Text="{Binding Message.Text}"
+                           TextWrapping="Wrap"
+                           FontSize="16"
+                           FontFamily="../Fonts/#Dirooz"
+                           MinHeight="25"
+                           MaxHeight="100"
+                           MinWidth="25"
+                           MaxWidth="200"
+                           Background="Transparent"
+                           BorderThickness="0"
+                           IsReadOnly="True"
+                           Cursor="IBeam"/>
+                  <Label 
+                      HorizontalAlignment="Left"
+                      Foreground="Gray"
+                      FontSize="11"
+                      Content="12:23"
+
+                  ></Label>
+                </StackPanel>
+            </Border>
+
+        </StackPanel>
+
+        <!-- Triggers -->
+        <DataTemplate.Triggers>
+            <DataTrigger Binding="{Binding Message.IsMessageEdited}" Value="True">
+                <!-- اگر خواستی می‌توانی Label "(edited)" اضافه کنی -->
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Message.IsSeen}" Value="True">
+                <!-- اگر خواستی SeenIcon اضافه کنی -->
+            </DataTrigger>
+        </DataTemplate.Triggers>
+    </DataTemplate>
+
+    <!-- ================== پیام طرف مقابل ================== -->
+    <DataTemplate x:Key="OtherMessageTemplate">
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="3 0 0 1" >
+            <Button 
+                Height="35"
+                Width="35"
+                Background="Transparent"
+                BorderThickness="0"
+                Padding="0"
+                Cursor="Hand"
+                Name="ProfilePic"
+                Focusable="False"
+                Command="{Binding OpenProfile}"
+                    >
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <ContentPresenter/>
+                    </ControlTemplate>
+                </Button.Template>
+                <!-- Ellipse با Clip روی خود Image -->
+                <Ellipse Height="35" Width="35">
+                    <Ellipse.Fill>
+                        <ImageBrush ImageSource="{Binding Message.Image}" Stretch="UniformToFill"/>
+                    </Ellipse.Fill>
+                </Ellipse>
+
+            </Button>
+
+
+            <StackPanel>
+                    <Label
+                        Name="SenderName"
+                        Content="{Binding Message.SenderName}"
+                        Foreground="Black"
+                        FontSize="18"
+                        VerticalAlignment="Center"
+                        />
+                    
+                <Border
+                    Margin="3 1 0 0"
+                         Padding="3"
+                        CornerRadius="10"
+                        VerticalAlignment="Center"
+                        Background="Gainsboro"
+                        Name="TextBorder"
+                        HorizontalAlignment="Left">
+                    <StackPanel Orientation="Vertical">
+                        <TextBox Text="{Binding Message.Text}"
+                                 TextWrapping="Wrap"
+                                 MinHeight="25"
+                                 MaxHeight="100"
+                                 MinWidth="25"
+                                 MaxWidth="200"
+                                 FontSize="16"
+                                 FontFamily="../Fonts/#Dirooz"
+                                 VerticalAlignment="Center"
+                                 HorizontalAlignment="Right"
+                                 Background="Transparent"
+                                 IsReadOnly="True"
+                                 BorderThickness="0"
+                                 Cursor="IBeam"/>
+                        <Label 
+                            HorizontalAlignment="Right"
+                            Foreground="Gray"
+                            FontSize="11"
+                            Content="12:24"
+
+                            ></Label>
+
+                    </StackPanel>
+                 
+                </Border>
+            </StackPanel>
+        </StackPanel>
+
+        <!-- Triggers -->
+        <DataTemplate.Triggers>
+            <!-- اگر پیام ویرایش شده -->
+            <DataTrigger Binding="{Binding Message.IsMessageEdited}" Value="True">
+                <!-- می‌توان Label "(edited)" اضافه کرد -->
+            </DataTrigger>
+
+            <!-- اگر پیام اول نباشد، عکس پروفایل مخفی -->
+            <DataTrigger Binding="{Binding Message.FirstMessage}" Value="true">
+                <Setter TargetName="ProfilePic" Property="Visibility" Value="Collapsed"/>
+                <Setter TargetName="SenderName" Property="Visibility" Value="Collapsed"></Setter>
+                <Setter TargetName="TextBorder" Property="Margin" Value="35 0 35 0"></Setter>
+            </DataTrigger>
+        </DataTemplate.Triggers>
+    </DataTemplate>
+
+    <!-- ================== TemplateSelector ================== -->
+    <messageDataSelector:MessageTemplate x:Key="MsgTemplateSelector"
+                                         MyTextMessageTemplate="{StaticResource MyMessageTemplate}"
+                                         OtherTextMessageTemplate="{StaticResource OtherMessageTemplate}" />
+
+</ResourceDictionary>
+

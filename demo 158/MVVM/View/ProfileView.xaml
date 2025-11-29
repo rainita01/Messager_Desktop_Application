@@ -68,7 +68,7 @@
                    Width="150"       
                    Height="145"
                    Stroke="LightGreen"
-      
+                    Margin="20 0 0 0"
                    StrokeDashCap="Round"
                    StrokeDashOffset="2"
                    StrokeStartLineCap="Flat"
@@ -88,11 +88,15 @@
                        </VisualBrush>
                    </Ellipse.Fill>
                </Ellipse>
-               <Button Height="20"
-                       Width="20"
-                       Margin="0 0 0 110"
-                       Content="c"
+               <Button Height="30"
+                       Width="30"
+                       Background="Transparent"
+                       Margin="0 0 1 110"
+                       Content="🔄"
+                       Foreground="OldLace"
+                       FontSize="15"
                        Command="{Binding ChangeProfileImage}"
+                       Style="{DynamicResource BaseButtonStyle}"
                        ></Button>
                 </StackPanel>
         

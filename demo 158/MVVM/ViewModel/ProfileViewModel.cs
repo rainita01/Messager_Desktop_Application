@@ -23,8 +23,6 @@ namespace demo_158.MVVM.ViewModel
     {
         private readonly ConnectionManager _connectionManager;
         private readonly MyInformationRepository _myInfoRepo;
-        private readonly IProfileServices _profileServices;
-        private readonly IServiceProvider _service;
         private ICommand changeProfileImage;
         private readonly ICommand saveChanges;
         private byte[] _image;
@@ -44,12 +42,10 @@ namespace demo_158.MVVM.ViewModel
             set => SetField(ref _myUserInfo, value);
         }
 
-        public ProfileViewModel(ConnectionManager connectionManager,MyInformationRepository myInfoRepo,IProfileServices profileServices,IServiceProvider service)
+        public ProfileViewModel(ConnectionManager connectionManager,MyInformationRepository myInfoRepo)
         {
             _connectionManager = connectionManager;
             _myInfoRepo = myInfoRepo;
-            _profileServices = profileServices;
-            _service = service;
             MyUserInfo = _myInfoRepo.MyUserInfo;
             Image = _myInfoRepo.MyUserInfo.Image;
             ChangeProfile();

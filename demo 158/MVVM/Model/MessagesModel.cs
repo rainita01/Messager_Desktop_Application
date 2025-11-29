@@ -21,8 +21,9 @@ namespace demo_158.MVVM.Model
     {
         private string _senderName;
         private string? _text;
-        private byte[]? _o;
+        private byte[]? _image;
         private bool _isSeen;
+        private DateTime _sentTime;
 
         public int Id { get; set; }
         public int ConversationId { get; set; }
@@ -40,8 +41,8 @@ namespace demo_158.MVVM.Model
 
         public byte[]? Image
         {   
-            get => _o;
-            set => SetField(ref _o, value);
+            get => _image;
+            set => SetField(ref _image, value);
         }
         public bool IsSeen
         {
@@ -49,11 +50,15 @@ namespace demo_158.MVVM.Model
             set => SetField(ref _isSeen, value);
         }
         public MessageTypes MessageType { get; set; }
-        public DateTime SentTime { get; set; }
-        public HorizontalAlignment HorizontalAlignmentMessage { get; set; }
-        public FlowDirection FlowDirectionMessage { get; set; }
-        public SolidColorBrush BackgroundColorBrush { get; set; }
+
+        public DateTime SentTime
+        {
+            get => _sentTime;
+            set => SetField(ref _sentTime, value);
+        }
         public bool FirstMessage { get; set; }
+        public bool IsMyMessage { get; set; }
+        public bool IsMessageEdited { get; set; }
 
      
     }

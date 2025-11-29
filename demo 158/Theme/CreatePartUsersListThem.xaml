@@ -1,0 +1,102 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+
+    <Style x:Key="CreatePartContactsListItemTheme" TargetType="{x:Type ListViewItem}"
+           xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+        <Setter Property="Cursor" Value="Hand" ></Setter>
+        <Setter Property="Template">
+
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ListViewItem}">
+                    <Border 
+                        Padding="3"
+                        BorderThickness="0"
+                        Background="{TemplateBinding Background}" >
+                        <StackPanel Orientation="Horizontal">
+                            <Grid Width="40" Height="40">
+                                <Ellipse Fill="White"/>
+                                <Ellipse>
+                                    <Ellipse.Fill>
+                                        <ImageBrush
+                                            ImageSource="{Binding ContactImage}" 
+                                            Stretch="UniformToFill"/>
+                                    </Ellipse.Fill>
+                                </Ellipse>
+                            </Grid>
+                            <StackPanel >
+                                <TextBlock
+                                    Margin="10 0 0 0"
+                                    Text="{Binding ContactUsername}"
+                                    VerticalAlignment="Top"
+                                    FontSize="18"></TextBlock>
+                                <TextBlock 
+                                    Opacity="20"
+                                    Margin="10 10 0 0 " 
+                                    Text="Tab to open Profile"
+                                    FontSize="12" FontFamily="Arial" Foreground="Gray">
+
+                                </TextBlock>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Background" Value="Transparent"></Setter>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="WhiteSmoke"></Setter>
+            </Trigger>
+            <Trigger Property="IsSelected" Value="True">
+                <Setter Property="Background" Value="LightBlue"></Setter>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+    <Style TargetType="Thumb">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Thumb}" >
+                    <Rectangle Width="{TemplateBinding Width}" Height="{TemplateBinding Height}" Fill="Gray"></Rectangle>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style TargetType="RepeatButton">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="RepeatButton">
+                    <Rectangle Height="{TemplateBinding Height}" Width="{TemplateBinding Width}"
+                               Fill="#252525">
+
+                    </Rectangle>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+
+    </Style>
+    <Style TargetType="ScrollBar">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Grid>
+                        <Track x:Name="PART_Track">
+                            <Track.DecreaseRepeatButton>
+                                <RepeatButton Command="{x:Static ScrollBar.PageUpCommand}"></RepeatButton>
+                            </Track.DecreaseRepeatButton>
+                            <Track.IncreaseRepeatButton >
+                                <RepeatButton Command="{x:Static ScrollBar.PageDownCommand}"></RepeatButton>
+                            </Track.IncreaseRepeatButton>
+                        </Track>
+                        <Track>
+                            <Track.Thumb>
+                                <Thumb></Thumb>
+                            </Track.Thumb>
+                        </Track>
+                    </Grid>
+
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

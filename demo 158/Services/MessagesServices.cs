@@ -28,10 +28,8 @@ namespace demo_158.Services
                 Id = msg.Id,
                 SenderName = msg.Username,
                 SentTime = msg.SendDate,
-                HorizontalAlignmentMessage = SetHorizontalAlignment(username, msg.Username),
-                FlowDirectionMessage = SetFlowDirectionMessage(username, msg.Username),
-                BackgroundColorBrush = SetBackGroundBrush(username, msg.Username),
-                FirstMessage =SetFirstMessage(lastMessageUsername, msg.Username),
+                IsMyMessage = IsUsernamesEqual(username, msg.Username),
+                FirstMessage = IsUsernamesEqual(lastMessageUsername, msg.Username),
                 MessageType = msg.MessageType,
                 Text = msg.Text,
               
@@ -45,10 +43,10 @@ namespace demo_158.Services
                 Id = msg.Id,
                 SenderName = msg.Username,
                 SentTime = DateTime.Now,
-                HorizontalAlignmentMessage = SetHorizontalAlignment(username, msg.Username),
-                FlowDirectionMessage =SetFlowDirectionMessage(username, msg.Username),
-                BackgroundColorBrush = SetBackGroundBrush(username, msg.Username),
-                FirstMessage = SetFirstMessage(lastMessageUsername, msg.Username),
+                IsSeen = msg.IsSeen,
+                IsMyMessage = IsUsernamesEqual(username,msg.Username),
+                FirstMessage = IsUsernamesEqual(lastMessageUsername, msg.Username),
+                Image = msg.Object,
                 MessageType = msg.MessageType,
                 Text = msg.Text,
               
@@ -82,14 +80,14 @@ namespace demo_158.Services
 
             return Brushes.LightSkyBlue;
         }
-        public bool SetFirstMessage(string? username, string? senderUsername)
+        public bool IsUsernamesEqual(string? myUsername, string? senderUsername)
         {
-            if (username == senderUsername)
+            if (myUsername == senderUsername)
             {
-                return false;
+                return true;   
             }
 
-            return true;
+            return false;
 
         }
     }

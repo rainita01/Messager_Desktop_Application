@@ -112,10 +112,10 @@
                                  Grid.RowSpan="2"
                                  Background="#4A7691  "
                                  Margin="0 20 0 0 "
-                                 Width="35">
+                                 Width="40">
                             <StackPanel >
                                 <Button
-                                    Margin="0 0 0 25"
+                                    Margin="0 0 0 10"
                                     Foreground="White"
                                     FontSize="16"
                                     Content="{Binding UserModelFromServer.Username}"
@@ -124,10 +124,33 @@
                       >
 
                                 </Button>
-                                <RadioButton 
+                                <Line
+                                    X1="0"
+                                    X2="150"
+                                    Stroke="LightBlue"
+                                    StrokeThickness="2"
+                                    Margin="0 0 0 10"
+                                ></Line>
+                                    <Button
+                                    Height="35"
+                                    Margin="0 0 0 10"
+                                    Style="{StaticResource AddButtonStyle}"
+                                    Command="{Binding  AddConversationCommand}"
+                                    >
+                                    
+
+                                </Button>
+                                <Line
+                                    X1="0"
+                                    X2="150"
+                                    Stroke="LightBlue"
+                                    StrokeThickness="2"
+                                    Margin="0 0 0 10"
+                                ></Line>
+                                    <RadioButton 
                                    FontSize="16"
                                    Foreground="White"
-                                   Content="💬  All Chats"
+                                   Content=" 💬  All Chats"
                                    IsChecked="True"
                                    Style="{StaticResource RadioButtonStyle}"
 
@@ -155,7 +178,7 @@
                                                 <BeginStoryboard>
                                                     <Storyboard>
                                                         <DoubleAnimation Storyboard.TargetProperty="(Border.Width)"
-                                           To="35"
+                                           To="40"
                                            Duration="0:0:.1"
                                                      />
                                                     </Storyboard>

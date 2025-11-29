@@ -70,11 +70,12 @@ namespace demo_158
             service.AddTransient<MainView>();
             service.AddTransient<ConversationView>();
             service.AddTransient<EditMessageView>();
-
-            service.AddTransient<ProfileViewModel>();
-            service.AddTransient<LoginLoadingPage>();
+            service.AddTransient<AddNewConversationView>();
+            service.AddTransient<ProfileView>();
+            service.AddTransient<LoginLoadingPageView>();
             service.AddTransient<ContactProfileVeiw>();
             service.AddTransient<DefaultMessageView>();
+            service.AddTransient<AddNewConverPageView>();
 
             service.AddSingleton<ConnectionManager>();
             service.AddHostedService<ReconnectManager>();
@@ -89,10 +90,11 @@ namespace demo_158
             service.AddSingleton<MyInformationRepository>();
             service.AddSingleton<MyMessagesRepository>();
             service.AddSingleton<MyConversationsRepository>();
-            
 
 
-            service.AddTransient<ProfileView>();
+
+
+            service.AddTransient<ProfileViewModel>();
             service.AddSingleton<MainViewModel>();
             service.AddTransient<SignViewModel>();
             service.AddTransient<LoginViewModel>();
@@ -100,9 +102,9 @@ namespace demo_158
             service.AddSingleton<SharingDataViewModel>();
             service.AddTransient<ContactProfileViewModel>();
             service.AddTransient<EditMessageViewModel>();
-
             service.AddTransient<ConversationViewModel>();
             service.AddTransient<Func<ConversationViewModel>>(sp => () => sp.GetRequiredService<ConversationViewModel>());
+            service.AddTransient<AddNewConversationViewModel>();
         }
     }
     

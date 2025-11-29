@@ -11,9 +11,17 @@ public class ReconnectManager (ConnectionManager connectionManager,MyInformation
     {
         while (!stoppingToken.IsCancellationRequested)
         {
-            if (connectionManager.ConnectionState == HubConnectionState.Disconnected )
+            if (connectionManager.ConnectionState == HubConnectionState.Connected)
             {
-                await connectionManager.StartAsync();
+             
+                await Task.Delay(TimeSpan.FromSeconds(7), CancellationToken.None);
+                continue;
+            }
+
+            try
+            {
+                var startTask =  connectionManager.StartAsync();
+                await Task.WhenAny(startTask, Task.Delay(5000, stoppingToken));
                 if (connectionManager.ConnectionState == HubConnectionState.Connected && inforepRepository.MyUserInfo != null)
                 {
                     var user = new UserModelFromUser()
@@ -23,10 +31,13 @@ public class ReconnectManager (ConnectionManager connectionManager,MyInformation
 
                     await connectionManager.SendAsync("ReconnectRequest", user);
                 }
-
             }
+            catch (Exception e)
+            {
+                await Task.Delay(TimeSpan.FromSeconds(7), stoppingToken);
+            }
+           
 
-            await Task.Delay(TimeSpan.FromSeconds(5),stoppingToken);
         }
 
 

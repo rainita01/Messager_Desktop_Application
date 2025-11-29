@@ -33,6 +33,7 @@ namespace demo_158.MVVM.ViewModel
         private ConversationViewModel _conversationViewModel;
         private UserModelFromServer _userModelFromServer;
         private SolidColorBrush _cycleFillerBrush;
+        private ICommand addConversationCommand;
 
         public ObservableCollection<ConversationViewModel>? Conversations { get; set; } = new();
 
@@ -107,6 +108,7 @@ namespace demo_158.MVVM.ViewModel
                             break;
                         case HubConnectionState.Reconnecting:
                             CycleFillerBrush = new SolidColorBrush(Colors.LightGoldenrodYellow);
+                            
                             break;
                     }
 
@@ -115,10 +117,15 @@ namespace demo_158.MVVM.ViewModel
                 UserModelFromServer = _myInformationRepository.MyUserInfo;
                 _conversationsRepository.SuccessReceiveConversations += SuccessReceiveConversations;
                 _myMessagesRepository.MessageReceived += SuccessReceiveMessages;
+                _myInformationRepository.ImageChanged += ImageChanged;
                 _connection.OnStateChanged += OnStateChanged;
             }
 
-            
+            private void ImageChanged(byte[] obj)
+            {
+                this.UserModelFromServer.Image = _myInformationRepository.MyUserInfo.Image;
+            }
+
 
             public ICommand OpenProfileCommand => openProfileCommand ?? new GeneralCommand((() =>
              {
@@ -126,6 +133,13 @@ namespace demo_158.MVVM.ViewModel
 
                  profileView.ShowDialog();
           
+              }));
+
+              public ICommand AddConversationCommand => addConversationCommand ?? new GeneralCommand((async () =>
+              {
+                  var addView = _service.GetRequiredService<AddNewConversationView>();
+                  await _connection.SendAsync("AskUsers", UserModelFromServer.Id);
+                  addView.ShowDialog();
               }));
 
         public ICommand MoveAndDrugCommand => moveAndDrugCommand ?? new GeneralCommand((() =>
@@ -218,9 +232,9 @@ namespace demo_158.MVVM.ViewModel
 
             });
         }
-        private void AddToConversation(MessagesModel messageModel, ConversationViewModel conversationView)
+        private void AddToConversation(MessagesModel messageModel, ConversationViewModel conversationViewModel)
         {
-            if (conversationView == null)
+            if (conversationViewModel == null)
             {
                 throw new Exception("Conversation not found");
             }
@@ -230,10 +244,11 @@ namespace demo_158.MVVM.ViewModel
                 var messageViewModel = new MessageViewModel(_connection,_service)
                 {
                     Message = messageModel,
-                    Username = _userModelFromServer.Username
+                    Username = _userModelFromServer.Username,
+                    UserModel = conversationViewModel.ContactUserModel
                 };
-                conversationView.Messages.Add(messageViewModel);
-                conversationView.LastMessage = conversationView.Messages.LastOrDefault()?.Message;
+                conversationViewModel.Messages.Add(messageViewModel);
+                conversationViewModel.LastMessage = conversationViewModel.Messages.LastOrDefault()?.Message;
             });
         }
 

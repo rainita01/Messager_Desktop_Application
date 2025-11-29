@@ -1,7 +1,9 @@
 ﻿<Application x:Class="demo_158.App"
+             
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:extensions="clr-namespace:demo_158.Base"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:messageDataSelector="clr-namespace:demo_158.DataTemplateSelector.MessageDataSelector">
     <Application.Resources>
           <ResourceDictionary>
               <ResourceDictionary.MergedDictionaries >
@@ -14,15 +16,20 @@
                   <ResourceDictionary Source="Theme/RadioButtonStyle.xaml"></ResourceDictionary>
                   <ResourceDictionary Source="Theme/ProfileButtonTheme.xaml"></ResourceDictionary>
                   <ResourceDictionary Source="Theme/SenderButtonTheme.xaml"></ResourceDictionary>
-                  <ResourceDictionary Source="Theme/MessagesListItemTheme.xaml"></ResourceDictionary>
+                 
                   <ResourceDictionary Source="Theme/ProfileSaveChangeButtonView.xaml"></ResourceDictionary>
                   <ResourceDictionary Source="Theme/ScrollbarTheme.xaml"></ResourceDictionary>
                   <ResourceDictionary Source="Theme/ContextMenuTheme.xaml"></ResourceDictionary>
                   <ResourceDictionary Source="Theme/ButtonEditMessage.xaml"></ResourceDictionary>
+                  <ResourceDictionary Source="DataTemplateSelector/MessageDataSelector/MessageTemplateResourceDic.xaml"></ResourceDictionary>
+                  <ResourceDictionary Source="Theme/AddButtonStyle.xaml"></ResourceDictionary>
+                  <ResourceDictionary Source="Theme/CreatePartUsersListThem.xaml"></ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
             
 
         </ResourceDictionary>
-       
+
+
     </Application.Resources>
+
 </Application>

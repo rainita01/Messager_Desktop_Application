@@ -51,6 +51,7 @@ namespace demo_158.MVVM.View
         private void TopHideButtonClick(object sender, RoutedEventArgs e)
         {
             this.WindowState = WindowState.Minimized;
+            
         }
 
         private void NormalizeMaximizeWindowClick(object sender, RoutedEventArgs e)

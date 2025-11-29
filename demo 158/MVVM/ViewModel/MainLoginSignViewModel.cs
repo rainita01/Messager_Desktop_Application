@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.SignalR.Client;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace demo_158.MVVM.ViewModel
 {
@@ -13,8 +14,9 @@ namespace demo_158.MVVM.ViewModel
     {
         private readonly LoginView _loginView;
         private readonly SignView _signView;
-        private readonly LoginLoadingPage _loadingPage;
+        private readonly LoginLoadingPageView _loadingPageView;
         private readonly ConnectionManager _connectionManager;
+        private readonly IServiceProvider _service;
         private ICommand _signViewSwitch;
         private ICommand _loginViewSwitch;
         private SolidColorBrush _cycleFillerBrush;
@@ -31,15 +33,17 @@ namespace demo_158.MVVM.ViewModel
             set => SetField(ref _cycleFillerBrush, value);
         }
 
-        public MainLoginSignViewModel(LoginView loginView,SignView signView,LoginLoadingPage loadingPage,ConnectionManager connectionManager)
+        public MainLoginSignViewModel(LoginView loginView,SignView signView,LoginLoadingPageView loadingPageView,ConnectionManager connectionManager,IServiceProvider service)
         {
             
             _loginView = loginView;
             _signView = signView;
-            _loadingPage = loadingPage;
+            _loadingPageView = loadingPageView;
             _connectionManager = connectionManager;
+            _service = service;
             _connectionManager.OnStateChanged += OnStateChanged;
             _currentView = _loginView;
+            OnErrorLogin();
             SharingDataViewModel.Instance.CurrenViewChanged += CurrenViewChanged;
             SharingDataViewModel.Instance.CurrentViewErrorChanged += CurrentViewErrorChanged;
         }
@@ -78,7 +82,7 @@ namespace demo_158.MVVM.ViewModel
 
         private void CurrenViewChanged(object? sender, EventArgs e)
         {
-            CurrentView = _loadingPage;
+            CurrentView = _loadingPageView;
         }
 
        
@@ -96,6 +100,15 @@ namespace demo_158.MVVM.ViewModel
         private void SignViewExecute()
         {
             CurrentView = _signView;
+        }
+        public void OnErrorLogin()
+        {
+
+            _connectionManager.On<string>("OnErrorLogin", (methodError) =>
+            {
+                SharingDataViewModel.Instance.CurrentViewErrorChanged.Invoke(this,EventArgs.Empty);
+                MessageBox.Show($"Could not Login {methodError}");
+            });
         }
     }
 }

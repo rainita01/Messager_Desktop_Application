@@ -10,21 +10,30 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
+using demo_158.MVVM.ViewModel;
 
 namespace demo_158.MVVM.View
 {
     /// <summary>
-    /// Interaction logic for LoginLoadingPage.xaml
+    /// Interaction logic for AddNewConversationView.xaml
     /// </summary>
-    public partial class LoginLoadingPage : UserControl
+    public partial class AddNewConversationView : Window
     {
-        public LoginLoadingPage()
+        private readonly AddNewConversationViewModel _viewModel;
+
+        public AddNewConversationView(AddNewConversationViewModel viewModel)
         {
             InitializeComponent();
+            _viewModel = viewModel;
+            DataContext = _viewModel;
+           
+
         }
 
-       
+        private void ExitButon(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
     }
 }

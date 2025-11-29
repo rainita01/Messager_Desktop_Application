@@ -1,0 +1,77 @@
+﻿<Page x:Class="demo_158.MVVM.View.AddNewConverPageView"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:demo_158.MVVM.View"
+      mc:Ignorable="d" 
+      d:DesignHeight="700" d:DesignWidth="280"
+      Title="AddNewConverPageView">
+
+    <Border
+        Background="#4A7691"
+        CornerRadius="10"
+    >
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30"></RowDefinition>
+                <RowDefinition Height="100"></RowDefinition>
+                <RowDefinition></RowDefinition>
+            </Grid.RowDefinitions>
+            <Border 
+                Grid.Row="0"
+
+            >
+                <Button 
+                    Width="35"
+                    HorizontalAlignment="Left"
+                    Content="⬅️"
+
+                    Style="{DynamicResource TopToolsButtonThem}"
+                ></Button>
+
+            </Border>
+            <Border Grid.Row="0" 
+                    Margin="5"
+            ></Border>
+            <Line 
+                Grid.Row="2"
+                X1="10"
+                X2="260"
+                Stroke="AliceBlue"
+            ></Line>
+            <Border
+                Margin="5 5 5 5"
+                Grid.Row="1">
+                <StackPanel>
+
+                    <TextBox
+                        Style="{DynamicResource SearchTextBox}"
+                    ></TextBox>
+                    <Button
+                        Margin="10"
+                        Width="150"
+                        Height="35"
+                        Content="Create Group"
+                        Style="{DynamicResource LoginButtonTheme}"
+                    ></Button>
+                </StackPanel>
+
+
+            </Border>
+            <Border Grid.Row="2"
+                    Background="Transparent"
+            >
+                <ListView
+                    Margin="5"
+                    BorderThickness="0"
+                    Background="WhiteSmoke"
+                    ItemsSource="{Binding Users}"
+                    ItemContainerStyle="{StaticResource CreatePartContactsListItemTheme}"
+                    
+                ></ListView>
+            </Border>
+        </Grid>
+
+    </Border>
+</Page>

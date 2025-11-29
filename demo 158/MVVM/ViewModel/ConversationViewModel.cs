@@ -25,12 +25,11 @@ namespace demo_158.MVVM.Model
         private ICommand _sendMessageCommand;
         private ICommand _deleteConversation;
         private ICommand openProfileCommand;
-        private int _id;
         private string _text;
         private MessagesModel? _lastMessage;
         private string _contactState;
-       
 
+        private int _id;
         public int Id
         {
             get => _id;
@@ -77,6 +76,7 @@ namespace demo_158.MVVM.Model
             _messagesServices = messagesServices;
             _service = service;
             MessageDeleted();
+            MessageEdited();
         }
         public ICommand ShowUserContentCommand => _showUserContentCommand ?? new GeneralCommand((ShowUserContentAction));
         public ICommand SendMessageCommand => _sendMessageCommand ??= new GeneralCommand(async () => await SendTextMessageExecuteAction());
@@ -98,22 +98,24 @@ namespace demo_158.MVVM.Model
                 Object = null,
                 UserId = UserModelFromServer.Id,
                 Username = UserModelFromServer.Username,
+                
             };
-            var messageModel = 
-                _messagesServices.MessageModelMapping(messageFromUser, UserModelFromServer.Username,this.Messages.OrderBy(e=>e.Message.SentTime)?.LastOrDefault().Message.SenderName);
+            var messageModel = _messagesServices.MessageModelMapping(messageFromUser, UserModelFromServer.Username,this.Messages.OrderBy(e=>e.Message.SentTime)?.LastOrDefault().Message.SenderName);
             messageModel.Image = _userModelFromServer.Image;
-            
             var messageViewModel = new MessageViewModel(_connection, _service)
             {
                 Message = messageModel,
-                Username = UserModelFromServer.Username
+                Username = UserModelFromServer.Username,
+                UserModel = ContactUserModel
             };
-
-            await _connection.SendAsync("SendMessageToPrivate", ContactUserModel.ContactUsername, messageFromUser);
+            messageViewModel.Message.Id = 
+                await _connection.InvokeAsync<string, MessageModelFromUser, int>("SendMessageToPrivate", ContactUserModel.ContactUsername, messageFromUser);
+            
             Messages.Add(messageViewModel);
             LastMessage = Messages.LastOrDefault()?.Message;
             Text = String.Empty;
         }
+
 
         public async Task MessageDeleted()
         {
@@ -124,11 +126,26 @@ namespace demo_158.MVVM.Model
                 {
                   var message =   Messages.FirstOrDefault(e => e.Message.Id == msg);
                   Messages.Remove(message);
+                  LastMessage = Messages.LastOrDefault()?.Message;
                 }
             }));
 
         }
 
+        public async Task MessageEdited()
+        {
+            await _connection.OnAsync<ServerAnswer,string,int>("MessageEdited", ((answer, Text, id) =>
+            {
+                if (answer == ServerAnswer.ok)
+                {
+                    var message = Messages.FirstOrDefault(e => e.Message.Id == id);
+                    if (message != null)
+                    {
+                        message.Message.Text = Text;
+                    }
+                }
+            }));
+        }
         private void ShowUserContentAction()
         {
             var contactProfile = _service.GetRequiredService<ContactProfileVeiw>();

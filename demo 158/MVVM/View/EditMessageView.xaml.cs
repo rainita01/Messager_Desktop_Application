@@ -41,7 +41,7 @@ namespace demo_158.MVVM.View
 
         private  void SaveChanges(object sender, RoutedEventArgs e)
         {
-            _connectionManager.SendAsync("ChangeMessageText", Text.Text, MessageId);
+            _connectionManager.SendAsync("EditMessage", Text.Text, MessageId);
             this.Close();
         }
 

@@ -17,9 +17,9 @@
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="1*"></RowDefinition>
-                <RowDefinition Height="3*"></RowDefinition>
+                <RowDefinition Height="3.5*"></RowDefinition>
                 <RowDefinition Height="5*"></RowDefinition>
-                <RowDefinition Height="Auto"></RowDefinition>
+                
             </Grid.RowDefinitions>
 
             <Border
@@ -54,34 +54,45 @@
 
             </Border>
             <Border
+
           CornerRadius="50"
       
          
            Grid.Row="1">
+                <StackPanel>
 
-                <Ellipse 
-              HorizontalAlignment="Center"
-              Width="150"       
-              Height="145"
-               Stroke="LightCoral"
-              
-              StrokeDashCap="Round"
-              StrokeDashOffset="2"
-              StrokeStartLineCap="Flat"
-              >
-                    <Ellipse.Fill >
+                    <Ellipse 
+                        HorizontalAlignment="Center"
+                        Width="150"       
+                        Height="145"
+                        Stroke="LightBlue"
 
-                        <VisualBrush  >
-                            <VisualBrush.Visual >
-                                <Grid Background="White" >
-                                    <Image 
-                                  Stretch="UniformToFill"
-                                  Source="{Binding Profile.ContactImage}"></Image>
-                                </Grid>
-                            </VisualBrush.Visual>
-                        </VisualBrush>
-                    </Ellipse.Fill>
-                </Ellipse>
+                        StrokeDashCap="Round"
+                        StrokeDashOffset="2"
+                        StrokeStartLineCap="Flat"
+                    >
+                        <Ellipse.Fill >
+
+                            <VisualBrush  >
+                                <VisualBrush.Visual >
+                                    <Grid Background="White" >
+                                        <Image 
+                                            Stretch="UniformToFill"
+                                            Source="{Binding Profile.ContactImage}"></Image>
+                                    </Grid>
+                                </VisualBrush.Visual>
+                            </VisualBrush>
+                        </Ellipse.Fill>
+                    </Ellipse>
+                    <Button 
+                        Content="💬"
+                        Background="Transparent"
+                        Height="25"
+                        Width="35"
+                        Style="{DynamicResource BaseButtonStyle}"
+                        ></Button>
+                </StackPanel>
+               
 
             </Border>
             <StackPanel
@@ -143,11 +154,6 @@
                     Height="70"
                     Style="{StaticResource LoginSignTextBoxTheme}"
                 ></TextBox>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" Margin="50 0 50 0" Grid.Row="3">
-                <RadioButton Content="Videos"></RadioButton>
-                <RadioButton Content="Audio"></RadioButton>
-                <RadioButton Content="Picture"></RadioButton>
             </StackPanel>
         </Grid>
        
