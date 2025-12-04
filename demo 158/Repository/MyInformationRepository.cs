@@ -9,21 +9,23 @@ namespace demo_158.Repository
     public class MyInformationRepository :ViewModelBase 
     {
         private readonly ConnectionManager _connectionManager;
-        private UserModelFromServer? _myUserInfo;
+        private UserModelFromServer _myUserInfo;
         public Action<byte[]>? ImageChanged;
        
         public Action<UserModelFromServer> SuccessLoginAction { get; set; }
 
-        public UserModelFromServer? MyUserInfo
+        public UserModelFromServer MyUserInfo
         {
             get => _myUserInfo;
             set
             {
+                _myUserInfo = value;
                 if (_myUserInfo?.Image != value?.Image)
                 {
                     _myUserInfo = value;
                     ImageChanged?.Invoke(value.Image);
                 }
+                OnPropertyChanged();
             }
 
         }

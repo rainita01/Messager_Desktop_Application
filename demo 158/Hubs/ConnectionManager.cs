@@ -124,6 +124,17 @@ namespace demo_158.Hubs
              });
 
         }
+         public void On<T1, T2,T3>(string methodName, Action<T1, T2,T3> handler)
+         {
+             _connection.On<T1, T2,T3>(methodName, (data1, data2,data3) =>
+             {
+                 Application.Current.Dispatcher.Invoke(() =>
+                 {
+                     handler(data1, data2,data3);
+                 });
+             });
+
+         }
         public async Task SendAsync<T>(string methodName,T obj)
          {
 
@@ -135,7 +146,11 @@ namespace demo_158.Hubs
 
             await _connection.SendAsync(methodName, obj1,obj2);
         }
+        public async Task SendAsync<T1, T2,T3>(string methodName, T1 obj1, T2 obj2,T3 obj3)
+        {
 
+            await _connection.SendAsync(methodName, obj1, obj2,obj3);
+        }
         public async Task<ServerAnswer> InvokeAsync<T>(string methodName, T obj)
         {
           return await _connection.InvokeAsync<ServerAnswer>(methodName, obj);

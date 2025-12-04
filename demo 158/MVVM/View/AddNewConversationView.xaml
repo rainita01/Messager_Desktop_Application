@@ -72,7 +72,7 @@
                         Background="WhiteSmoke"
                         ItemsSource="{Binding Users}"
                         ItemContainerStyle="{StaticResource CreatePartContactsListItemTheme}"
-                        
+                        SelectedItem="{Binding SelectedUser,Mode=TwoWay}"
                         ></ListView>
                 </Border>
         </Grid>

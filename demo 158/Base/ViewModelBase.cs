@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using System.Windows.Data;
 
 namespace demo_158.Base
-{ public class ViewModelBase : INotifyPropertyChanged
+{ public class ViewModelBase : INotifyPropertyChanged ,IDisposable
     {
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -30,6 +30,10 @@ namespace demo_158.Base
             field = value;
             
             PropertyChanged?.Invoke(this,new PropertyChangedEventArgs(propertyName));
+        }
+
+        public void Dispose()
+        { 
         }
     }
 }

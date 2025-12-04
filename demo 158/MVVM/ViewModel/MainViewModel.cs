@@ -1,18 +1,19 @@
-﻿using demo_158.Base;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using demo_158.Base;
+using demo_158.Hubs;
 using demo_158.MVVM.Model;
 using demo_158.MVVM.View;
 using demo_158.MVVM.View.Model;
-using Microsoft.Extensions.DependencyInjection;
-using System.Collections.ObjectModel;
-using System.Security.Permissions;
-using System.Windows;
-using System.Windows.Input;
-using System.Windows.Media;
-using demo_158.Hubs;
 using demo_158.Repository;
 using demo_158.Services.Enums;
 using demo_158.Services.Interfaces;
 using Microsoft.AspNetCore.SignalR.Client;
+using Microsoft.Extensions.DependencyInjection;
+using System.Collections.ObjectModel;
+using System.Windows;
+using System.Windows.Input;
+using System.Windows.Media;
+using demo_158.EventsPublish;
 
 namespace demo_158.MVVM.ViewModel
 {
@@ -89,8 +90,8 @@ namespace demo_158.MVVM.ViewModel
                 _conversationServices = conversationServices;
                 _service = service;
 
-                var userView = service.GetService<DefaultMessageView>();
-                CurrentView = userView;
+                var defaultMessageView = service.GetService<DefaultMessageView>();
+                CurrentView = defaultMessageView;
 
                 Application.Current.Dispatcher.Invoke(() =>
                 {
@@ -115,13 +116,75 @@ namespace demo_158.MVVM.ViewModel
                 });
                 CheckUsersState();
                 UserModelFromServer = _myInformationRepository.MyUserInfo;
+                // این برای وقتیه که میخوایم مکالمه بریم حالا جدید یا قدیمیش
+                WeakReferenceMessenger.Default.Register<CreateNewConversationEvent>(this, (r, m) => {
+                var value = m.Value;
+                if (CurrentView is DefaultMessageView)
+                {
+                    var conversationView = _service.GetRequiredService<ConversationView>();
+                    CurrentView = conversationView;
+                }
+                var conversation =
+                    Conversations?.FirstOrDefault(e => e.ContactUserModel.ContactUsername == value.ContactUsername);
+                if (conversation == null)
+                {
+                    conversation = new ConversationViewModel(_connection, _messagesServices, _service)
+                    {
+                        ContactUserModel = value,
+                        UserModelFromServer = UserModelFromServer,
+                        ContactState = "OffLine",
+                        Messages = new ObservableCollection<MessageViewModel>()
+                    };
+                    Conversations?.Add(conversation);
+                    
+                }
+
+                ConversationViewModel = conversation;
+            });
+
                 _conversationsRepository.SuccessReceiveConversations += SuccessReceiveConversations;
-                _myMessagesRepository.MessageReceived += SuccessReceiveMessages;
-                _myInformationRepository.ImageChanged += ImageChanged;
+                _myMessagesRepository.MessageReceivedEvent +=  SuccessReceiveMessages;
+                _myInformationRepository.ImageChanged += ImageChanged; 
                 _connection.OnStateChanged += OnStateChanged;
+                _myMessagesRepository.ContactDeletedMessageEvent += ContactDeletedMessageEvent;
+                _myMessagesRepository.ContactEditedMessageEvent += ContactEditedMessageEvent;
+                _myInformationRepository.ImageChanged -= ImageChanged;
+                _connection.OnStateChanged -= OnStateChanged;
+        }
+
+        private async void ContactEditedMessageEvent(EditMessageModel newMessage)
+        {
+            await Task.Run((() =>
+            {
+                var conversation = Conversations?.FirstOrDefault(e => e.ContactUserModel.ContactUsername == newMessage.SenderUsername);
+                var message = conversation?.Messages?.FirstOrDefault(i => i.Message.Id == newMessage.MessageId);
+                if (message == null)
+                    return;
+
+                message.Message.Text = newMessage.NewText;
+
+            }));
+        }
+
+        private  void ContactDeletedMessageEvent(int messageId, string contactName)
+        {
+           var conversation =  Conversations?.FirstOrDefault(e => e.ContactUserModel.ContactUsername == contactName);
+            if (conversation == null)
+            {
+                return;
             }
 
-            private void ImageChanged(byte[] obj)
+            var message = conversation.Messages?.FirstOrDefault(i => i.Message.Id == messageId);
+            if (message == null)
+            {
+                return;
+            }
+
+            conversation.Messages?.Remove(message);
+        }
+
+
+        private void ImageChanged(byte[] obj)
             {
                 this.UserModelFromServer.Image = _myInformationRepository.MyUserInfo.Image;
             }
@@ -178,35 +241,52 @@ namespace demo_158.MVVM.ViewModel
             CurrentView = messageView;
         }
         // این کد برای اضافه کردن پیام ها بعد دریافته 
-        private void SuccessReceiveMessages(MessageModelFromServer obj)
+        private async void SuccessReceiveMessages(MessageModelFromServer obj)
         {
             MessagesModel lastmessage;
             MessagesModel message;
-
-            Application.Current.Dispatcher.Invoke(() =>
+            var conversation = Conversations?.FirstOrDefault(e => e.Id == obj.ConversationId);
+            if (conversation is null)
             {
-                var conversation = Conversations?.FirstOrDefault(e => e.Id == obj.ConversationId);
-                if (conversation.Messages.Count > 0)
-                {
-                   lastmessage = conversation.Messages.Last().Message;
-                     message = _messagesServices.MessageModelMapping(obj, UserModelFromServer.Username, lastmessage.SenderName);
+                var getContactUser = await _connection.InvokeAskDataAsync<ContactUserModel, string>("AskNewMessageUser", obj.Username);
+                    conversation = new ConversationViewModel(_connection, _messagesServices, _service)
+                    {
 
-                }
-                else
-                {
-                     message = _messagesServices.MessageModelMapping(obj, UserModelFromServer.Username, null); 
-                }
+                        Id = obj.ConversationId,
+                        ContactUserModel = getContactUser,
+                        UserModelFromServer = UserModelFromServer,
+                        Messages = new ObservableCollection<MessageViewModel>(),
 
-                if (message.SenderName == conversation.ContactUserModel.ContactUsername)
-                {
-                    message.Image = conversation.ContactUserModel.ContactImage;
-                }
-                else
-                {
-                    message.Image = _userModelFromServer.Image;
-                }
+                    };
+                    await Application.Current.Dispatcher.InvokeAsync(() =>
+                    {
+                        Conversations?.Add(conversation);
+                    });
+                    
+            }
+            if (conversation.Messages?.Count > 0)
+            {
+                lastmessage = conversation.Messages.Last().Message;
+                message = _messagesServices.MessageModelMapping(obj, UserModelFromServer.Username, lastmessage.SenderName);
+
+            }
+            else
+            {
+                message = _messagesServices.MessageModelMapping(obj, UserModelFromServer.Username, null);
+            }
+
+            if (message.SenderName == conversation.ContactUserModel.ContactUsername)
+            {
+                message.Image = conversation.ContactUserModel.ContactImage;
+            }
+            else
+            {
+                message.Image = _userModelFromServer.Image;
+            }
+
+            await Application.Current.Dispatcher.InvokeAsync(() =>
+            {
                 AddToConversation(message, conversation);
-
             });
         }
         // این دو  متد هم برای ضافه کردن مکالمه ها بعد از دریافته 
@@ -245,7 +325,7 @@ namespace demo_158.MVVM.ViewModel
                 {
                     Message = messageModel,
                     Username = _userModelFromServer.Username,
-                    UserModel = conversationViewModel.ContactUserModel
+                    ContactUser = conversationViewModel.ContactUserModel
                 };
                 conversationViewModel.Messages.Add(messageViewModel);
                 conversationViewModel.LastMessage = conversationViewModel.Messages.LastOrDefault()?.Message;
@@ -254,7 +334,7 @@ namespace demo_158.MVVM.ViewModel
 
         private void CheckUsersState()
         {
-            _connection.OnAsync<State, string>("CheckUsersState", (state, username) =>
+            _connection.On<State, string>("CheckUsersState", (state, username) =>
             {
                 var conversation = Conversations
                     .FirstOrDefault(e => e.ContactUserModel.ContactUsername == username);

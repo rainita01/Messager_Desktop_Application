@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
 using System.Windows;
 using System.Windows.Input;
 using demo_158.Base;
 using demo_158.Hubs;
 using demo_158.MVVM.Model;
 using demo_158.MVVM.View;
-using demo_158.Services.Enums;
+
 using Microsoft.Extensions.DependencyInjection;
 
 namespace demo_158.MVVM.ViewModel
@@ -25,7 +20,7 @@ namespace demo_158.MVVM.ViewModel
         private MessagesModel _message;
         private ICommand openProfile;
 
-        public ContactUserModel UserModel { get; set; }
+        public ContactUserModel ContactUser { get; set; }
         public MessagesModel Message
         {
             get => _message;
@@ -48,10 +43,12 @@ namespace demo_158.MVVM.ViewModel
                MessageBox.Show("U cannot Edit another person message");
                return;
            }
-           var edit = _service.GetService<EditMessageView>();
-          edit.Text.Text = Message.Text;
-          edit.MessageId = Message.Id;
-          edit.ShowDialog();
+           var editMessageView = _service.GetRequiredService<EditMessageView>();
+           editMessageView.ContactUser = ContactUser;
+          editMessageView.Text.Text = Message.Text;
+          editMessageView.MessageId = Message.Id;
+          editMessageView.Username = Username;
+          editMessageView.ShowDialog();
        });
        public  ICommand DeleteMessageCommand => deleteMessageCommand ?? new GeneralCommand(() =>
        {
@@ -66,7 +63,7 @@ namespace demo_158.MVVM.ViewModel
            {
                return;
            }
-           _connectionManager.SendAsync("DeleteMessage", Message.Id);
+           _connectionManager.SendAsync("DeleteMessage", Message.Id,Username,ContactUser.ContactUsername);
        });
        public ICommand CopyTextCommand => copyTextCommand ?? new GeneralCommand(() =>
        {
@@ -79,7 +76,7 @@ namespace demo_158.MVVM.ViewModel
        public void ShowUserProfile()
        {
            var profile = _service.GetRequiredService<ContactProfileVeiw>();
-           profile.Profile = UserModel;
+           profile.Profile = ContactUser;
            profile.ShowDialog();
 
        }

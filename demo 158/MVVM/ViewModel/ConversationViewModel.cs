@@ -41,7 +41,7 @@ namespace demo_158.MVVM.Model
             set => SetField(ref _userModelFromServer, value);
         }
 
-        public ObservableCollection<MessageViewModel> Messages { get; set; }
+        public ObservableCollection<MessageViewModel>? Messages { get; set; }
 
         public ContactUserModel ContactUserModel
         {
@@ -100,26 +100,25 @@ namespace demo_158.MVVM.Model
                 Username = UserModelFromServer.Username,
                 
             };
-            var messageModel = _messagesServices.MessageModelMapping(messageFromUser, UserModelFromServer.Username,this.Messages.OrderBy(e=>e.Message.SentTime)?.LastOrDefault().Message.SenderName);
+            var messageModel = _messagesServices.MessageModelMapping(messageFromUser, UserModelFromServer.Username,Messages.OrderBy(e=>e.Message.SentTime).LastOrDefault()?.Message.SenderName);
             messageModel.Image = _userModelFromServer.Image;
             var messageViewModel = new MessageViewModel(_connection, _service)
             {
                 Message = messageModel,
                 Username = UserModelFromServer.Username,
-                UserModel = ContactUserModel
+                ContactUser = ContactUserModel
             };
-            messageViewModel.Message.Id = 
-                await _connection.InvokeAsync<string, MessageModelFromUser, int>("SendMessageToPrivate", ContactUserModel.ContactUsername, messageFromUser);
-            
+            messageViewModel.Message.Id = await _connection.InvokeAsync<string, MessageModelFromUser, int>("SendMessageToPrivate", ContactUserModel.ContactUsername, messageFromUser);
+         
             Messages.Add(messageViewModel);
             LastMessage = Messages.LastOrDefault()?.Message;
             Text = String.Empty;
         }
 
 
-        public async Task MessageDeleted()
+        public void MessageDeleted()
         {
-            await _connection.OnAsync<ServerAnswer,int>("MessageDeleted", ((answer,msg) =>
+             _connection.On<ServerAnswer,int>("MessageDeleted", ((answer,msg) =>
             {
 
                 if (answer == ServerAnswer.ok)
@@ -132,9 +131,9 @@ namespace demo_158.MVVM.Model
 
         }
 
-        public async Task MessageEdited()
+        public void MessageEdited()
         {
-            await _connection.OnAsync<ServerAnswer,string,int>("MessageEdited", ((answer, Text, id) =>
+             _connection.On<ServerAnswer,string,int>("MessageEdited", ((answer, Text, id) =>
             {
                 if (answer == ServerAnswer.ok)
                 {

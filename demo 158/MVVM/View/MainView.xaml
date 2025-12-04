@@ -132,7 +132,6 @@
                                     Margin="0 0 0 10"
                                 ></Line>
                                     <Button
-                                    Height="35"
                                     Margin="0 0 0 10"
                                     Style="{StaticResource AddButtonStyle}"
                                     Command="{Binding  AddConversationCommand}"
@@ -227,13 +226,15 @@
                                     <ListView
                                         SelectedItem="{Binding ConversationViewModel,Mode=TwoWay}"
                                         Name="ContactsList"
+                                        MaxWidth="200"
                                         ItemsSource="{Binding Conversations}"
                                         Style="{StaticResource ContactsListTheme}"
                                         ItemContainerStyle="{StaticResource ContactsListItemTheme}"
-                          >
+                          >            
 
 
                                     </ListView>
+                                    
                                 </Border>
                             </DockPanel>
                         </Border>

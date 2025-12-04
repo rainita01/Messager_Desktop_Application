@@ -9,49 +9,52 @@
 
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ListViewItem}">
-                    <Border 
-                        Padding="3"
-                        BorderThickness="0"
-                        Background="{TemplateBinding Background}" >
-                        <StackPanel Orientation="Horizontal">
-                            <Grid Width="40" Height="40">
-                                <Ellipse Fill="White"/>
-                                <Ellipse>
-                                    <Ellipse.Fill>
-                                        <ImageBrush
-                                            ImageSource="{Binding ContactImage}" 
-                                            Stretch="UniformToFill"/>
-                                    </Ellipse.Fill>
-                                </Ellipse>
-                            </Grid>
-                            <StackPanel >
-                                <TextBlock
-                                    Margin="10 0 0 0"
-                                    Text="{Binding ContactUsername}"
-                                    VerticalAlignment="Top"
-                                    FontSize="18"></TextBlock>
-                                <TextBlock 
-                                    Opacity="20"
-                                    Margin="10 10 0 0 " 
-                                    Text="Tab to open Profile"
-                                    FontSize="12" FontFamily="Arial" Foreground="Gray">
+                    
+                        <Grid 
+                        >
+                        <Border
+                                Background="{TemplateBinding Background}"
+                                BorderThickness="0"
+                            >
+                                    <StackPanel
 
-                                </TextBlock>
-                            </StackPanel>
-                        </StackPanel>
-                    </Border>
+                                        Orientation="Horizontal">
+                                        <Grid Width="40" Height="40">
+                                            <Ellipse Fill="White"/>
+                                            <Ellipse>
+                                                <Ellipse.Fill>
+                                                    <ImageBrush
+                                                        ImageSource="{Binding ContactImage}" 
+                                                        Stretch="UniformToFill"/>
+                                                </Ellipse.Fill>
+                                            </Ellipse>
+                                        </Grid>
+                                        <StackPanel >
+                                            <TextBlock
+                                                Margin="10 0 0 0"
+                                                Text="{Binding ContactUsername}"
+                                                VerticalAlignment="Top"
+                                                FontSize="18"></TextBlock>
+                                            <TextBlock 
+                                                Opacity="20"
+                                                Margin="10 10 0 0 " 
+                                                Text="Tab to open Profile"
+                                                FontSize="12" FontFamily="Arial" Foreground="Gray">
+
+                                            </TextBlock>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+                        </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="White"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
         <Setter Property="Background" Value="Transparent"></Setter>
-        <Style.Triggers>
-            <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="WhiteSmoke"></Setter>
-            </Trigger>
-            <Trigger Property="IsSelected" Value="True">
-                <Setter Property="Background" Value="LightBlue"></Setter>
-            </Trigger>
-        </Style.Triggers>
     </Style>
     <Style TargetType="Thumb">
         <Setter Property="Template">
@@ -60,6 +63,7 @@
                     <Rectangle Width="{TemplateBinding Width}" Height="{TemplateBinding Height}" Fill="Gray"></Rectangle>
                 </ControlTemplate>
             </Setter.Value>
+            
         </Setter>
     </Style>
     <Style TargetType="RepeatButton">

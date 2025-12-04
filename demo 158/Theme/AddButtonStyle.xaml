@@ -8,8 +8,9 @@
                     <Border
                         Background="Transparent"
                         CornerRadius="3"
-                        Padding="3"
-                       x:Name="bd"
+                        Padding="5"
+                        Height="35"
+                        x:Name="bd"
                         VerticalAlignment="Center"
                         >
                         <StackPanel

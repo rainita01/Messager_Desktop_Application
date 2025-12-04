@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using demo_158.Hubs;
+using demo_158.MVVM.Model;
 using demo_158.MVVM.ViewModel;
 
 namespace demo_158.MVVM.View
@@ -24,7 +25,8 @@ namespace demo_158.MVVM.View
         public int MessageId { get; set; }
         private readonly EditMessageViewModel _viewModel;
         private readonly ConnectionManager _connectionManager;
-
+        public ContactUserModel ContactUser { get; set; }
+        public string Username { get; set; }
         public EditMessageView(EditMessageViewModel viewModel,ConnectionManager connectionManager)
         {
             _viewModel = viewModel;
@@ -41,7 +43,15 @@ namespace demo_158.MVVM.View
 
         private  void SaveChanges(object sender, RoutedEventArgs e)
         {
-            _connectionManager.SendAsync("EditMessage", Text.Text, MessageId);
+            var editedMessage = new EditMessageModel()
+            {
+                SenderUsername   = Username,
+                ContactUsername = ContactUser.ContactUsername,
+                MessageId = MessageId,
+                NewText = Text.Text
+
+            };
+            _connectionManager.SendAsync("EditMessage",editedMessage);
             this.Close();
         }
 

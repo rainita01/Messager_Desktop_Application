@@ -11,13 +11,12 @@ namespace demo_158.Repository
     public class MyConversationsRepository 
     {
         private readonly ConnectionManager _connectionManager;
-        private readonly IConversationServices _conversationServices;
+        
 
         public Action<List<ConversationModelFromServer>> SuccessReceiveConversations { get; set; }
-        public MyConversationsRepository(ConnectionManager connectionManager,IConversationServices conversationServices)
+        public MyConversationsRepository(ConnectionManager connectionManager)
         {
             _connectionManager = connectionManager;
-            _conversationServices = conversationServices;
         }
         public async Task StartAsync()
         {

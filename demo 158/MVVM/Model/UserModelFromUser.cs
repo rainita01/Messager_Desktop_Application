@@ -17,12 +17,12 @@ namespace demo_158.MVVM.Model
     }
     public class UserModelFromServer : ViewModelBase
     {
-        private byte[] _image;
+        private byte[]? _image;
         public int Id { get; set; }
         public string Username { get; set; }
         public string? BioCaption { get; set; }
 
-        public byte[] Image
+        public byte[]? Image
         {
             get => _image;
             set => SetField(ref _image, value);

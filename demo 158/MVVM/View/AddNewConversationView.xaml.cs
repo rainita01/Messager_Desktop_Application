@@ -1,4 +1,7 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using demo_158.EventsPublish;
+using demo_158.MVVM.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,7 +14,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using demo_158.MVVM.ViewModel;
 
 namespace demo_158.MVVM.View
 {
@@ -27,7 +29,10 @@ namespace demo_158.MVVM.View
             InitializeComponent();
             _viewModel = viewModel;
             DataContext = _viewModel;
-           
+            WeakReferenceMessenger.Default.Register<CreateNewConversationEvent>(this, (r, m) =>
+            {
+                Close();
+            });
 
         }
 
@@ -35,5 +40,6 @@ namespace demo_158.MVVM.View
         {
             this.Close();
         }
+
     }
 }

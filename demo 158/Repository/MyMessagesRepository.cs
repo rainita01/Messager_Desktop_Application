@@ -8,18 +8,22 @@ namespace demo_158.Repository
     {
         private readonly ConnectionManager _connection;
         private ConcurrentQueue<MessageModelFromServer> _queue = new();
-        public Action<MessageModelFromServer> MessageReceived;
+        public Action<MessageModelFromServer> MessageReceivedEvent;
+        public Action<int, string> ContactDeletedMessageEvent;
+        public Action<EditMessageModel> ContactEditedMessageEvent;
         public MyMessagesRepository(ConnectionManager connection)
         {
             _connection = connection;
-        }
+        }   
 
         public async Task StartAsync()
         {
 
                 await ReceivePrivateMessage();
                 await ReceiveMessages();
-                
+                await ContactDeletedMessage();
+                await ContactEditedMessage();
+
         }
         public async Task ReceiveMessages()
         {
@@ -51,11 +55,28 @@ namespace demo_158.Repository
 
         }
 
+        public async Task ContactDeletedMessage()
+        {
+            await _connection.OnAsync<int, string>("ContactDeletedMessage", ((messageId, contactName) =>
+            {
+                ContactDeletedMessageEvent.Invoke(messageId,contactName);
+            }));
+        }
+        // 0911 389 1474
+        public async Task ContactEditedMessage()
+        {
+            await _connection.OnAsync<EditMessageModel>("ContactEditedMessage", ((newMessage) =>
+            {
+
+                ContactEditedMessageEvent.Invoke(newMessage);
+            }));
+
+        }
         public void DequeueMessages()
         {
                 while (_queue.TryDequeue(out var msg))
                 {
-                    MessageReceived?.Invoke(msg);
+                    MessageReceivedEvent?.Invoke(msg);
                 }
         }
 

@@ -71,7 +71,6 @@ namespace demo_158.MVVM.View
         {
             this.Close();
         }
-
     }
 
   

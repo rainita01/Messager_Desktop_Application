@@ -25,12 +25,12 @@ namespace demo_158.MVVM.ViewModel
         private readonly MyInformationRepository _myInfoRepo;
         private ICommand changeProfileImage;
         private readonly ICommand saveChanges;
-        private byte[] _image;
+        private byte[]? _image;
         private UserModelFromServer? _myUserInfo;
 
         public EventHandler ProfileSuccessChange;
 
-        public byte[] Image
+        public byte[]? Image
         {
             get => _image;
             set => SetField(ref _image, value);
@@ -47,7 +47,7 @@ namespace demo_158.MVVM.ViewModel
             _connectionManager = connectionManager;
             _myInfoRepo = myInfoRepo;
             MyUserInfo = _myInfoRepo.MyUserInfo;
-            Image = _myInfoRepo.MyUserInfo.Image;
+            Image = _myInfoRepo.MyUserInfo?.Image;
             ChangeProfile();
         }
 
@@ -66,7 +66,7 @@ namespace demo_158.MVVM.ViewModel
                 var imageBytes = await File.ReadAllBytesAsync(filePath);
 
                 // ارسال تصویر به سرور
-                var imageSend = await _connectionManager.InvokeAsync("UploadProfileImage", imageBytes, MyUserInfo.Id);
+                var imageSend = await _connectionManager.InvokeAsync("UploadProfileImage", imageBytes, MyUserInfo?.Id);
 
                 if (imageSend == ServerAnswer.bad)
                     return;
