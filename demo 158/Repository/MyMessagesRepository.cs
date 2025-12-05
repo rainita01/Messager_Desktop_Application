@@ -62,7 +62,6 @@ namespace demo_158.Repository
                 ContactDeletedMessageEvent.Invoke(messageId,contactName);
             }));
         }
-        // 0911 389 1474
         public async Task ContactEditedMessage()
         {
             await _connection.OnAsync<EditMessageModel>("ContactEditedMessage", ((newMessage) =>

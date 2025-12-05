@@ -130,6 +130,7 @@ namespace demo_158.MVVM.ViewModel
                 {
                     conversation = new ConversationViewModel(_connection, _messagesServices, _service)
                     {
+                        
                         ContactUserModel = value,
                         UserModelFromServer = UserModelFromServer,
                         ContactState = "OffLine",
@@ -149,7 +150,18 @@ namespace demo_158.MVVM.ViewModel
                 _myMessagesRepository.ContactDeletedMessageEvent += ContactDeletedMessageEvent;
                 _myMessagesRepository.ContactEditedMessageEvent += ContactEditedMessageEvent;
                 _myInformationRepository.ImageChanged -= ImageChanged;
+                _conversationsRepository.SuccessCreatedConversation += SuccessCreatedConversation;
                 _connection.OnStateChanged -= OnStateChanged;
+        }
+
+        private void SuccessCreatedConversation(int conversationId, string contactUsername)
+        {
+            var conversation =
+                Conversations?.FirstOrDefault(e => e.ContactUserModel.ContactUsername == contactUsername);
+            if (conversation != null)
+            {
+                conversation.Id = conversationId;
+            }
         }
 
         private async void ContactEditedMessageEvent(EditMessageModel newMessage)

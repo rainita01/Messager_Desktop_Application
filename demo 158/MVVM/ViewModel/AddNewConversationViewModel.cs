@@ -14,7 +14,6 @@ public class AddNewConversationViewModel :ViewModelBase
 {
     private readonly ConnectionManager _connection;
     private ContactUserModel _selectedUser;
-    public EventHandler<ContactUserModel>? UserSelectedHandler; 
     public ObservableCollection<ContactUserModel> Users { get; set; } = new();
 
     public ContactUserModel SelectedUser    

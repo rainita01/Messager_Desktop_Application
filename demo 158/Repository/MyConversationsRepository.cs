@@ -14,6 +14,7 @@ namespace demo_158.Repository
         
 
         public Action<List<ConversationModelFromServer>> SuccessReceiveConversations { get; set; }
+        public Action<int,string> SuccessCreatedConversation { get; set; }
         public MyConversationsRepository(ConnectionManager connectionManager)
         {
             _connectionManager = connectionManager;
@@ -21,7 +22,9 @@ namespace demo_158.Repository
         public async Task StartAsync()
         {
             await ReceiveConversations();
-           
+            await GetConversationId();
+
+
         }
 
 
@@ -42,6 +45,15 @@ namespace demo_158.Repository
             }));
         }
 
-    
+        public async Task GetConversationId()
+        {
+            await _connectionManager.OnAsync<int, string>("GetConversationId", ((conversationId, user) =>
+            {
+                SuccessCreatedConversation.Invoke(conversationId,user);
+            }));
+        }
+
+
+
     }
 }
