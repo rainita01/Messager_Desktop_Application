@@ -9,7 +9,7 @@ using System.Windows.Controls;
 namespace demo_158.MVVM.View
 {
     /// <summary>
-    /// Interaction logic for ConversationView.xaml
+    /// Interaction logic for ConversationsView.xaml
     /// </summary>
     public partial class ConversationView : UserControl
     {
@@ -20,10 +20,17 @@ namespace demo_158.MVVM.View
             InitializeComponent();
             _viewModel = viewModel;
             DataContext = _viewModel.ConversationViewModel;
-          
-            Loaded += MessageAndTalkView_OnLoaded;
             Loaded -= MessageAndTalkView_OnLoaded;
+            Loaded += MessageAndTalkView_OnLoaded;
+            _viewModel.ConversationViewModel.MessageAdded -= MessageAdded;
+            _viewModel.ConversationViewModel.MessageAdded += MessageAdded;
         }
+
+        private void MessageAdded(object? sender, EventArgs e)
+        {
+            MessagesListView.ScrollIntoView(_viewModel.ConversationViewModel.Messages.Last());
+        }
+
         private void DeleteClick(object sender, RoutedEventArgs e)
         {
             MessageBox.Show("EVENT Fired");

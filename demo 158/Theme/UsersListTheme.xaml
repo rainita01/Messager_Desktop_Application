@@ -23,11 +23,17 @@
 
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ListViewItem}">
-                    <Border 
-                        Padding="3"
-                        BorderThickness="0"
-                        Background="{TemplateBinding Background}" >
-                        <StackPanel Orientation="Horizontal">
+                  
+                        <Border 
+                            Padding="3"
+                            BorderThickness="0"
+                            Background="{TemplateBinding Background}" >
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition></ColumnDefinition>
+                                    <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+                            <StackPanel Orientation="Horizontal">
                             <Grid Width="40" Height="40">
                                 <Ellipse Fill="White"/>
                                 <Ellipse>
@@ -53,8 +59,36 @@
 
                                 </TextBlock>
                             </StackPanel>
+                       
                         </StackPanel>
+                                <Border
+                                    Grid.Column="1"
+                                    HorizontalAlignment="Right"
+                                    CornerRadius="3 3 15 15"
+     
+                                    BorderBrush="BlueViolet"
+                                    BorderThickness="2"
+                                    Background="Transparent"
+                                    Name="NewLengthBorder"
+                                    Height="26"
+                                    Width="26"
+                                    Visibility="Hidden"
+                                >
+                                    <TextBlock
+                                        Foreground="DarkSlateBlue"
+                                        Text="10"
+                                        FontSize="14"
+                                        Padding="1"
+                                        FontWeight="DemiBold"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Center"
+                                    >
+
+                                    </TextBlock>
+                                </Border>
+                        </Grid>
                     </Border>
+                 
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

@@ -1,8 +1,11 @@
 ﻿using demo_158.Base;
 using demo_158.Hubs;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using demo_158.EventsPublish;
 using demo_158.MVVM.View;
 using demo_158.MVVM.ViewModel;
 using demo_158.Services.Enums;
@@ -30,6 +33,8 @@ namespace demo_158.MVVM.Model
         private string _contactState;
 
         private int _id;
+        private DateTime? _lastMessageDateTime;
+
         public int Id
         {
             get => _id;
@@ -41,8 +46,8 @@ namespace demo_158.MVVM.Model
             set => SetField(ref _userModelFromServer, value);
         }
 
-        public ObservableCollection<MessageViewModel>? Messages { get; set; }
-
+        public ObservableCollection<MessageViewModel>? Messages { get; set; } = new();
+        public EventHandler MessageAdded { get; set; }
         public ContactUserModel ContactUserModel
         {
             get => _contactUserModel;
@@ -61,6 +66,12 @@ namespace demo_158.MVVM.Model
             set => SetField(ref _lastMessage, value);
         }
 
+        public DateTime? LastMessageDateTime
+        {
+            get => _lastMessageDateTime;
+            set => SetField(ref _lastMessageDateTime, value);
+        }
+
         public string Text
         {
             get => _text;
@@ -77,7 +88,12 @@ namespace demo_158.MVVM.Model
             _service = service;
             MessageDeleted();
             MessageEdited();
+
+           
         }
+
+      
+
         public ICommand ShowUserContentCommand => _showUserContentCommand ?? new GeneralCommand((ShowUserContentAction));
         public ICommand SendMessageCommand => _sendMessageCommand ??= new GeneralCommand(async () => await SendTextMessageExecuteAction());
 
@@ -88,7 +104,7 @@ namespace demo_158.MVVM.Model
         private async Task SendTextMessageExecuteAction()
         {
             if (string.IsNullOrEmpty(Text))
-                throw new Exception();
+               return;
 
             var messageFromUser = new MessageModelFromUser()
             {
@@ -108,13 +124,15 @@ namespace demo_158.MVVM.Model
                 Username = UserModelFromServer.Username,
                 ContactUser = ContactUserModel
             };
+            LastMessageDateTime = DateTime.Now;
+            
             messageViewModel.Message.Id = await _connection.InvokeAsync<string, MessageModelFromUser, int>("SendMessageToPrivate", ContactUserModel.ContactUsername, messageFromUser);
          
             Messages.Add(messageViewModel);
             LastMessage = Messages.LastOrDefault()?.Message;
+            WeakReferenceMessenger.Default.Send(new MessageSendedSuccessEvent(true));
             Text = String.Empty;
         }
-
 
         public void MessageDeleted()
         {
@@ -126,6 +144,7 @@ namespace demo_158.MVVM.Model
                   var message =   Messages.FirstOrDefault(e => e.Message.Id == msg);
                   Messages.Remove(message);
                   LastMessage = Messages.LastOrDefault()?.Message;
+                  LastMessageDateTime = LastMessage?.SentTime;
                 }
             }));
 
