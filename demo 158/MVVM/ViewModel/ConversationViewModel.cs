@@ -3,6 +3,7 @@ using demo_158.Hubs;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using demo_158.EventsPublish;
@@ -11,12 +12,11 @@ using demo_158.MVVM.ViewModel;
 using demo_158.Services.Enums;
 using demo_158.Services.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Identity.Client;
+using Microsoft.Extensions.Logging;
 
 
 namespace demo_158.MVVM.Model
 {
-
     public class ConversationViewModel : ViewModelBase
     {
         private readonly ConnectionManager _connection;
@@ -28,13 +28,16 @@ namespace demo_158.MVVM.Model
         private ICommand _sendMessageCommand;
         private ICommand _deleteConversation;
         private ICommand openProfileCommand;
+        private ICommand _isSeenCommand;
         private string _text;
         private MessagesModel? _lastMessage;
         private string _contactState;
-
         private int _id;
         private DateTime? _lastMessageDateTime;
-
+        private int _newMessagesLength;
+        private Visibility _newMessageVisibility = Visibility.Hidden;
+   
+        public ILogger<MessageViewModel> Ilogger { get; set; }
         public int Id
         {
             get => _id;
@@ -45,9 +48,8 @@ namespace demo_158.MVVM.Model
             get => _userModelFromServer;
             set => SetField(ref _userModelFromServer, value);
         }
-
         public ObservableCollection<MessageViewModel>? Messages { get; set; } = new();
-        public EventHandler MessageAdded { get; set; }
+        public EventHandler? MessageAdded { get; set; }
         public ContactUserModel ContactUserModel
         {
             get => _contactUserModel;
@@ -77,6 +79,32 @@ namespace demo_158.MVVM.Model
             get => _text;
             set => SetField(ref _text, value);
         }
+
+        public int NewMessagesLength    
+        {
+            get => _newMessagesLength;
+            set 
+            {
+                if (value > 0)
+                {
+                    NewMessageVisibility = Visibility.Visible;
+                }
+                else
+                {
+                    NewMessageVisibility = Visibility.Hidden;
+                }
+
+                _newMessagesLength = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public Visibility NewMessageVisibility
+        {
+            get => _newMessageVisibility;
+            set => SetField(ref _newMessageVisibility, value);
+        }
+
         public ConversationViewModel(ConnectionManager connection,
             IMessageServices messagesServices,
             IServiceProvider service
@@ -97,10 +125,17 @@ namespace demo_158.MVVM.Model
         public ICommand ShowUserContentCommand => _showUserContentCommand ?? new GeneralCommand((ShowUserContentAction));
         public ICommand SendMessageCommand => _sendMessageCommand ??= new GeneralCommand(async () => await SendTextMessageExecuteAction());
 
-        public ICommand DeleteConversation => _deleteConversation ?? new GeneralCommand(() =>
+        public ICommand DeleteConversation => _deleteConversation ?? new GeneralCommand(async () =>
         {
-           
+          var result = await _connection.InvokeAsync("DeleteConversation", Id, ContactUserModel.ContactUsername);
+
+          if (result is ServerAnswer.ok)
+          {
+              WeakReferenceMessenger.Default.Send(new SuccessDeletedConversation(Id));
+          }
         });
+
+        public ICommand IsSeenCommand => _isSeenCommand ?? new GeneralCommand(() => { });
         private async Task SendTextMessageExecuteAction()
         {
             if (string.IsNullOrEmpty(Text))

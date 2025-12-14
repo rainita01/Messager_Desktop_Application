@@ -1,19 +1,25 @@
 ﻿using demo_158.Hubs;
 using demo_158.MVVM.Model;
 using System.Collections.Concurrent;
+using CommunityToolkit.Mvvm.Messaging;
+using demo_158.EventsPublish;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+
 namespace demo_158.Repository
 {
     public class MyMessagesRepository
     {
         private readonly ConnectionManager _connection;
+        private readonly ILogger<int> _logger;
         private ConcurrentQueue<MessageModelFromServer> _queue = new();
-        public Action<MessageModelFromServer> MessageReceivedEvent;
+        private int Count { get; set; }
         public Action<int, string> ContactDeletedMessageEvent;
         public Action<EditMessageModel> ContactEditedMessageEvent;
-        public MyMessagesRepository(ConnectionManager connection)
+        public MyMessagesRepository(ConnectionManager connection,ILogger<int> logger)
         {
             _connection = connection;
+            _logger = logger;
         }   
 
         public async Task StartAsync()
@@ -31,10 +37,11 @@ namespace demo_158.Repository
             {
                 foreach (var messageModelFromServer in messages)
                 {
-                    _queue.Enqueue(messageModelFromServer);    
+                    _queue.Enqueue(messageModelFromServer);
+                    Count++;
+                   
                     DequeueMessages();
                 }
-
 
             });
 
@@ -47,9 +54,10 @@ namespace demo_158.Repository
                 if (message == null)
                 {
                     return;
+                    
                 }
                 _queue.Enqueue(message);
-                
+                Count++;
                 DequeueMessages();
             });
 
@@ -59,6 +67,7 @@ namespace demo_158.Repository
         {
             await _connection.OnAsync<int, string>("ContactDeletedMessage", ((messageId, contactName) =>
             {
+            
                 ContactDeletedMessageEvent.Invoke(messageId,contactName);
             }));
         }
@@ -75,7 +84,7 @@ namespace demo_158.Repository
         {
                 while (_queue.TryDequeue(out var msg))
                 {
-                    MessageReceivedEvent?.Invoke(msg);
+                    WeakReferenceMessenger.Default.Send(new SuccessMessageReceivedEvent(msg));
                 }
         }
 

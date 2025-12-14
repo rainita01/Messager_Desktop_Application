@@ -1,11 +1,13 @@
 ﻿
 using System.Windows;
 using System.Windows.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using demo_158.Base;
+using demo_158.EventsPublish;
 using demo_158.Hubs;
 using demo_158.MVVM.Model;
 using demo_158.MVVM.View;
-
+using demo_158.Services.Enums;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace demo_158.MVVM.ViewModel
@@ -58,12 +60,17 @@ namespace demo_158.MVVM.ViewModel
                return;
            }
 
-           var result =  MessageBox.Show("Are you sure ?", "Delete", MessageBoxButton.YesNo);
-           if (result == MessageBoxResult.No)
+           var messageBoxResult =  MessageBox.Show("Are you sure ?", "Delete", MessageBoxButton.YesNo);
+           if (messageBoxResult == MessageBoxResult.No)
            {
                return;
            }
-           _connectionManager.SendAsync("DeleteMessage", Message.Id,Username,ContactUser.ContactUsername);
+           var result =  _connectionManager.InvokeAsync<int,string,string,ServerAnswer>("DeleteMessage", Message.Id,Username,ContactUser.ContactUsername);
+           Task.WhenAny(result);
+           if (result.Result == ServerAnswer.ok)
+           {
+               WeakReferenceMessenger.Default.Send(new SuccessDeletedMessage(true));
+           }
        });
        public ICommand CopyTextCommand => copyTextCommand ?? new GeneralCommand(() =>
        {

@@ -1,6 +1,10 @@
 ﻿using demo_158.Base;
+using demo_158.Hubs;
 using demo_158.MVVM.Model;
+using demo_158.MVVM.View;
+using demo_158.Repository;
 using demo_158.Services;
+using demo_158.Services.Enums;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
@@ -12,7 +16,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
-using demo_158.Hubs;
+using Microsoft.Extensions.DependencyInjection;
 using WebSocketSharp;
 using Color = System.Drawing.Color;
 
@@ -21,6 +25,8 @@ namespace demo_158.MVVM.ViewModel
     public class SignViewModel : ViewModelBase
     {
         private readonly ConnectionManager _connection;
+        private readonly MyInformationRepository _myInformationRepository;
+        private readonly IServiceProvider _service;
         private string _email;
         private string _username;
         private string _password;
@@ -79,18 +85,28 @@ namespace demo_158.MVVM.ViewModel
             }
         }
 
-        public SignViewModel(ConnectionManager connection)
+        public SignViewModel(ConnectionManager connection,MyInformationRepository myInformationRepository,IServiceProvider service)
         {
             _connection = connection;
+            _myInformationRepository = myInformationRepository;
+            _service = service;
+            _myInformationRepository.SuccessSignInAction += SuccessLoginAction;
             InvalidSignUp();
-            SuccessSignUp();
         }
-     
+
+        private void SuccessLoginAction(UserModelFromServer obj)
+        {
+
+            var mainView = _service.GetService<MainView>();
+            mainView?.Show();
+             Application.Current.Windows.OfType<MainLoginSignView>().FirstOrDefault()?.Close();
+        }
+
         public ICommand SignCommand => signCommand ?? new GeneralCommand((SignExecuteAction),SignCanExecute);
 
         private async void SignExecuteAction()
         {
-            if (!(await SignInValidation()))
+            if  (!SignInValidation())
             {
                 return;
             }
@@ -101,17 +117,10 @@ namespace demo_158.MVVM.ViewModel
                  Email = Email,
             };
 
-           await _connection.SendAsync("SignUp", user);
-
+            await _connection.SendAsync("SignUp", user);
+            SharingDataViewModel.Instance.CurrenViewChanged.Invoke(this,EventArgs.Empty);
         }
 
-        private  void SuccessSignUp()
-        {
-            _connection.OnAsync<string>("SuccessSignUp", data =>
-            {
-                MessageBox.Show("Success Sign Up!", data, MessageBoxButton.OKCancel);
-            });
-        }
 
         private void InvalidSignUp()
         {
@@ -126,7 +135,7 @@ namespace demo_158.MVVM.ViewModel
             return fields.All(f => !string.IsNullOrEmpty(f));
         }
 
-        private async Task<bool> SignInValidation()
+        private bool SignInValidation()
         {
             
             if (Password != VerifyPassword)

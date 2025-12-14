@@ -60,7 +60,14 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Thumb}" >
-                    <Rectangle Width="{TemplateBinding Width}" Height="{TemplateBinding Height}" Fill="Gray"></Rectangle>
+                    <Rectangle
+                        RadiusX="5"
+                        RadiusY="5"
+                        Width="9" 
+                        Height="{TemplateBinding Height}" 
+                        Fill="LightBlue"
+                        
+                        ></Rectangle>
                 </ControlTemplate>
             </Setter.Value>
             
@@ -71,34 +78,42 @@
             <Setter.Value>
                 <ControlTemplate TargetType="RepeatButton">
                     <Rectangle Height="{TemplateBinding Height}" Width="{TemplateBinding Width}"
-                               Fill="#252525">
+                               Fill="GhostWhite">
 
                     </Rectangle>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-
+    
     </Style>
     <Style TargetType="ScrollBar">
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate>
+                <ControlTemplate TargetType="ScrollBar">
                     <Grid>
-                        <Track x:Name="PART_Track">
+                        <Track x:Name="PART_Track"
+                               Minimum="{TemplateBinding Minimum}"
+                               Maximum="{TemplateBinding Maximum}"
+                               Value="{TemplateBinding Value}"
+                               ViewportSize="{TemplateBinding ViewportSize}"
+                               Orientation="{TemplateBinding Orientation}">
+
                             <Track.DecreaseRepeatButton>
-                                <RepeatButton Command="{x:Static ScrollBar.PageUpCommand}"></RepeatButton>
+                                <RepeatButton
+                                    Command="{x:Static ScrollBar.PageUpCommand}" />
                             </Track.DecreaseRepeatButton>
-                            <Track.IncreaseRepeatButton >
-                                <RepeatButton Command="{x:Static ScrollBar.PageDownCommand}"></RepeatButton>
-                            </Track.IncreaseRepeatButton>
-                        </Track>
-                        <Track>
+
                             <Track.Thumb>
-                                <Thumb></Thumb>
+                                <Thumb/>
                             </Track.Thumb>
+
+                            <Track.IncreaseRepeatButton>
+                                <RepeatButton
+                                    Command="{x:Static ScrollBar.PageDownCommand}" />
+                            </Track.IncreaseRepeatButton>
+
                         </Track>
                     </Grid>
-
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

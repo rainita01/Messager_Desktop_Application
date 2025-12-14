@@ -14,6 +14,7 @@ namespace demo_158.Base
         {
 
         }
+
         public  EventHandler CurrenViewChanged;
         public EventHandler CurrentViewErrorChanged;    
         public object CurrentView

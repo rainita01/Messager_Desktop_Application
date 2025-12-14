@@ -9,29 +9,33 @@
             <Border Background="LightSkyBlue"
                     CornerRadius="10"
                     Padding="3"
-                    MaxWidth="250">
-              <StackPanel 
-                  Orientation="Vertical"
-                  >
+                    MaxWidth="250"
+                    MinWidth="100"
+                    >
+                <StackPanel 
+                    Orientation="Vertical"
+                >
                   <TextBox Text="{Binding Message.Text}"
                            TextWrapping="Wrap"
                            FontSize="16"
-                           FontFamily="../Fonts/#Dirooz"
+                           FontFamily="Vazirmatn Medium"
+                           FontStyle="Normal"
                            MinHeight="25"
                            MaxHeight="100"
                            MinWidth="25"
                            MaxWidth="200"
                            Background="Transparent"
+                         
                            BorderThickness="0"
                            IsReadOnly="True"
                            Cursor="IBeam"/>
-                  <Label 
+                  <TextBlock 
                       HorizontalAlignment="Left"
                       Foreground="Gray"
                       FontSize="11"
-                      Content="12:23"
+                      Text="{Binding Message.SentTime ,StringFormat=HH:mm}"
 
-                  ></Label>
+                  ></TextBlock>
                 </StackPanel>
             </Border>
 
@@ -92,6 +96,8 @@
                         CornerRadius="10"
                         VerticalAlignment="Center"
                         Background="Gainsboro"
+                        MinWidth="100"
+                        MaxWidth="250"
                         Name="TextBorder"
                         HorizontalAlignment="Left">
                     <StackPanel Orientation="Vertical">
@@ -102,20 +108,20 @@
                                  MinWidth="25"
                                  MaxWidth="200"
                                  FontSize="16"
-                                 FontFamily="../Fonts/#Dirooz"
+                                 FontFamily="\demo 158\Fonts\Vazirmatn-Regular.ttf"
                                  VerticalAlignment="Center"
                                  HorizontalAlignment="Right"
                                  Background="Transparent"
                                  IsReadOnly="True"
                                  BorderThickness="0"
                                  Cursor="IBeam"/>
-                        <Label 
+                        <TextBlock 
                             HorizontalAlignment="Right"
                             Foreground="Gray"
                             FontSize="11"
-                            Content="12:24"
+                            Text="{Binding Message.SentTime ,StringFormat=HH:mm}"
 
-                            ></Label>
+                            ></TextBlock>
 
                     </StackPanel>
                  

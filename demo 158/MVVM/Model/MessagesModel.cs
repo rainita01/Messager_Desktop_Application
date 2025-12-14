@@ -71,7 +71,8 @@ namespace demo_158.MVVM.Model
         public int UserId { get; set; }
         public string Username { get; set; }
         public int ConversationId { get; set; }
-        public bool IsSeen { get; set; }= false;
+        public bool IsSeen { get; set; }
+        public bool IsEdited { get; set; }
     }
     public class MessageModelFromServer
     {
@@ -83,7 +84,8 @@ namespace demo_158.MVVM.Model
         public string Username { get; set; }
         public DateTime SendDate { get; set; }
         public int ConversationId { get; set; }
-        public  bool IsSeen { get; set; }
+        public bool IsSeen { get; set; }
+        public bool IsEdited { get; set; }
     }
     public class EditMessageModel
     {

@@ -10,8 +10,8 @@ namespace demo_158.Services
     {
         public ObservableCollection<MessagesModel> MessagesModelMapping(List<MessageModelFromServer> messages, string username)
         {
-            var messageModel = new ObservableCollection<MessagesModel>();
-            var lastMessageUsername = string.Empty; 
+            ObservableCollection<MessagesModel>? messageModel = new ObservableCollection<MessagesModel>();
+            var lastMessageUsername = messageModel.LastOrDefault()?.SenderName; 
             foreach (var msg in messages)
             {
 
@@ -32,6 +32,8 @@ namespace demo_158.Services
                 FirstMessage = IsUsernamesEqual(lastMessageUsername, msg.Username),
                 MessageType = msg.MessageType,
                 Text = msg.Text,
+                IsMessageEdited = msg.IsEdited,
+                IsSeen = msg.IsSeen,
               
             };  
             return messageModel;

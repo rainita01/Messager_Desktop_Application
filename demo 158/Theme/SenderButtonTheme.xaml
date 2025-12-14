@@ -11,8 +11,10 @@
                 <Border
                     
                     Margin="5 5 5 5"
-                    MaxHeight="55"
-                    MaxWidth="55"
+                    MaxHeight="50"
+                    MaxWidth="50"
+                    MinHeight="30"
+                    MinWidth="30"
                     CornerRadius="8"
                     Padding="0 3 3 0"
                    

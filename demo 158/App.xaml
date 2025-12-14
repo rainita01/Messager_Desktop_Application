@@ -24,6 +24,7 @@
                   <ResourceDictionary Source="DataTemplateSelector/MessageDataSelector/MessageTemplateResourceDic.xaml"></ResourceDictionary>
                   <ResourceDictionary Source="Theme/AddButtonStyle.xaml"></ResourceDictionary>
                   <ResourceDictionary Source="Theme/CreatePartUsersListThem.xaml"></ResourceDictionary>
+                  <ResourceDictionary Source="Theme/ScrollBarStyle.xaml"></ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
             
 

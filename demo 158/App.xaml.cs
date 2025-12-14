@@ -46,6 +46,9 @@ namespace demo_158
             var myMessagesListener = host.Services.GetRequiredService<MyMessagesRepository>();
             await myMessagesListener.StartAsync();
 
+            var userChangesListener = host.Services.GetRequiredService<UserChangesRepository>();
+            await userChangesListener.StartAsync();
+
             var mainLoginSignView = host.Services.GetRequiredService<MainLoginSignView>();
             mainLoginSignView.Show();
 
@@ -90,7 +93,7 @@ namespace demo_158
             service.AddSingleton<MyInformationRepository>();
             service.AddSingleton<MyMessagesRepository>();
             service.AddSingleton<MyConversationsRepository>();
-
+            service.AddSingleton<UserChangesRepository>();
 
 
 

@@ -1,6 +1,7 @@
 ﻿using demo_158.Base;
 using demo_158.Hubs;
 using demo_158.MVVM.Model;
+using demo_158.Services.Enums;
 using Microsoft.EntityFrameworkCore.Query.Internal;
 using Microsoft.Extensions.Hosting;
 
@@ -13,6 +14,7 @@ namespace demo_158.Repository
         public Action<byte[]>? ImageChanged;
        
         public Action<UserModelFromServer> SuccessLoginAction { get; set; }
+        public Action<UserModelFromServer> SuccessSignInAction { get; set; }
 
         public UserModelFromServer MyUserInfo
         {
@@ -39,6 +41,7 @@ namespace demo_158.Repository
         public  async Task StartAsync()
         {
                 await ReceiveUser();
+                await SignedUserReceived();
         }
 
         private async Task ReceiveUser()
@@ -49,7 +52,15 @@ namespace demo_158.Repository
                 SuccessLoginAction.Invoke(user);
 
             });
+        }
+        private async Task SignedUserReceived()
+        {
+            await _connectionManager.OnAsync<UserModelFromServer>("SignedUserReceived", (user) =>
+            {
+                MyUserInfo = user;
+                SuccessSignInAction.Invoke(user);
 
+            });
         }
     }
 }

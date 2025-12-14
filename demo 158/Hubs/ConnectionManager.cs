@@ -171,6 +171,12 @@ namespace demo_158.Hubs
             return await _connection.InvokeAsync<T3>(methodName, obj, obj2);
 
         }
+        public async Task<T4> InvokeAsync<T1, T2, T3,T4>(string methodName, T1 obj, T2 obj2,T3 obj3)
+        {
+            return await _connection.InvokeAsync<T4>(methodName, obj, obj2,obj3);
+
+        }
+
         public async Task StopAsync()
         {
 

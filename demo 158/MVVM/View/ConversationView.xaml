@@ -90,6 +90,8 @@
                 ItemsSource="{Binding Messages}"
                 Background="WhiteSmoke"
                 BorderThickness="0"
+               ScrollViewer.ScrollChanged="MessagesListView_OnScrollChanged"
+                Loaded="MessagesListView_OnLoaded"
                 ItemTemplateSelector="{StaticResource MsgTemplateSelector}"
                       >
                 <ListView.ItemContainerStyle>
@@ -148,6 +150,7 @@
                        FontStretch="Medium"
                        AcceptsReturn="True"
                        MinHeight="30"
+                       MaxHeight="40"
                        Foreground="Black"
                        VerticalContentAlignment="Center"
                        TabIndex="1"

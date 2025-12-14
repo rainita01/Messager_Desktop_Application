@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <TargetFramework>net8.0-windows</TargetFramework>
     <RootNamespace>demo_158</RootNamespace>
     <Nullable>enable</Nullable>
@@ -11,6 +11,15 @@
 
   <ItemGroup>
     <None Remove="Fonts\Dirooz.ttf" />
+    <None Remove="Fonts\Vazirmatn-Black.ttf" />
+    <None Remove="Fonts\Vazirmatn-Bold.ttf" />
+    <None Remove="Fonts\Vazirmatn-ExtraBold.ttf" />
+    <None Remove="Fonts\Vazirmatn-ExtraLight.ttf" />
+    <None Remove="Fonts\Vazirmatn-Light.ttf" />
+    <None Remove="Fonts\Vazirmatn-Medium.ttf" />
+    <None Remove="Fonts\Vazirmatn-Regular.ttf" />
+    <None Remove="Fonts\Vazirmatn-SemiBold.ttf" />
+    <None Remove="Fonts\Vazirmatn-Thin.ttf" />
     <None Remove="Images\account-circle-outline.svg" />
     <None Remove="Images\blue profile.png" />
     <None Remove="Images\CancelButton.png" />
@@ -28,6 +37,33 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Fonts\Vazirmatn-Black.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Fonts\Vazirmatn-Bold.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Fonts\Vazirmatn-ExtraBold.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Fonts\Vazirmatn-ExtraLight.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Fonts\Vazirmatn-Light.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Fonts\Vazirmatn-Medium.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Fonts\Vazirmatn-Regular.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Fonts\Vazirmatn-SemiBold.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Fonts\Vazirmatn-Thin.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Images\blue profile.png" />
   </ItemGroup>
 
@@ -46,6 +82,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.5" />
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="websocketsharp.core" Version="1.0.1" />
   </ItemGroup>

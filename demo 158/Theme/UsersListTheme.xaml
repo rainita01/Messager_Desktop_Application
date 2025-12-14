@@ -20,14 +20,17 @@
             </Setter.Value>
         </Setter>
         <Setter Property="Template">
-
+ 
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ListViewItem}">
                   
                         <Border 
                             Padding="3"
                             BorderThickness="0"
+                            MaxWidth="181"
+                            CornerRadius="3"
                             Background="{TemplateBinding Background}" >
+                            
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition></ColumnDefinition>
@@ -64,19 +67,17 @@
                                 <Border
                                     Grid.Column="1"
                                     HorizontalAlignment="Right"
-                                    CornerRadius="3 3 15 15"
-     
-                                    BorderBrush="BlueViolet"
+                                    CornerRadius="10 10 10 10"
                                     BorderThickness="2"
-                                    Background="Transparent"
+                                    Background="DarkMagenta"
                                     Name="NewLengthBorder"
-                                    Height="26"
-                                    Width="26"
-                                    Visibility="Hidden"
+                                    Height="28"
+                                    Width="27"
+                                    Visibility="{Binding NewMessageVisibility}"
                                 >
                                     <TextBlock
-                                        Foreground="DarkSlateBlue"
-                                        Text="10"
+                                        Foreground="GhostWhite"
+                                        Text="{Binding NewMessagesLength}"
                                         FontSize="14"
                                         Padding="1"
                                         FontWeight="DemiBold"
@@ -107,43 +108,6 @@
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Thumb}" >
                     <Rectangle Width="{TemplateBinding Width}" Height="{TemplateBinding Height}" Fill="Gray"></Rectangle>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-    <Style TargetType="RepeatButton">
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="RepeatButton">
-                    <Rectangle Height="{TemplateBinding Height}" Width="{TemplateBinding Width}"
-                               Fill="#252525">
-
-                    </Rectangle>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-
-    </Style>
-    <Style TargetType="ScrollBar">
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate>
-                    <Grid>
-                        <Track x:Name="PART_Track">
-                            <Track.DecreaseRepeatButton>
-                                <RepeatButton Command="{x:Static ScrollBar.PageUpCommand}"></RepeatButton>
-                            </Track.DecreaseRepeatButton>
-                            <Track.IncreaseRepeatButton >
-                                <RepeatButton Command="{x:Static ScrollBar.PageDownCommand}"></RepeatButton>
-                            </Track.IncreaseRepeatButton>
-                        </Track>
-                        <Track>
-                            <Track.Thumb>
-                                <Thumb></Thumb>
-                            </Track.Thumb>
-                        </Track>
-                    </Grid>
-
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
