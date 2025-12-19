@@ -3,15 +3,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:demo_158.MVVM.View"
              mc:Ignorable="d" 
              d:DesignHeight="550" d:DesignWidth="600"
              Background="Transparent"
              BorderThickness="0"
-             Loaded="MessageAndTalkView_OnLoaded"
-             
-             >
-<Border
+             Loaded="MessageAndTalkView_OnLoaded">
+    <Border
     CornerRadius="20"
    >
 
@@ -90,9 +87,8 @@
                 ItemsSource="{Binding Messages}"
                 Background="WhiteSmoke"
                 BorderThickness="0"
-               ScrollViewer.ScrollChanged="MessagesListView_OnScrollChanged"
-                Loaded="MessagesListView_OnLoaded"
                 ItemTemplateSelector="{StaticResource MsgTemplateSelector}"
+                
                       >
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
@@ -145,7 +141,7 @@
                        HorizontalContentAlignment="Right"
                        Margin="5 10 10 10"
                        Text="{Binding Text,UpdateSourceTrigger= PropertyChanged}"
-                       Background="LightSkyBlue"
+                       Background="LightBlue"
                        FontSize="17"
                        FontStretch="Medium"
                        AcceptsReturn="True"
@@ -154,15 +150,18 @@
                        Foreground="Black"
                        VerticalContentAlignment="Center"
                        TabIndex="1"
+                      FontFamily="Vazirmatn,Segoe UI Emoji"
                         
                        Name="MessageTextBox"
               >
+              
                   <TextBox.InputBindings>
                       <KeyBinding
                           Key="Enter"
                           Command="{Binding SendMessageCommand}"
                           ></KeyBinding>
                   </TextBox.InputBindings>
+                 
               </TextBox>
                     <Button
                         Name="MessageBlock"
@@ -174,6 +173,7 @@
                         >
                     </Button>
               </Grid>
+              
             </Border>
         </Grid>
        

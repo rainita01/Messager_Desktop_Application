@@ -13,8 +13,9 @@ namespace demo_158.Repository
         private readonly ConnectionManager _connectionManager;
         
 
-        public Action<List<ConversationModelFromServer>> SuccessReceiveConversations { get; set; }
+        public Action<List<ConversationModel>> SuccessReceiveConversations { get; set; }
         public Action<int,string> SuccessCreatedConversation { get; set; }
+        public Action<int> SuccessDeletedConversation { get; set; }
         public MyConversationsRepository(ConnectionManager connectionManager)
         {
             _connectionManager = connectionManager;
@@ -23,14 +24,14 @@ namespace demo_158.Repository
         {
             await ReceiveConversations();
             await GetConversationId();
-
+            await DeleteConversation();
 
         }
 
 
         public async Task ReceiveConversations()
         {
-            await _connectionManager.OnAsync<List<ConversationModelFromServer>>("ReceiveConversations", (ConversationsList =>
+            await _connectionManager.OnAsync<List<ConversationModel>>("ReceiveConversations", (ConversationsList =>
             {
                 try
                 {
@@ -53,7 +54,13 @@ namespace demo_158.Repository
             }));
         }
 
+        public async Task DeleteConversation()
+        {
+            await _connectionManager.OnAsync<int>("DeleteConversation", (conversationId =>
+            {
+                SuccessDeletedConversation.Invoke(conversationId);
+            }));
 
-
+        }
     }
 }

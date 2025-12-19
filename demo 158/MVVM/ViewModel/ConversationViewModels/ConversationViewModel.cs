@@ -1,21 +1,23 @@
-﻿using demo_158.Base;
-using demo_158.Hubs;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
-using CommunityToolkit.Mvvm.Messaging;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using demo_158.Base;
 using demo_158.EventsPublish;
+using demo_158.Hubs;
+using demo_158.MVVM.Model;
 using demo_158.MVVM.View;
 using demo_158.MVVM.ViewModel;
 using demo_158.Services.Enums;
 using demo_158.Services.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Interop;
 
 
-namespace demo_158.MVVM.Model
+namespace demo_158.MVVM.ViewModel.ConversationViewModels
 {
     public class ConversationViewModel : ViewModelBase
     {
@@ -34,10 +36,15 @@ namespace demo_158.MVVM.Model
         private string _contactState;
         private int _id;
         private DateTime? _lastMessageDateTime;
-        private int _newMessagesLength;
+        private int _unreadCount;
         private Visibility _newMessageVisibility = Visibility.Hidden;
-   
-        public ILogger<MessageViewModel> Ilogger { get; set; }
+
+        private long _lastReadMessageId = 0;
+        public long LastReadMessageId
+        {
+            get => _lastReadMessageId;
+            private set => _lastReadMessageId = value;
+        }
         public int Id
         {
             get => _id;
@@ -49,7 +56,6 @@ namespace demo_158.MVVM.Model
             set => SetField(ref _userModelFromServer, value);
         }
         public ObservableCollection<MessageViewModel>? Messages { get; set; } = new();
-        public EventHandler? MessageAdded { get; set; }
         public ContactUserModel ContactUserModel
         {
             get => _contactUserModel;
@@ -80,9 +86,9 @@ namespace demo_158.MVVM.Model
             set => SetField(ref _text, value);
         }
 
-        public int NewMessagesLength    
+        public int UnreadCount    
         {
-            get => _newMessagesLength;
+            get => _unreadCount;
             set 
             {
                 if (value > 0)
@@ -94,7 +100,7 @@ namespace demo_158.MVVM.Model
                     NewMessageVisibility = Visibility.Hidden;
                 }
 
-                _newMessagesLength = value;
+                _unreadCount = value;
                 OnPropertyChanged();
             }
         }
@@ -120,8 +126,6 @@ namespace demo_158.MVVM.Model
            
         }
 
-      
-
         public ICommand ShowUserContentCommand => _showUserContentCommand ?? new GeneralCommand((ShowUserContentAction));
         public ICommand SendMessageCommand => _sendMessageCommand ??= new GeneralCommand(async () => await SendTextMessageExecuteAction());
 
@@ -134,8 +138,51 @@ namespace demo_158.MVVM.Model
               WeakReferenceMessenger.Default.Send(new SuccessDeletedConversation(Id));
           }
         });
+        public async Task MarkAllVisibleAsSeenAsync()
+        {
+            var lastIncoming = Messages
+                .Where(m => !m.Message.IsMyMessage)
+                .OrderBy(m => m.Id)
+                .LastOrDefault();
 
-        public ICommand IsSeenCommand => _isSeenCommand ?? new GeneralCommand(() => { });
+            if (lastIncoming != null)
+               await OnUserScrolledAsync(lastIncoming.Id);
+        }
+        public async Task OnUserScrolledAsync(long lastVisibleId)
+        {
+            if (lastVisibleId <= LastReadMessageId)
+                return;
+
+            LastReadMessageId = lastVisibleId;
+           await ApplySeenAsync();
+        }
+  
+     
+        private async Task ApplySeenAsync()
+        {
+            var messagesId = new List<int>(Messages
+                .Where(m => !m.Message.IsMyMessage)
+                .Where(e => !e.Message.IsSeen)
+                .Select(i => i.Message.Id));
+            if (messagesId.Count > 0)
+            {
+                await _connection.SendAsync("SendSeenMessages", messagesId);
+            }
+            foreach (var msg in Messages)
+            {
+                msg.Message.IsSeen =
+                    !msg.Message.IsMyMessage &&
+                    msg.Id <= LastReadMessageId;
+            }
+
+            UnreadCount = Messages.Count(m =>
+                !m.Message.IsMyMessage &&
+                m.Id > LastReadMessageId
+            );
+
+          
+
+        }
         private async Task SendTextMessageExecuteAction()
         {
             if (string.IsNullOrEmpty(Text))
@@ -195,6 +242,7 @@ namespace demo_158.MVVM.Model
                     if (message != null)
                     {
                         message.Message.Text = Text;
+                        message.Message.IsMessageEdited = true;
                     }
                 }
             }));
@@ -207,5 +255,4 @@ namespace demo_158.MVVM.Model
         }
     }
 
-    
 }

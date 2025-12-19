@@ -1,11 +1,11 @@
-﻿using demo_158.MVVM.Model;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using demo_158.EventsPublish;
+using demo_158.MVVM.Model;
 using demo_158.MVVM.ViewModel;
 using Microsoft.EntityFrameworkCore;
-
 using System.Windows;
 using System.Windows.Controls;
-using CommunityToolkit.Mvvm.Messaging;
-using demo_158.EventsPublish;
+using System.Windows.Media;
 
 
 namespace demo_158.MVVM.View
@@ -16,7 +16,7 @@ namespace demo_158.MVVM.View
     public partial class ConversationView : UserControl
     {
         private readonly MainViewModel _viewModel;
-        
+        private ScrollViewer _scrollViewer;
         public ConversationView(MainViewModel viewModel)
         {
             InitializeComponent();
@@ -25,54 +25,66 @@ namespace demo_158.MVVM.View
             Loaded -= MessageAndTalkView_OnLoaded;
             Loaded += MessageAndTalkView_OnLoaded;
             WeakReferenceMessenger.Default.Register<MessageSendedSuccessEvent>(this, MessageSendSuccess);
-        
+           
         }
 
-        private void MessageSendSuccess(object recipient, MessageSendedSuccessEvent message)
-        {
-            MessagesListView.ScrollIntoView(_viewModel.ConversationViewModel.Messages.Last());
-        }
         private void MessageAndTalkView_OnLoaded(object sender, RoutedEventArgs e)
         {
-            if (_viewModel.ConversationViewModel?.Messages is { Count: > 0 })
+
+            var message = _viewModel.ConversationViewModel?.Messages
+                .Where(m => m.Message.IsSeen == false)
+                .Where(b => b.Message.IsMyMessage == false).FirstOrDefault();
+            if (message != null)
+            {
+                MessagesListView.ScrollIntoView(message);
+                MessageTextBox.Focus();
+            }
+            else if (_viewModel.ConversationViewModel?.Messages?.Count > 0)
             {
                 MessagesListView.ScrollIntoView(_viewModel.ConversationViewModel.Messages.Last());
                 MessageTextBox.Focus();
             }
-        }
+            var sv = FindScrollViewer(MessagesListView);
 
-        private void MessagesListView_OnScrollChanged(object sender, ScrollChangedEventArgs e)
+            if (sv == null)
+                return;
+
+            // اگر اسکرول لازم نیست
+            if (sv.ExtentHeight <= sv.ViewportHeight)
+            {
+                _viewModel.ConversationViewModel?.MarkAllVisibleAsSeenAsync();
+                return;
+            }
+
+            sv.ScrollChanged += (_,__) =>
+            {
+                var last = _viewModel.ConversationViewModel.Messages.LastOrDefault(m => !m.Message.IsMyMessage);
+                if (last != null)
+                    _viewModel.ConversationViewModel.OnUserScrolledAsync(last.Id);
+            };
+        }
+        private ScrollViewer FindScrollViewer(DependencyObject root)
         {
-                var listView = sender as ListView;
+            if (root == null)
+                return null;
 
-                for (int i = 0; i < listView?.Items.Count; i++)
-                {
-                    var item = listView.ItemContainerGenerator.ContainerFromIndex(i) as ListViewItem;
-                    if (item == null)
-                        continue;
+            if (root is ScrollViewer scrollViewer)
+                return scrollViewer;
 
-                    if (IsElementVisible(item, listView))
-                    {
-                        if (item.DataContext is MessageModelFromServer msg && !msg.IsSeen)
-                        {
-                            msg.IsSeen = true;
-                        }
-                    }
-                }
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(root); i++)
+            {
+                var child = VisualTreeHelper.GetChild(root, i);
+                var result = FindScrollViewer(child);
+                if (result != null)
+                    return result;
+            }
 
+            return null;
         }
-        private bool IsElementVisible(FrameworkElement element, FrameworkElement container)
+        private void MessageSendSuccess(object recipient, MessageSendedSuccessEvent message)
         {
-            var bounds = element.TransformToAncestor(container)
-                .TransformBounds(new Rect(0, 0, element.ActualWidth, element.ActualHeight));
-
-            var containerRect = new Rect(0, 0, container.ActualWidth, container.ActualHeight);
-            return containerRect.IntersectsWith(bounds);
+            MessagesListView.ScrollIntoView(_viewModel.ConversationViewModel.Messages.Last());
         }
 
-        private void MessagesListView_OnLoaded(object sender, RoutedEventArgs e)
-        {
-            
-        }
     }
 }

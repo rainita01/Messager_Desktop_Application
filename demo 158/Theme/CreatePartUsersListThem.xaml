@@ -65,7 +65,7 @@
                         RadiusY="5"
                         Width="9" 
                         Height="{TemplateBinding Height}" 
-                        Fill="LightBlue"
+                        Fill="LightSteelBlue"
                         
                         ></Rectangle>
                 </ControlTemplate>
@@ -78,7 +78,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="RepeatButton">
                     <Rectangle Height="{TemplateBinding Height}" Width="{TemplateBinding Width}"
-                               Fill="GhostWhite">
+                               Fill="Transparent">
 
                     </Rectangle>
                 </ControlTemplate>
@@ -87,6 +87,17 @@
     
     </Style>
     <Style TargetType="ScrollBar">
+        <Setter Property="RenderTransform"  >
+         <Setter.Value>
+                <RotateTransform Angle="180"/>
+       
+         </Setter.Value>
+        </Setter>
+        <Setter Property="RenderTransformOrigin"  >
+            <Setter.Value>
+                <Point X="0.5" Y="0.5"/>
+            </Setter.Value>
+        </Setter>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ScrollBar">

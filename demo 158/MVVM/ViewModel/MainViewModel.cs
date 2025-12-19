@@ -17,6 +17,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using demo_158.EventsPublish;
 using Microsoft.Extensions.Logging;
+using demo_158.MVVM.ViewModel.ConversationViewModels;
 
 namespace demo_158.MVVM.ViewModel
 {
@@ -40,7 +41,7 @@ namespace demo_158.MVVM.ViewModel
         private ICommand addConversationCommand;
 
         public ObservableCollection<ConversationViewModel>? Conversations { get; set; } = new();
-
+    
         public ICollectionView? ConversationsView { get; set; }
         public SolidColorBrush CycleFillerBrush
         {
@@ -139,7 +140,7 @@ namespace demo_158.MVVM.ViewModel
 
             _conversationsRepository.SuccessReceiveConversations += SuccessReceiveConversations;
             _conversationsRepository.SuccessCreatedConversation += SuccessCreatedConversation;
-
+            _conversationsRepository.SuccessDeletedConversation += ContactDeletedConversation;
             _myInformationRepository.ImageChanged -= ImageChanged;
             _myInformationRepository.ImageChanged += ImageChanged;
 
@@ -157,6 +158,17 @@ namespace demo_158.MVVM.ViewModel
             WeakReferenceMessenger.Default.Register<ContactUserChangedProfileEvent>(this, ContactEditedProfileHandler);
         }
 
+        private void ContactDeletedConversation(int obj)
+        {
+            var conversaiton = Conversations?.FirstOrDefault(i => i.Id == obj);
+            if (conversaiton != null)
+            {
+                Conversations?.Remove(conversaiton);
+                ConversationsView?.Refresh();
+            }
+           
+        }
+
         private void ContactEditedProfileHandler(object recipient, ContactUserChangedProfileEvent message)
         {
             var contactUser =
@@ -170,10 +182,10 @@ namespace demo_158.MVVM.ViewModel
 
         private void SuccessDeleteConversationHandler(object recipient, SuccessDeletedConversation message)
         {
-            var conversation = Conversations?.FirstOrDefault(e=>e.Id == message.Value);
+            var conversation = Conversations?.FirstOrDefault(e => e.Id == message.Value);
             if (ConversationViewModel == conversation)
             {
-              
+
                 CurrentView = _defaultMessageView;
             }
 
@@ -239,6 +251,7 @@ namespace demo_158.MVVM.ViewModel
         {
             var messageView = _service.GetRequiredService<ConversationView>();
             messageView.DataContext = ConversationViewModel;
+          
             CurrentView = messageView;
         }
         //-----------------------------------------------
@@ -253,41 +266,40 @@ namespace demo_158.MVVM.ViewModel
                 var getContactUser = await _connection.InvokeAskDataAsync<ContactUserModel, string>("AskNewMessageUser", obj.Value.Username);
                 conversation = new ConversationViewModel(_connection, _messagesServices, _service)
                 {
-
                     Id = obj.Value.ConversationId,
                     ContactUserModel = getContactUser,
                     UserModelFromServer = UserModelFromServer,
                     Messages = new ObservableCollection<MessageViewModel>(),
-
                 };
                 await Application.Current.Dispatcher.InvokeAsync(() =>
                 {
                     Conversations?.Add(conversation);
                 });
-
             }
             if (conversation.Messages?.Count > 0)
             {
                 lastmessage = conversation.Messages.Last().Message;
                 message = _messagesServices.MessageModelMapping(obj.Value, UserModelFromServer.Username, lastmessage.SenderName);
-
             }
             else
-            {
                 message = _messagesServices.MessageModelMapping(obj.Value, UserModelFromServer.Username, null);
-            }
-            if (message.IsSeen is false && message.SenderName != UserModelFromServer.Username)
-            {
-                conversation.NewMessagesLength++;
-            }
+
+            if (message.IsSeen == false && message.SenderName != UserModelFromServer.Username && conversation != ConversationViewModel)
+                conversation.UnreadCount++;
+
+            if (conversation == ConversationViewModel)
+                message.IsSeen = true;
+
             if (message.SenderName == conversation.ContactUserModel.ContactUsername)
-            {
                 message.Image = conversation.ContactUserModel.ContactImage;
-            }
+
             else
             {
+                message.IsMyMessage = true;
                 message.Image = _userModelFromServer.Image;
             }
+
+
             Application.Current.Dispatcher.Invoke(() =>
             {
                 AddToConversation(message, conversation);
@@ -306,7 +318,7 @@ namespace demo_158.MVVM.ViewModel
                 conversation.Id = conversationId;
             }
         }
-        private void SuccessReceiveConversations(List<ConversationModelFromServer> obj)
+        private void SuccessReceiveConversations(List<ConversationModel> obj)
         {
             Application.Current.Dispatcher.BeginInvoke(() =>
             {
@@ -341,11 +353,13 @@ namespace demo_158.MVVM.ViewModel
                 {
                     Message = messageModel,
                     Username = _userModelFromServer.Username,
-                    ContactUser = conversationViewModel.ContactUserModel
+                    ContactUser = conversationViewModel.ContactUserModel,
+                    Id = 1 + conversationViewModel.Messages.Count,
                 };
                 conversationViewModel.Messages?.Add(messageViewModel);
                 conversationViewModel.LastMessage = conversationViewModel.Messages.LastOrDefault()?.Message;
                 conversationViewModel.LastMessageDateTime = conversationViewModel.LastMessage?.SentTime;
+              
             });
         }
 
@@ -361,11 +375,12 @@ namespace demo_158.MVVM.ViewModel
                     return;
 
                 message.Message.Text = newMessage.NewText;
+                message.Message.IsMessageEdited = newMessage.IsEdited;
 
             }));
         }
 
-        private void ContactDeletedMessageEvent(int messageId, string contactName)
+        private void ContactDeletedMessageEvent(int messageId,string contactName)
         {
             var conversation = Conversations?.FirstOrDefault(e => e.ContactUserModel.ContactUsername == contactName);
             if (conversation == null)
@@ -381,7 +396,7 @@ namespace demo_158.MVVM.ViewModel
 
             conversation.Messages?.Remove(message);
             var lastMessage = conversation.LastMessage;
-            conversation.LastMessageDateTime = lastMessage?.SentTime;
+            conversation.LastMessageDateTime  = lastMessage?.SentTime;
             ConversationsView?.Refresh();
         }
         //----------------------------------------------------------------------------------------------

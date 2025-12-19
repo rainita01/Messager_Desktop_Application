@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <None Remove="Fonts\Dirooz.ttf" />
+    <None Remove="Fonts\Segoe UI Emoji.TTF" />
     <None Remove="Fonts\Vazirmatn-Black.ttf" />
     <None Remove="Fonts\Vazirmatn-Bold.ttf" />
     <None Remove="Fonts\Vazirmatn-ExtraBold.ttf" />
@@ -37,6 +38,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Fonts\Segoe UI Emoji.TTF">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Fonts\Vazirmatn-Black.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>

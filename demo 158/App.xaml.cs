@@ -1,10 +1,9 @@
-﻿using System.Windows;
-using demo_158.Base;
+﻿using demo_158.Base;
 using demo_158.Hubs;
-using demo_158.MVVM.Model;
 using demo_158.MVVM.View;
 using demo_158.MVVM.View.Model;
 using demo_158.MVVM.ViewModel;
+using demo_158.MVVM.ViewModel.ConversationViewModels;
 using demo_158.Repository;
 using demo_158.Services;
 using demo_158.Services.Interfaces;
@@ -12,6 +11,8 @@ using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System.Windows;
+using System.Windows.Media;
 
 namespace demo_158
 {
@@ -53,7 +54,7 @@ namespace demo_158
             mainLoginSignView.Show();
 
             base.OnStartup(e);
-
+       
         }
         protected override void OnExit(ExitEventArgs e)
         {
@@ -79,6 +80,8 @@ namespace demo_158
             service.AddTransient<ContactProfileVeiw>();
             service.AddTransient<DefaultMessageView>();
             service.AddTransient<AddNewConverPageView>();
+            service.AddTransient<CreateGroupView>();
+
 
             service.AddSingleton<ConnectionManager>();
             service.AddHostedService<ReconnectManager>();
@@ -108,6 +111,7 @@ namespace demo_158
             service.AddTransient<ConversationViewModel>();
             service.AddTransient<Func<ConversationViewModel>>(sp => () => sp.GetRequiredService<ConversationViewModel>());
             service.AddTransient<AddNewConversationViewModel>();
+            service.AddTransient<CreateGroupViewModel>();
         }
     }
     

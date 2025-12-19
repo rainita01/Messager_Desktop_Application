@@ -31,11 +31,16 @@ namespace demo_158.MVVM.View
             _viewModel = viewModel;
             DataContext = _viewModel;
             InitializeComponent();
+            Loaded += OnLoaded;
            
         }
 
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            Username.Focus();
+        }
 
-     
+
         private void Password_OnPasswordChanged(object sender, RoutedEventArgs e)
         {
             _viewModel.Password = ((PasswordBox)sender).Password;

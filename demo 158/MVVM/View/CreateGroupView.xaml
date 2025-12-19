@@ -1,0 +1,133 @@
+﻿<Window x:Class="demo_158.MVVM.View.CreateGroupView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:demo_158.MVVM.View"
+        mc:Ignorable="d"
+        WindowStyle="None"
+        Background="Transparent"
+        BorderThickness="0"
+        WindowStartupLocation="CenterScreen"
+        Title="CreateGroupView" Height="250" Width="450">
+    <Border
+        Background="#4A7685"
+        CornerRadius="15"
+
+    >
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="4*"></RowDefinition>
+                <RowDefinition Height="1*"></RowDefinition>
+            </Grid.RowDefinitions>
+
+            <Border Grid.Row="0"
+                    Height="25"
+            >
+                <Grid>
+                    <Button
+                        Height="25"
+                        Width="25"
+                        Content="×"
+                        
+                        Foreground="AliceBlue"
+                        HorizontalAlignment="Right"
+                        Command="{Binding ClosWindowCommand}"
+                        Style="{DynamicResource TopToolsButtonThem}"
+                    ></Button>
+                    <TextBlock 
+                        Text="Create Group"
+                        Margin="10 0 200 0"
+                        VerticalAlignment="Center"
+                        Foreground="AliceBlue"
+                        ></TextBlock>
+                </Grid>
+           
+            </Border>
+            <Border Grid.Row="1"
+                    
+                    >
+                <StackPanel
+                    
+                    >
+                    <StackPanel
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Center"
+                        Margin="0 40 0 0 "
+                        >
+                        <TextBlock
+                            Text="Name:"
+                            Foreground="AliceBlue"
+                            Margin="0 0 30 0"
+                            VerticalAlignment="Center"
+                            ></TextBlock>
+                        <TextBox 
+                            Height="25"
+                            Width="180"
+                            Margin="0 0 10 0"
+                            Background="WhiteSmoke"
+                            BorderThickness="0"
+                            FontSize="15"
+                            Foreground="CadetBlue"
+                            Name="NameTextBox"
+                        ></TextBox>
+
+                    </StackPanel>
+                    <StackPanel
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Center"
+                        Margin="0 20 0 0 "
+                    >
+                        <TextBlock
+                            Text="Caption:"
+                            Foreground="AliceBlue"
+                            Margin="0 0 20 0"
+                            VerticalAlignment="Center"
+                        ></TextBlock>
+                        <TextBox 
+                            Height="50"
+                            Width="180"
+                            Margin="0 0 10 0"
+                            Background="WhiteSmoke"
+                            BorderThickness="0"
+                            FontSize="15"
+                            Foreground="CadetBlue"
+                        ></TextBox>
+
+                    </StackPanel>
+                
+                </StackPanel>
+            </Border>
+            <Border Grid.Row="2">
+                <StackPanel
+                    Margin="5"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    >
+                    <Button
+
+                        Width="50"
+                        Background="#5A5695"
+                        Content="Create"
+                        Margin="0 0 5 0"
+                        Style="{DynamicResource CancelButtonStyle}"
+                        ></Button>
+                    <Button
+        
+                        Command="{Binding ClosWindowCommand}"
+                        Width="50"
+                        Background="#fA0615"
+                        Content="Cancel"
+                        Margin="0 0 5 0"
+                       
+                        Style="{DynamicResource CancelButtonStyle}"
+                    ></Button>
+
+                </StackPanel>
+            </Border>
+        </Grid>
+
+    </Border>
+  
+</Window>

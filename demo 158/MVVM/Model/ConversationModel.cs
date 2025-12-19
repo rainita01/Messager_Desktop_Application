@@ -1,11 +1,7 @@
 ﻿namespace demo_158.MVVM.Model;
 
-public class ConversationModel
-{
-    
-}
 
-public class ConversationModelFromServer
+public class ConversationModel
 {
     public int Id { get; set; }
     public bool IsConversationPrivateChat { get; set; }

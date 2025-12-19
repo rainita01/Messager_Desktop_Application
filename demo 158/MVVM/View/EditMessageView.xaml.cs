@@ -41,17 +41,18 @@ namespace demo_158.MVVM.View
 
         }
 
-        private  void SaveChanges(object sender, RoutedEventArgs e)
+        private async  void SaveChanges(object sender, RoutedEventArgs e)
         {
             var editedMessage = new EditMessageModel()
             {
                 SenderUsername   = Username,
                 ContactUsername = ContactUser.ContactUsername,
                 MessageId = MessageId,
-                NewText = Text.Text
+                NewText = Text.Text,
+                IsEdited = true
 
             };
-            _connectionManager.SendAsync("EditMessage",editedMessage);
+           await _connectionManager.SendAsync("EditMessage",editedMessage);
             this.Close();
         }
 

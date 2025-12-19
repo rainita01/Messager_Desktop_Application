@@ -21,12 +21,19 @@ namespace demo_158.MVVM.ViewModel
         private ICommand copyTextCommand;
         private MessagesModel _message;
         private ICommand openProfile;
+        private int _id;
 
         public ContactUserModel ContactUser { get; set; }
         public MessagesModel Message
         {
             get => _message;
             set => SetField(ref _message, value);
+        }
+
+        public int Id   
+        {
+            get => _id;
+            set => SetField(ref _id, value);
         }
 
         public string Username { get; set; }

@@ -93,5 +93,6 @@ namespace demo_158.MVVM.Model
         public string SenderUsername { get; set; }
         public string ContactUsername { get; set; }
         public string NewText { get; set; }
+        public bool IsEdited { get; set; }
     }
 }

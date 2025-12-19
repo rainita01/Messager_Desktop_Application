@@ -6,7 +6,7 @@
     <!-- Template پیام من -->
     <DataTemplate x:Key="MyMessageTemplate">
         <StackPanel HorizontalAlignment="Right" Margin="0 0 3 1">
-            <Border Background="LightSkyBlue"
+            <Border Background="LightBlue"
                     CornerRadius="10"
                     Padding="3"
                     MaxWidth="250"
@@ -18,16 +18,17 @@
                   <TextBox Text="{Binding Message.Text}"
                            TextWrapping="Wrap"
                            FontSize="16"
-                           FontFamily="Vazirmatn Medium"
+                           FontFamily="Vazirmatn Medium,Segoe UI Emoji"
                            FontStyle="Normal"
                            MinHeight="25"
                            MaxHeight="100"
                            MinWidth="25"
                            MaxWidth="200"
                            Background="Transparent"
-                         
+                           HorizontalAlignment="Right"
                            BorderThickness="0"
                            IsReadOnly="True"
+                          
                            Cursor="IBeam"/>
                   <TextBlock 
                       HorizontalAlignment="Left"
@@ -108,9 +109,9 @@
                                  MinWidth="25"
                                  MaxWidth="200"
                                  FontSize="16"
-                                 FontFamily="\demo 158\Fonts\Vazirmatn-Regular.ttf"
+                                  FontFamily="Vazirmatn Medium"
                                  VerticalAlignment="Center"
-                                 HorizontalAlignment="Right"
+                                 HorizontalAlignment="Left"
                                  Background="Transparent"
                                  IsReadOnly="True"
                                  BorderThickness="0"

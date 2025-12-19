@@ -77,7 +77,7 @@
                                 >
                                     <TextBlock
                                         Foreground="GhostWhite"
-                                        Text="{Binding NewMessagesLength}"
+                                        Text="{Binding UnreadCount}"
                                         FontSize="14"
                                         Padding="1"
                                         FontWeight="DemiBold"

@@ -3,6 +3,7 @@ using demo_158.Repository;
 using demo_158.Services.Interfaces;
 using System.Collections.ObjectModel;
 using demo_158.MVVM.ViewModel;
+using demo_158.MVVM.ViewModel.ConversationViewModels;
 
 namespace demo_158.Services
 {
@@ -19,7 +20,7 @@ namespace demo_158.Services
         
         }
 
-        public ConversationViewModel ConversationModelMapping(ConversationModelFromServer obj)
+        public ConversationViewModel ConversationModelMapping(ConversationModel obj)
         {
             var result = _createConversationModel();
 
