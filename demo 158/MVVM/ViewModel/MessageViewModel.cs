@@ -59,7 +59,7 @@ namespace demo_158.MVVM.ViewModel
           editMessageView.Username = Username;
           editMessageView.ShowDialog();
        });
-       public  ICommand DeleteMessageCommand => deleteMessageCommand ?? new GeneralCommand(() =>
+       public  ICommand DeleteMessageCommand => deleteMessageCommand ?? new MyRelayCommand(async () =>
        {
            if (Message.SenderName != Username )
            {
@@ -72,11 +72,12 @@ namespace demo_158.MVVM.ViewModel
            {
                return;
            }
-           var result =  _connectionManager.InvokeAsync<int,string,string,ServerAnswer>("DeleteMessage", Message.Id,Username,ContactUser.ContactUsername);
-           Task.WhenAny(result);
-           if (result.Result == ServerAnswer.ok)
+           var result = await _connectionManager.InvokeAsync<int,string,string,ServerAnswer>("DeleteMessage", Message.Id,Username,ContactUser.ContactUsername);
+          
+           if (result == ServerAnswer.ok)
            {
-               WeakReferenceMessenger.Default.Send(new SuccessDeletedMessage(true));
+
+               WeakReferenceMessenger.Default.Send(new SuccessDeletedMessage(Message.Id));
            }
        });
        public ICommand CopyTextCommand => copyTextCommand ?? new GeneralCommand(() =>

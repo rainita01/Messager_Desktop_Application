@@ -2,7 +2,6 @@
 using demo_158.Base;
 using demo_158.EventsPublish;
 using demo_158.Hubs;
-using demo_158.MVVM.Model;
 using demo_158.MVVM.View;
 using demo_158.MVVM.ViewModel;
 using demo_158.Services.Enums;
@@ -15,9 +14,10 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
+using CommunityToolkit.Mvvm.Input;
 
 
-namespace demo_158.MVVM.ViewModel.ConversationViewModels
+namespace demo_158.MVVM.Model
 {
     public class ConversationViewModel : ViewModelBase
     {
@@ -39,6 +39,8 @@ namespace demo_158.MVVM.ViewModel.ConversationViewModels
         private int _unreadCount;
         private Visibility _newMessageVisibility = Visibility.Hidden;
 
+        private readonly HashSet<long> _seenMessageIds = new();
+
         private long _lastReadMessageId = 0;
         public long LastReadMessageId
         {
@@ -56,6 +58,7 @@ namespace demo_158.MVVM.ViewModel.ConversationViewModels
             set => SetField(ref _userModelFromServer, value);
         }
         public ObservableCollection<MessageViewModel>? Messages { get; set; } = new();
+        public EventHandler? MessageAdded { get; set; }
         public ContactUserModel ContactUserModel
         {
             get => _contactUserModel;
@@ -120,18 +123,30 @@ namespace demo_158.MVVM.ViewModel.ConversationViewModels
             _connection = connection;
             _messagesServices = messagesServices;
             _service = service;
-            MessageDeleted();
+           
             MessageEdited();
+            WeakReferenceMessenger.Default.Register<SuccessDeletedMessage>(this, (recipient, message) =>
+            {
+                var messageToRemove = Messages.FirstOrDefault(e => e.Message.Id == message.Value);
+                if (messageToRemove is null)
+                {
+                    return;
+                }
+                Messages.Remove(messageToRemove);
+                LastMessage = Messages.LastOrDefault()?.Message;
+                LastMessageDateTime = LastMessage?.SentTime;
+
+            });
 
            
         }
 
-        public ICommand ShowUserContentCommand => _showUserContentCommand ?? new GeneralCommand((ShowUserContentAction));
-        public ICommand SendMessageCommand => _sendMessageCommand ??= new GeneralCommand(async () => await SendTextMessageExecuteAction());
+        public ICommand ShowUserContentCommand => _showUserContentCommand ??= new GeneralCommand((ShowUserContentAction));
+        public ICommand SendMessageCommand => _sendMessageCommand ??= new MyRelayCommand(async () => await SendTextMessageExecuteAction());
 
-        public ICommand DeleteConversation => _deleteConversation ?? new GeneralCommand(async () =>
+        public ICommand DeleteConversation => _deleteConversation ??= new MyRelayCommand(async () =>
         {
-          var result = await _connection.InvokeAsync("DeleteConversation", Id, ContactUserModel.ContactUsername);
+          var result = await _connection.InvokeAsync<int,string,ServerAnswer>("DeleteConversation", Id, ContactUserModel.ContactUsername);
 
           if (result is ServerAnswer.ok)
           {
@@ -216,22 +231,6 @@ namespace demo_158.MVVM.ViewModel.ConversationViewModels
             Text = String.Empty;
         }
 
-        public void MessageDeleted()
-        {
-             _connection.On<ServerAnswer,int>("MessageDeleted", ((answer,msg) =>
-            {
-
-                if (answer == ServerAnswer.ok)
-                {
-                  var message =   Messages.FirstOrDefault(e => e.Message.Id == msg);
-                  Messages.Remove(message);
-                  LastMessage = Messages.LastOrDefault()?.Message;
-                  LastMessageDateTime = LastMessage?.SentTime;
-                }
-            }));
-
-        }
-
         public void MessageEdited()
         {
              _connection.On<ServerAnswer,string,int>("MessageEdited", ((answer, Text, id) =>
@@ -255,4 +254,5 @@ namespace demo_158.MVVM.ViewModel.ConversationViewModels
         }
     }
 
+    
 }

@@ -1,4 +1,5 @@
 ﻿using demo_158.Hubs;
+using demo_158.MVVM.Model;
 using demo_158.Services.Interfaces;
 
 namespace demo_158.MVVM.ViewModel.ConversationViewModels;

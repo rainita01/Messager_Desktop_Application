@@ -112,13 +112,13 @@ namespace demo_158.MVVM.ViewModel
              // commands
             public ICommand OpenProfileCommand => openProfileCommand ?? new GeneralCommand((() =>
              {
-                 var profileView = _service.GetService<ProfileView>();
+                 var profileView = _service.GetRequiredService<ProfileView>();
 
                  profileView.ShowDialog();
           
               }));
 
-              public ICommand AddConversationCommand => addConversationCommand ?? new GeneralCommand((async () =>
+              public ICommand AddConversationCommand => addConversationCommand ?? new MyRelayCommand((async () =>
               {
                   var addView = _service.GetRequiredService<AddNewConversationView>();
                   await _connection.SendAsync("AskUsers", UserModelFromServer.Id);

@@ -2,9 +2,9 @@
 
 namespace demo_158.EventsPublish;
 
-public class SuccessDeletedMessage : ValueChangedMessage<bool>
+public class SuccessDeletedMessage : ValueChangedMessage<int>
 {
-    public SuccessDeletedMessage(bool value) : base(value)
+    public SuccessDeletedMessage(int id) : base(id)
     {
     }
 }

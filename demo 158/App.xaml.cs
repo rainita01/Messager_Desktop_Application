@@ -13,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Windows;
 using System.Windows.Media;
+using demo_158.MVVM.Model;
 
 namespace demo_158
 {
@@ -109,6 +110,8 @@ namespace demo_158
             service.AddTransient<ContactProfileViewModel>();
             service.AddTransient<EditMessageViewModel>();
             service.AddTransient<ConversationViewModel>();
+            service.AddTransient<GroupConversationViewModel>();
+            service.AddTransient<PrivateConversationViewModel>();
             service.AddTransient<Func<ConversationViewModel>>(sp => () => sp.GetRequiredService<ConversationViewModel>());
             service.AddTransient<AddNewConversationViewModel>();
             service.AddTransient<CreateGroupViewModel>();
